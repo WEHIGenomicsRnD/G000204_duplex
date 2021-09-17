@@ -1,12 +1,12 @@
-name: "nanoseq-rare-mutation-detection"
+name: "Rare mutation detection"
 output_dir: ../docs
 navbar:
-  title: "nanoseq-rare-mutation-detection"
+  title: "Rare mutation detection"
   left:
   - text: Home
     href: index.html
-  - text: About
-    href: about.html
+  - text: Model
+    href: model.html
   - text: License
     href: license.html
 output:

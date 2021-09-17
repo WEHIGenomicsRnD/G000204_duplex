@@ -8,4 +8,10 @@ editor_options:
   chunk_output_type: console
 ---
 
-Welcome to my research website.
+Nanoseq rare mutation detection
+=============================================================================================
+
+Analyses
+--------
+
+* [Model](model.html)

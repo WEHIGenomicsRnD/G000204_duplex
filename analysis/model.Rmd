@@ -1,0 +1,88 @@
+---
+title: "Rare mutation detection model"
+output:
+  workflowr::wflow_html:
+      code_folding: hide
+---
+
+```{r knitr, include = FALSE}
+DOCNAME = "Simulation_Benchmarking"
+knitr::opts_chunk$set(autodep        = TRUE,
+                      cache          = FALSE,
+                      cache.path     = paste0("cache/", DOCNAME, "/"),
+                      cache.comments = FALSE,
+                      echo           = TRUE,
+                      error          = FALSE,
+                      fig.align      = "center",
+                      fig.width      = 9,
+                      fig.height     = 5,
+                      dev            = c("png"),
+                      message        = FALSE,
+                      warning        = FALSE)
+```
+
+```{r libraries, cache = FALSE}
+library(ggplot2)
+```
+
+# Model
+
+Q: what is the lowest % VAF of mutation we can reliably detect (at >95% confidence) using Nanoseq on bulk WES?
+
+## Assumptions
+
+* We consider a human diploid genome (6.4Gb) without SCNAs
+* The mutation is heterozygous
+* We sequence 15,000 cells
+* Our duplex rate is optimal ~81%
+* Our ligation efficiency is 20%
+* We assume a duplex mutation call equals a real mutation (theoretical error rate of duplex sequencing is <10^-9)
+
+## Probability of sequencing a mutant cell
+
+Let $f$ be the probability of sequencing a mutation from a single fragment, on both strands.
+
+$f = (v / p) d.l$
+
+Where:
+
+* $v$ = target VAF
+* $p$ = ploidy (2)
+* $d$ = duplex efficiency (0.81)
+* $l$ = ligation efficiency
+
+We assume the probability of selecting a mutant cell is binomially distributed. We want to know the probability of selecting at least one mutant cell:
+
+$P(Bin(f, m)) > 0)$ = 0.95
+
+This is equivalent to:
+
+$P(Bin(f, m)) = 0)$ = 0.05
+
+Where $m$ is the number of mutant cells cells ($15000 (v . 2)$).
+
+For a range of possible VAFs, $V = \{0.001, 0.002 .. 0.05\}$, we can plot the probability of missing the mutant cell.
+
+```{r vaf_plot}
+d = 0.81
+l = 0.2
+v = seq(0.001, 0.05, 0.001)
+f = (v / 2) * d * l
+n = 15000
+m = n * (v * 2)
+
+vafs <- data.frame(vaf=v,
+                   p=dbinom(0, m, v))
+
+ggplot(vafs, aes(vaf, p)) +
+  geom_point() +
+  theme_bw() +
+  geom_hline(yintercept=0.05, alpha=0.4)
+```
+For this range of VAFs, 0.01 (1%) is the smallest VAF for which the probability of missing the mutant is approximately 0.05.
+
+```{r}
+deviation <- abs(0.05 - vafs$p)
+print(vafs[which(deviation == min(deviation)),])
+```
+
