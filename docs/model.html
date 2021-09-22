@@ -367,7 +367,7 @@ div.tocify {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -376,7 +376,7 @@ div.tocify {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -385,10 +385,10 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-09-17
+<strong>Last updated:</strong> 2021-09-22
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>rare-mutation-detection-rmarkdown/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -404,12 +404,12 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
 </div>
 </div>
 </div>
@@ -476,16 +476,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreeebb9d74647432ec0b35bec27ab7245915b35caa3targetblankebb9d74a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/mcmero/rare-mutation-detection/tree/ebb9d74647432ec0b35bec27ab7245915b35caa3" target="_blank">ebb9d74</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreeb680ba04eb31c2ee8ff74999358db02cf37df4a8targetblankb680ba0a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/mcmero/rare-mutation-detection/tree/b680ba04eb31c2ee8ff74999358db02cf37df4a8" target="_blank">b680ba0</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreeebb9d74647432ec0b35bec27ab7245915b35caa3targetblankebb9d74a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreeb680ba04eb31c2ee8ff74999358db02cf37df4a8targetblankb680ba0a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/mcmero/rare-mutation-detection/tree/ebb9d74647432ec0b35bec27ab7245915b35caa3" target="_blank">ebb9d74</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/mcmero/rare-mutation-detection/tree/b680ba04eb31c2ee8ff74999358db02cf37df4a8" target="_blank">b680ba0</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -495,6 +495,10 @@ Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+
+Unstaged changes:
+    Modified:   analysis/model.Rmd
+    Modified:   rare-mutation-detection.Rproj
 
 </code></pre>
 <p>
@@ -533,6 +537,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/b680ba04eb31c2ee8ff74999358db02cf37df4a8/docs/model.html" target="_blank">b680ba0</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2021-09-17
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -581,7 +602,7 @@ initial commit
 <div id="assumptions" class="section level2">
 <h2>Assumptions</h2>
 <ul>
-<li>We consider a human diploid genome (6.4Gb) without SCNAs</li>
+<li>We consider a human diploid genome without SCNAs</li>
 <li>The mutation is heterozygous</li>
 <li>We sequence 15,000 cells</li>
 <li>Our duplex rate is optimal ~81%</li>
@@ -598,14 +619,14 @@ initial commit
 <li><span class="math inline">\(v\)</span> = target VAF</li>
 <li><span class="math inline">\(p\)</span> = ploidy (2)</li>
 <li><span class="math inline">\(d\)</span> = duplex efficiency (0.81)</li>
-<li><span class="math inline">\(l\)</span> = ligation efficiency</li>
+<li><span class="math inline">\(l\)</span> = ligation efficiency (0.2)</li>
 </ul>
 <p>We assume the probability of selecting a mutant cell is binomially distributed. We want to know the probability of selecting at least one mutant cell:</p>
 <p><span class="math inline">\(P(Bin(f, m)) &gt; 0)\)</span> = 0.95</p>
 <p>This is equivalent to:</p>
 <p><span class="math inline">\(P(Bin(f, m)) = 0)\)</span> = 0.05</p>
-<p>Where <span class="math inline">\(m\)</span> is the number of mutant cells cells (<span class="math inline">\(15000 (v . 2)\)</span>).</p>
-<p>For a range of possible VAFs, <span class="math inline">\(V = \{0.001, 0.002 .. 0.05\}\)</span>, we can plot the probability of missing the mutant cell.</p>
+<p>Where <span class="math inline">\(m\)</span> is the number of mutant cells (<span class="math inline">\(15000 \times 2v\)</span>).</p>
+<p>Since we don’t know <span class="math inline">\(v\)</span>, we’ll define a vector of possible VAFs incremented by <span class="math inline">\(0.001\)</span>, <span class="math inline">\(V = \{0.001, 0.002..0.05\}\)</span>. Using these values, we can plot the probability of missing the mutant cell at each VAF (line is at 0.05).</p>
 <pre class="r"><code>d = 0.81
 l = 0.2
 v = seq(0.001, 0.05, 0.001)
@@ -614,12 +635,13 @@ n = 15000
 m = n * (v * 2)
 
 vafs &lt;- data.frame(vaf=v,
-                   p=dbinom(0, m, v))
+                   p=dbinom(0, m, f),
+                   mutant_cells=(n * v * 2))
 
 ggplot(vafs, aes(vaf, p)) +
-  geom_point() +
-  theme_bw() +
-  geom_hline(yintercept=0.05, alpha=0.4)</code></pre>
+    geom_point() +
+    theme_bw() +
+    geom_hline(yintercept=0.05, alpha=0.4)</code></pre>
 <p><img src="figure/model.Rmd/vaf_plot-1.png" width="864" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-vaf_plot-1">
@@ -658,11 +680,57 @@ mcmero
 </table>
 </div>
 </div>
-<p>For this range of VAFs, 0.01 (1%) is the smallest VAF for which the probability of missing the mutant is approximately 0.05.</p>
+<p>We can also plot this as mutant cells instead of VAF:</p>
+<pre class="r"><code>ggplot(vafs, aes(mutant_cells, p)) +
+    geom_point() +
+    theme_bw() +
+    geom_hline(yintercept=0.05, alpha=0.4)</code></pre>
+<p><img src="figure/model.Rmd/mutant_cells_plot-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>For this range of VAFs, 0.01 (1%) is the smallest VAF for which the probability of missing the mutant is approximately 0.05. A VAF of 0.035 translates to 1050 mutant cells in our input of 15,000.</p>
 <pre class="r"><code>deviation &lt;- abs(0.05 - vafs$p)
 print(vafs[which(deviation == min(deviation)),])</code></pre>
-<pre><code>    vaf          p
-10 0.01 0.04904089</code></pre>
+<pre><code>     vaf          p mutant_cells
+35 0.035 0.05074321         1050</code></pre>
+</div>
+<div id="varying-the-number-of-input-cells" class="section level2">
+<h2>Varying the number of input cells</h2>
+<p>If we change the number of input cells, how does this change the probability calculation? Let’s assume the target VAF is 0.035 from our previous calculation (line is at 0.05).</p>
+<pre class="r"><code>v = 0.035
+n = seq(1000, 20000, 1000)
+m = n * (v * 2)
+f = (v / 2) * d * l
+
+cells &lt;- data.frame(vaf=v,
+                    p=dbinom(0, m, f),
+                    total_cells=n,
+                    mutant_cells=(n * v * 2))
+
+ggplot(cells, aes(total_cells, p)) +
+    geom_point() +
+    theme_bw() +
+    geom_hline(yintercept=0.05, alpha=0.4)</code></pre>
+<p><img src="figure/model.Rmd/varying_input_cells-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>We can then expand this to different target VAFs.</p>
+<p>Let’s define our VAFs as <span class="math inline">\(V = \{0.01, 0.02..0.2\}\)</span> and put these on a single plot (line at p = 0.05).</p>
+<pre class="r"><code>cells_vs_vaf = NULL
+V = seq(0.01, 0.20, 0.01)
+for (v in V) {
+    m = n * (v * 2)
+    f = (v / 2) * d * l
+    toadd &lt;- data.frame(
+        vaf=as.factor(v),
+        p=dbinom(0, m, f),
+        total_cells=n
+    )
+    cells_vs_vaf &lt;- rbind(cells_vs_vaf, toadd)
+}
+
+ggplot(cells_vs_vaf, aes(total_cells, p, colour=vaf)) +
+    geom_line() +
+    theme_bw() +
+    theme(legend.position = &#39;bottom&#39;) +
+    geom_hline(yintercept=0.05, alpha=0.4)</code></pre>
+<p><img src="figure/model.Rmd/cells_vs_vaf_plot-1.png" width="864" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">

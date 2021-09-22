@@ -31,7 +31,7 @@ Q: what is the lowest % VAF of mutation we can reliably detect (at >95% confiden
 
 ## Assumptions
 
-* We consider a human diploid genome (6.4Gb) without SCNAs
+* We consider a human diploid genome without SCNAs
 * The mutation is heterozygous
 * We sequence 15,000 cells
 * Our duplex rate is optimal ~81%
@@ -49,7 +49,7 @@ Where:
 * $v$ = target VAF
 * $p$ = ploidy (2)
 * $d$ = duplex efficiency (0.81)
-* $l$ = ligation efficiency
+* $l$ = ligation efficiency (0.2)
 
 We assume the probability of selecting a mutant cell is binomially distributed. We want to know the probability of selecting at least one mutant cell:
 
@@ -59,9 +59,9 @@ This is equivalent to:
 
 $P(Bin(f, m)) = 0)$ = 0.05
 
-Where $m$ is the number of mutant cells cells ($15000 (v . 2)$).
+Where $m$ is the number of mutant cells ($15000 \times 2v$).
 
-For a range of possible VAFs, $V = \{0.001, 0.002 .. 0.05\}$, we can plot the probability of missing the mutant cell.
+Since we don't know $v$, we'll define a vector of possible VAFs incremented by $0.001$, $V = \{0.001, 0.002..0.05\}$. Using these values, we can plot the probability of missing the mutant cell at each VAF (line is at 0.05). 
 
 ```{r vaf_plot}
 d = 0.81
@@ -72,17 +72,75 @@ n = 15000
 m = n * (v * 2)
 
 vafs <- data.frame(vaf=v,
-                   p=dbinom(0, m, v))
+                   p=dbinom(0, m, f),
+                   mutant_cells=(n * v * 2))
 
 ggplot(vafs, aes(vaf, p)) +
-  geom_point() +
-  theme_bw() +
-  geom_hline(yintercept=0.05, alpha=0.4)
+    geom_point() +
+    theme_bw() +
+    geom_hline(yintercept=0.05, alpha=0.4)
 ```
-For this range of VAFs, 0.01 (1%) is the smallest VAF for which the probability of missing the mutant is approximately 0.05.
 
-```{r}
+We can also plot this as mutant cells instead of VAF:
+
+```{r mutant_cells_plot}
+ggplot(vafs, aes(mutant_cells, p)) +
+    geom_point() +
+    theme_bw() +
+    geom_hline(yintercept=0.05, alpha=0.4)
+```
+
+
+For this range of VAFs, 0.01 (1%) is the smallest VAF for which the probability of missing the mutant is approximately 0.05. A VAF of 0.035 translates to 1050 mutant cells in our input of 15,000.
+
+```{r VAF_at_0.05}
 deviation <- abs(0.05 - vafs$p)
 print(vafs[which(deviation == min(deviation)),])
+```
+
+## Varying the number of input cells
+
+If we change the number of input cells, how does this change the probability calculation? Let's assume the target VAF is 0.035 from our previous calculation (line is at 0.05).
+
+```{r varying_input_cells}
+v = 0.035
+n = seq(1000, 20000, 1000)
+m = n * (v * 2)
+f = (v / 2) * d * l
+
+cells <- data.frame(vaf=v,
+                    p=dbinom(0, m, f),
+                    total_cells=n,
+                    mutant_cells=(n * v * 2))
+
+ggplot(cells, aes(total_cells, p)) +
+    geom_point() +
+    theme_bw() +
+    geom_hline(yintercept=0.05, alpha=0.4)
+```
+
+We can then expand this to different target VAFs.
+
+Let's define our VAFs as $V = \{0.01, 0.02..0.2\}$ and put these on a single plot (line at p = 0.05).
+
+```{r cells_vs_vaf_plot, fig.height=6.5, fig.width=9}
+cells_vs_vaf = NULL
+V = seq(0.01, 0.20, 0.01)
+for (v in V) {
+    m = n * (v * 2)
+    f = (v / 2) * d * l
+    toadd <- data.frame(
+        vaf=as.factor(v),
+        p=dbinom(0, m, f),
+        total_cells=n
+    )
+    cells_vs_vaf <- rbind(cells_vs_vaf, toadd)
+}
+
+ggplot(cells_vs_vaf, aes(total_cells, p, colour=vaf)) +
+    geom_line() +
+    theme_bw() +
+    theme(legend.position = 'bottom') +
+    geom_hline(yintercept=0.05, alpha=0.4)
 ```
 
