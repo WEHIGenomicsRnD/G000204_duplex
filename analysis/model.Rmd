@@ -71,7 +71,7 @@ f = (v / 2) * d * l
 n = 15000
 
 vafs <- data.frame(vaf=v,
-                   p=dbinom(0, n, f),
+                   p=pbinom(0, n, f),
                    mutant_cells=(n * v * 2))
 
 ggplot(vafs, aes(vaf, p)) +
@@ -106,7 +106,7 @@ n = seq(1000, 20000, 1000)
 f = (v / 2) * d * l
 
 cells <- data.frame(vaf=v,
-                    p=dbinom(0, n, f),
+                    p=pbinom(0, n, f),
                     total_cells=n,
                     mutant_cells=(n * v * 2))
 
@@ -128,7 +128,7 @@ for (v in V) {
     f = (v / 2) * d * l
     toadd <- data.frame(
         vaf=as.factor(v),
-        p=dbinom(0, n, f),
+        p=pbinom(0, n, f),
         total_cells=n
     )
     cells_vs_vaf <- rbind(cells_vs_vaf, toadd)
@@ -140,4 +140,9 @@ ggplot(cells_vs_vaf, aes(total_cells, p, colour=vaf)) +
     theme(legend.position = 'bottom') +
     geom_hline(yintercept=0.05, alpha=0.4)
 ```
+
+We can define an equation based on the binomial probability calculation, of obtaining the number of cells to sequence, to be 95% confident of sequencing the mutation:
+
+$(1 – f) ^ n = 0.05$
+
 
