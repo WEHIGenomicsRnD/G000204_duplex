@@ -1,0 +1,205 @@
+---
+title: "Compare sequencing metrics from E coli data"
+output:
+  workflowr::wflow_html:
+      code_folding: hide
+---
+
+# Compare sequencing metrics from E coli data
+
+These are extra stats that are not available in the MultiQC reports. These metrics are prior to consensus calling.
+
+```{r knitr, include = FALSE}
+DOCNAME = "Ecoli_data"
+knitr::opts_chunk$set(autodep        = TRUE,
+                      cache          = FALSE,
+                      cache.path     = paste0("cache/", DOCNAME, "/"),
+                      cache.comments = FALSE,
+                      echo           = TRUE,
+                      error          = FALSE,
+                      fig.align      = "center",
+                      fig.width      = 9,
+                      fig.height     = 5,
+                      dev            = c("png"),
+                      message        = FALSE,
+                      warning        = FALSE)
+```
+
+```{r libraries, cache = FALSE}
+library(ggplot2)
+library(data.table)
+library(dplyr)
+library(R.utils)
+library(UpSetR)
+library(here)
+```
+
+```{r functions}
+load_data <- function(fdir, pattern, samples) {
+    df <- list.files(
+        fdir,
+        full.names = TRUE,
+        recursive = TRUE,
+        pattern = pattern) %>%
+    lapply(., read.delim)
+    
+    for (i in seq(length(samples))) {
+        df[[i]]$Sample <- samples[i]
+    }
+    df <- rbindlist(df)
+    return(df)
+}
+
+extract_std <- function(genome_results) {
+    std <- genome_results[grep('std', genome_results$BamQC.report),] %>% 
+            strsplit(., split='=') %>%
+            last() %>% last() %>%
+            gsub(' |X', '', .) %>% as.numeric()
+    return(std)
+}
+
+load_cov_stats <- function(cov, qualimap_dir, samples) {
+    cov_stats <- list.files(
+        qualimap_dir,
+        full.names = TRUE,
+        recursive = TRUE,
+        pattern = 'genome_results.txt') %>%
+        lapply(., read.delim) %>%
+        lapply(., extract_std) %>%
+        unlist()
+    
+    cov_stats <- data.frame(cov_std=cov_stats, Sample=samples)
+    cov_stats <- data.table(cov)[,mean(Coverage), by=Sample] %>%
+                data.frame() %>% inner_join(., cov_stats, by='Sample')
+    colnames(cov_stats)[2] <- 'cov_mean'
+    
+    return(cov_stats)
+}
+```
+
+
+```{r load_data}
+qualimap_dir <- here('data/ecoli/QC/qualimap/')
+qualimap_cons_dir <- here('data/ecoli/QC/consensus/qualimap/')
+variant_dir <- here('data/ecoli/variants')
+family_size_stats <- here('data/ecoli/family_sizes.txt')
+
+samples <- list.files(qualimap_dir)
+
+cov <- load_data(qualimap_dir, 'coverage_across_reference.txt', samples)
+ccov <- load_data(qualimap_cons_dir, 'coverage_across_reference.txt', samples)
+clip <- load_data(qualimap_dir, 'mapped_reads_clipping_profile', samples)
+cclip <- load_data(qualimap_cons_dir, 'mapped_reads_clipping_profile', samples)
+vars <- load_data(variant_dir, '.tsv', samples)
+cov_stats <- load_cov_stats(cov, qualimap_dir, samples)
+ccov_stats <- load_cov_stats(ccov, qualimap_cons_dir, samples)
+fam <- read.delim(family_size_stats, sep='\t')
+```
+
+## Coverage boxplot
+
+Using coverage summary data from Qualimap (I assume these are summariesed to 10kb windows, though I coulnd't find this in the documentation).
+
+```{r coverage_boxplots}
+# order by median coverage
+median_cov <- data.table(cov)[,median(Coverage), by=Sample]
+cov$Sample <- factor(cov$Sample, levels=median_cov[order(median_cov$V1)]$Sample)
+ggplot(cov, aes(Coverage, Sample)) + geom_boxplot() + theme_bw() + ggtitle('Pre-duplex coverage')
+
+median_cov <- data.table(ccov)[,median(Coverage), by=Sample]
+ccov$Sample <- factor(ccov$Sample, levels=median_cov[order(median_cov$V1)]$Sample)
+ggplot(ccov, aes(Coverage, Sample)) + geom_boxplot() + theme_bw() + ggtitle('Duplex coverage')
+```
+
+## Coverage standard deviation bar plot
+
+```{r cov_std}
+ggplot(melt(cov_stats), aes(value, Sample, fill=variable)) +
+    geom_bar(stat='identity', position = 'dodge') +
+    theme_bw() +
+    ggtitle('Coverage std & mean (pre-duplex)')
+
+ggplot(melt(ccov_stats), aes(value, Sample, fill=variable)) +
+    geom_bar(stat='identity', position = 'dodge') +
+    theme_bw() +
+    ggtitle('Coverage std & mean (duplex)')
+
+cov_stats$cov_cv <- cov_stats$cov_std / cov_stats$cov_mean
+ggplot(cov_stats, aes(cov_cv, Sample)) +
+    geom_bar(stat='identity', position = 'dodge') +
+    theme_bw() +
+    ggtitle('Coverage CV (pre-duplex)')
+
+ccov_stats$cov_cv <- ccov_stats$cov_std / ccov_stats$cov_mean
+ggplot(ccov_stats, aes(cov_cv, Sample)) +
+    geom_bar(stat='identity', position = 'dodge') +
+    theme_bw() +
+    ggtitle('Coverage CV (duplex)')
+```
+
+## Clipping profile
+
+Pre-duplex reads prior to overlap clipping, but post-UMI removal.
+
+```{r clipping_profile}
+ggplot(clip, aes(X.Read.position..bp., Clipping.profile)) +
+    geom_line() +
+    theme_bw() +
+    xlab('Read position') +
+    facet_wrap(~Sample) +
+    ggtitle('Pre-duplex clipping profile')
+```
+
+Duplex reads have been clipped to remove read overlap.
+
+```{r clipping_profile_duplex}
+ggplot(cclip, aes(X.Read.position..bp., Clipping.profile)) +
+    geom_line() +
+    theme_bw() +
+    xlab('Read position') +
+    facet_wrap(~Sample) +
+    ggtitle('Duplex clipping profile')
+```
+
+## Family size stats (duplex statistics)
+
+- frac_fam_gt1: the fraction of families where family size is greater than one.
+- frac_fam_paired: the fraction of paired families (a family on each strand with the same UMI).
+- frac_fam_paired_gt1: the fraction of families that are greater than one in size, and also paired.
+
+```{r family_size}
+ggplot(fam, aes(len, sample)) +
+    geom_bar(stat='identity') +
+    theme_bw() +
+    ggtitle('Total family count')
+
+mfam <- reshape2::melt(fam[,c('sample', 'min', 'max', 'mean', 'median')])
+ggplot(mfam, aes(value, sample, colour=variable)) +
+    geom_point() +
+    theme_bw() +
+    coord_trans(x='log2') +
+    scale_x_continuous(breaks=seq(0, 25, 2)) +
+    theme(axis.text.x = element_text(size=6)) +
+    ggtitle('Family sizes')
+    
+
+mfam <- reshape2::melt(fam[,colnames(fam) %like% 'frac|sample'])
+ggplot(mfam, aes(value, sample, fill=variable)) +
+    geom_bar(stat='identity', position='dodge') +
+    theme_bw() +
+    ggtitle('Family reads + paired statistics')
+```
+
+## Variants
+
+```{r variants}
+vars$Sample <- strsplit(vars$Sample, '\\.') %>% lapply(., head, 1) %>% unlist()
+
+ulist <- NULL
+for(sample in samples) {
+    ulist[[sample]] <- vars[vars$Sample %in% sample,]$Position
+}
+
+upset(fromList(ulist), order.by='freq', nsets=8)
+```
+
