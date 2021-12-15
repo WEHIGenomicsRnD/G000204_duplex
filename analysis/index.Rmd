@@ -16,3 +16,5 @@ Analyses
 
 * [Model](model.html)
 * [E coli results](ecoli.html)
+    * [MultiQC pre-duplex](multiqc/multiqc_report.html)
+    * [MultiQC duplex](multiqc/multiqc_report_consensus.html)

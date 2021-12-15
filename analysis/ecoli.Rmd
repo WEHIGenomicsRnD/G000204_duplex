@@ -7,7 +7,10 @@ output:
 
 # Compare sequencing metrics from E coli data
 
-These are extra stats that are not available in the MultiQC reports. These metrics are prior to consensus calling.
+These are extra stats that are not available in the MultiQC reports. These reports can be found below:
+
+- [MultiQC pre-duplex](multiqc/multiqc_report.html)
+- [MultiQC duplex](multiqc/multiqc_report_consensus.html)
 
 ```{r knitr, include = FALSE}
 DOCNAME = "Ecoli_data"
