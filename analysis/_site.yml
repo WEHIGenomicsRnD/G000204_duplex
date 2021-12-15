@@ -7,6 +7,8 @@ navbar:
     href: index.html
   - text: Model
     href: model.html
+  - text: "E coli results"
+    href: ecoli.html
   - text: License
     href: license.html
 output:
