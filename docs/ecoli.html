@@ -479,29 +479,28 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreee610f975ca124e971530a78f8577de1ac001d0c7targetblanke610f97a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/mcmero/rare-mutation-detection/tree/e610f975ca124e971530a78f8577de1ac001d0c7" target="_blank">e610f97</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreeed42fa9c24ae607540808bca260924f57cc823d2targetblanked42fa9a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/mcmero/rare-mutation-detection/tree/ed42fa9c24ae607540808bca260924f57cc823d2" target="_blank">ed42fa9</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreee610f975ca124e971530a78f8577de1ac001d0c7targetblanke610f97a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreeed42fa9c24ae607540808bca260924f57cc823d2targetblanked42fa9a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/mcmero/rare-mutation-detection/tree/e610f975ca124e971530a78f8577de1ac001d0c7" target="_blank">e610f97</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/mcmero/rare-mutation-detection/tree/ed42fa9c24ae607540808bca260924f57cc823d2" target="_blank">ed42fa9</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .DS_Store
     Ignored:    .Rproj.user/
 
 Untracked files:
+    Untracked:  ._.DS_Store
     Untracked:  data/ecoli/
-
-Unstaged changes:
-    Modified:   analysis/_site.yml
 
 </code></pre>
 <p>
@@ -545,6 +544,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ed42fa9c24ae607540808bca260924f57cc823d2/analysis/ecoli.Rmd" target="_blank">ed42fa9</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2021-12-15
+</td>
+<td>
+Added multiQC reports
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/de277d979b1bd9622005ea47797cf6792201fd97/docs/ecoli.html" target="_blank">de277d9</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2021-12-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/e610f975ca124e971530a78f8577de1ac001d0c7/analysis/ecoli.Rmd" target="_blank">e610f97</a>
 </td>
 <td>
@@ -566,7 +599,11 @@ Added ecoli analysis
 </div>
 <div id="compare-sequencing-metrics-from-e-coli-data" class="section level1">
 <h1>Compare sequencing metrics from E coli data</h1>
-<p>These are extra stats that are not available in the MultiQC reports. These metrics are prior to consensus calling.</p>
+<p>These are extra stats that are not available in the MultiQC reports. These reports can be found below:</p>
+<ul>
+<li><a href="multiqc/multiqc_report.html">MultiQC pre-duplex</a></li>
+<li><a href="multiqc/multiqc_report_consensus.html">MultiQC duplex</a></li>
+</ul>
 <pre class="r"><code>library(ggplot2)
 library(data.table)
 library(dplyr)
@@ -636,10 +673,84 @@ median_cov &lt;- data.table(cov)[,median(Coverage), by=Sample]
 cov$Sample &lt;- factor(cov$Sample, levels=median_cov[order(median_cov$V1)]$Sample)
 ggplot(cov, aes(Coverage, Sample)) + geom_boxplot() + theme_bw() + ggtitle(&#39;Pre-duplex coverage&#39;)</code></pre>
 <p><img src="figure/ecoli.Rmd/coverage_boxplots-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-coverage_boxplots-1">
+Past versions of coverage_boxplots-1.png
+</button>
+</p>
+<div id="fig-coverage_boxplots-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/de277d979b1bd9622005ea47797cf6792201fd97/docs/figure/ecoli.Rmd/coverage_boxplots-1.png" target="_blank">de277d9</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2021-12-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>median_cov &lt;- data.table(ccov)[,median(Coverage), by=Sample]
 ccov$Sample &lt;- factor(ccov$Sample, levels=median_cov[order(median_cov$V1)]$Sample)
 ggplot(ccov, aes(Coverage, Sample)) + geom_boxplot() + theme_bw() + ggtitle(&#39;Duplex coverage&#39;)</code></pre>
 <p><img src="figure/ecoli.Rmd/coverage_boxplots-2.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-coverage_boxplots-2">
+Past versions of coverage_boxplots-2.png
+</button>
+</p>
+<div id="fig-coverage_boxplots-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/de277d979b1bd9622005ea47797cf6792201fd97/docs/figure/ecoli.Rmd/coverage_boxplots-2.png" target="_blank">de277d9</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2021-12-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="coverage-standard-deviation-bar-plot" class="section level2">
 <h2>Coverage standard deviation bar plot</h2>
@@ -648,23 +759,171 @@ ggplot(ccov, aes(Coverage, Sample)) + geom_boxplot() + theme_bw() + ggtitle(&#39
     theme_bw() +
     ggtitle(&#39;Coverage std &amp; mean (pre-duplex)&#39;)</code></pre>
 <p><img src="figure/ecoli.Rmd/cov_std-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-cov_std-1">
+Past versions of cov_std-1.png
+</button>
+</p>
+<div id="fig-cov_std-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/de277d979b1bd9622005ea47797cf6792201fd97/docs/figure/ecoli.Rmd/cov_std-1.png" target="_blank">de277d9</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2021-12-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ggplot(melt(ccov_stats), aes(value, Sample, fill=variable)) +
     geom_bar(stat=&#39;identity&#39;, position = &#39;dodge&#39;) +
     theme_bw() +
     ggtitle(&#39;Coverage std &amp; mean (duplex)&#39;)</code></pre>
 <p><img src="figure/ecoli.Rmd/cov_std-2.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-cov_std-2">
+Past versions of cov_std-2.png
+</button>
+</p>
+<div id="fig-cov_std-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/de277d979b1bd9622005ea47797cf6792201fd97/docs/figure/ecoli.Rmd/cov_std-2.png" target="_blank">de277d9</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2021-12-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>cov_stats$cov_cv &lt;- cov_stats$cov_std / cov_stats$cov_mean
 ggplot(cov_stats, aes(cov_cv, Sample)) +
     geom_bar(stat=&#39;identity&#39;, position = &#39;dodge&#39;) +
     theme_bw() +
     ggtitle(&#39;Coverage CV (pre-duplex)&#39;)</code></pre>
 <p><img src="figure/ecoli.Rmd/cov_std-3.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-cov_std-3">
+Past versions of cov_std-3.png
+</button>
+</p>
+<div id="fig-cov_std-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/de277d979b1bd9622005ea47797cf6792201fd97/docs/figure/ecoli.Rmd/cov_std-3.png" target="_blank">de277d9</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2021-12-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ccov_stats$cov_cv &lt;- ccov_stats$cov_std / ccov_stats$cov_mean
 ggplot(ccov_stats, aes(cov_cv, Sample)) +
     geom_bar(stat=&#39;identity&#39;, position = &#39;dodge&#39;) +
     theme_bw() +
     ggtitle(&#39;Coverage CV (duplex)&#39;)</code></pre>
 <p><img src="figure/ecoli.Rmd/cov_std-4.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-cov_std-4">
+Past versions of cov_std-4.png
+</button>
+</p>
+<div id="fig-cov_std-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/de277d979b1bd9622005ea47797cf6792201fd97/docs/figure/ecoli.Rmd/cov_std-4.png" target="_blank">de277d9</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2021-12-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="clipping-profile" class="section level2">
 <h2>Clipping profile</h2>
@@ -676,6 +935,43 @@ ggplot(ccov_stats, aes(cov_cv, Sample)) +
     facet_wrap(~Sample) +
     ggtitle(&#39;Pre-duplex clipping profile&#39;)</code></pre>
 <p><img src="figure/ecoli.Rmd/clipping_profile-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-clipping_profile-1">
+Past versions of clipping_profile-1.png
+</button>
+</p>
+<div id="fig-clipping_profile-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/de277d979b1bd9622005ea47797cf6792201fd97/docs/figure/ecoli.Rmd/clipping_profile-1.png" target="_blank">de277d9</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2021-12-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Duplex reads have been clipped to remove read overlap.</p>
 <pre class="r"><code>ggplot(cclip, aes(X.Read.position..bp., Clipping.profile)) +
     geom_line() +
@@ -684,6 +980,43 @@ ggplot(ccov_stats, aes(cov_cv, Sample)) +
     facet_wrap(~Sample) +
     ggtitle(&#39;Duplex clipping profile&#39;)</code></pre>
 <p><img src="figure/ecoli.Rmd/clipping_profile_duplex-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-clipping_profile_duplex-1">
+Past versions of clipping_profile_duplex-1.png
+</button>
+</p>
+<div id="fig-clipping_profile_duplex-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/de277d979b1bd9622005ea47797cf6792201fd97/docs/figure/ecoli.Rmd/clipping_profile_duplex-1.png" target="_blank">de277d9</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2021-12-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="family-size-stats-duplex-statistics" class="section level2">
 <h2>Family size stats (duplex statistics)</h2>
@@ -697,6 +1030,43 @@ ggplot(ccov_stats, aes(cov_cv, Sample)) +
     theme_bw() +
     ggtitle(&#39;Total family count&#39;)</code></pre>
 <p><img src="figure/ecoli.Rmd/family_size-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-family_size-1">
+Past versions of family_size-1.png
+</button>
+</p>
+<div id="fig-family_size-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/de277d979b1bd9622005ea47797cf6792201fd97/docs/figure/ecoli.Rmd/family_size-1.png" target="_blank">de277d9</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2021-12-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>mfam &lt;- reshape2::melt(fam[,c(&#39;sample&#39;, &#39;min&#39;, &#39;max&#39;, &#39;mean&#39;, &#39;median&#39;)])
 ggplot(mfam, aes(value, sample, colour=variable)) +
     geom_point() +
@@ -706,12 +1076,86 @@ ggplot(mfam, aes(value, sample, colour=variable)) +
     theme(axis.text.x = element_text(size=6)) +
     ggtitle(&#39;Family sizes&#39;)</code></pre>
 <p><img src="figure/ecoli.Rmd/family_size-2.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-family_size-2">
+Past versions of family_size-2.png
+</button>
+</p>
+<div id="fig-family_size-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/de277d979b1bd9622005ea47797cf6792201fd97/docs/figure/ecoli.Rmd/family_size-2.png" target="_blank">de277d9</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2021-12-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>mfam &lt;- reshape2::melt(fam[,colnames(fam) %like% &#39;frac|sample&#39;])
 ggplot(mfam, aes(value, sample, fill=variable)) +
     geom_bar(stat=&#39;identity&#39;, position=&#39;dodge&#39;) +
     theme_bw() +
     ggtitle(&#39;Family reads + paired statistics&#39;)</code></pre>
 <p><img src="figure/ecoli.Rmd/family_size-3.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-family_size-3">
+Past versions of family_size-3.png
+</button>
+</p>
+<div id="fig-family_size-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/de277d979b1bd9622005ea47797cf6792201fd97/docs/figure/ecoli.Rmd/family_size-3.png" target="_blank">de277d9</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2021-12-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="variants" class="section level2">
 <h2>Variants</h2>
@@ -724,6 +1168,43 @@ for(sample in samples) {
 
 upset(fromList(ulist), order.by=&#39;freq&#39;, nsets=8)</code></pre>
 <p><img src="figure/ecoli.Rmd/variants-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-variants-1">
+Past versions of variants-1.png
+</button>
+</p>
+<div id="fig-variants-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/de277d979b1bd9622005ea47797cf6792201fd97/docs/figure/ecoli.Rmd/variants-1.png" target="_blank">de277d9</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2021-12-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
