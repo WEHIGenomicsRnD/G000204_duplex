@@ -38,13 +38,13 @@ library(here)
 ```
 
 ```{r functions}
-load_data <- function(fdir, pattern, samples) {
+load_data <- function(fdir, pattern, samples, read_func=read.delim) {
     df <- list.files(
         fdir,
         full.names = TRUE,
         recursive = TRUE,
         pattern = pattern) %>%
-    lapply(., read.delim)
+    lapply(., read_func)
     
     for (i in seq(length(samples))) {
         df[[i]]$Sample <- samples[i]
@@ -93,7 +93,7 @@ cov <- load_data(qualimap_dir, 'coverage_across_reference.txt', samples)
 ccov <- load_data(qualimap_cons_dir, 'coverage_across_reference.txt', samples)
 clip <- load_data(qualimap_dir, 'mapped_reads_clipping_profile', samples)
 cclip <- load_data(qualimap_cons_dir, 'mapped_reads_clipping_profile', samples)
-vars <- load_data(variant_dir, '.tsv', samples)
+vars <- load_data(variant_dir, '.vcf', samples, read.table)
 cov_stats <- load_cov_stats(cov, qualimap_dir, samples)
 ccov_stats <- load_cov_stats(ccov, qualimap_cons_dir, samples)
 fam <- read.delim(family_size_stats, sep='\t')
@@ -200,9 +200,8 @@ vars$Sample <- strsplit(vars$Sample, '\\.') %>% lapply(., head, 1) %>% unlist()
 
 ulist <- NULL
 for(sample in samples) {
-    ulist[[sample]] <- vars[vars$Sample %in% sample,]$Position
+    ulist[[sample]] <- vars[vars$Sample %in% sample,]$V2
 }
 
 upset(fromList(ulist), order.by='freq', nsets=8)
 ```
-
