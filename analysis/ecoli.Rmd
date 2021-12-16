@@ -35,6 +35,8 @@ library(dplyr)
 library(R.utils)
 library(UpSetR)
 library(here)
+library(vcfR)
+library(tibble)
 ```
 
 ```{r functions}
@@ -101,7 +103,7 @@ fam <- read.delim(family_size_stats, sep='\t')
 
 ## Coverage boxplot
 
-Using coverage summary data from Qualimap (I assume these are summariesed to 10kb windows, though I coulnd't find this in the documentation).
+Using coverage summary data from Qualimap (I assume these are summarised to 10kb windows, though I couldn't find this in the documentation).
 
 ```{r coverage_boxplots}
 # order by median coverage
@@ -195,7 +197,7 @@ ggplot(mfam, aes(value, sample, fill=variable)) +
 
 ## Variants
 
-```{r variants}
+```{r variant_overlap}
 vars$Sample <- strsplit(vars$Sample, '\\.') %>% lapply(., head, 1) %>% unlist()
 
 ulist <- NULL
@@ -205,3 +207,28 @@ for(sample in samples) {
 
 upset(fromList(ulist), order.by='freq', nsets=8)
 ```
+Check how many variants have at least one reference base called.
+
+```{r discordant_variants}
+vcfs <- list.files(variant_dir,
+                  full.names = TRUE) %>%
+        lapply(., read.vcfR, verbose = FALSE) %>%
+        lapply(., vcfR2tidy,
+               format_fields = c('RDR', 'RDF', 'VDR', 'VDF'),
+               verbose = FALSE)
+
+disc <- lapply(vcfs, function(vcf) {
+          has_ref <- vcf$gt$gt_RDR + vcf$gt$gt_RDF > 0
+          row <- c(sum(has_ref), nrow(vcf$gt))
+          return(row)
+        })
+
+disc <- data.frame(disc, row.names = c('has_ref_bases','total_variants')) %>% t() %>%
+          data.frame(row.names = 1:nrow(.)) %>%
+          add_column(sample=samples)
+
+ggplot(melt(disc), aes(value, sample, fill = variable)) +
+  geom_histogram(stat = 'identity', position = 'dodge') +
+  theme_bw()
+```
+
