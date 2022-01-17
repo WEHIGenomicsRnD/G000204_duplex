@@ -214,11 +214,11 @@ vcfs <- list.files(variant_dir,
                   full.names = TRUE) %>%
         lapply(., read.vcfR, verbose = FALSE) %>%
         lapply(., vcfR2tidy,
-               format_fields = c('RDR', 'RDF', 'VDR', 'VDF'),
+               format_fields = c('GT', 'AD', 'RD'),
                verbose = FALSE)
 
 disc <- lapply(vcfs, function(vcf) {
-          has_ref <- vcf$gt$gt_RDR + vcf$gt$gt_RDF > 0
+          has_ref <- vcf$gt$gt_RD > 0
           row <- c(sum(has_ref), nrow(vcf$gt))
           return(row)
         })
@@ -230,5 +230,17 @@ disc <- data.frame(disc, row.names = c('has_ref_bases','total_variants')) %>% t(
 ggplot(melt(disc), aes(value, sample, fill = variable)) +
   geom_histogram(stat = 'identity', position = 'dodge') +
   theme_bw()
+
+gts <- NULL
+for(i in 1:length(samples)) {
+    vcfs[[i]]$gt$sample <- samples[i]
+    gts <- rbind(gts, vcfs[[i]]$gt)
+}
+
+ggplot(gts, aes(sample, fill = gt_GT)) +
+    geom_histogram(stat = 'count', position = 'dodge') +
+    theme_bw() +
+    coord_flip() +
+    ggtitle('Variant genotype')
 ```
 
