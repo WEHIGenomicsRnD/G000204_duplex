@@ -388,13 +388,13 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-12-16
+<strong>Last updated:</strong> 2022-01-17
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
 </p>
 <p>
-<strong>Knit directory:</strong> <code>rare-mutation-detection-rmarkdown/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+<strong>Knit directory:</strong> <code>rare-mutation-detection/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
@@ -479,16 +479,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreece8d35de59ffe4c1e3589464a0a90d54274d9cdetargetblankce8d35da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/mcmero/rare-mutation-detection/tree/ce8d35de59ffe4c1e3589464a0a90d54274d9cde" target="_blank">ce8d35d</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree47858f3e84cacaa296c3f68f97077bac9d453746targetblank47858f3a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/mcmero/rare-mutation-detection/tree/47858f3e84cacaa296c3f68f97077bac9d453746" target="_blank">47858f3</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreece8d35de59ffe4c1e3589464a0a90d54274d9cdetargetblankce8d35da" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree47858f3e84cacaa296c3f68f97077bac9d453746targetblank47858f3a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/mcmero/rare-mutation-detection/tree/ce8d35de59ffe4c1e3589464a0a90d54274d9cde" target="_blank">ce8d35d</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/mcmero/rare-mutation-detection/tree/47858f3e84cacaa296c3f68f97077bac9d453746" target="_blank">47858f3</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -498,11 +498,16 @@ Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/figure/
-    Ignored:    data/.DS_Store
+    Ignored:    scripts/
 
 Untracked files:
+    Untracked:  ._.DS_Store
+    Untracked:  DOCNAME
+    Untracked:  code/.count_family_metrics.py.swp
+    Untracked:  code/count_family_metrics.sh
     Untracked:  data/ecoli/
+    Untracked:  prototype_code/
+    Untracked:  quali
 
 </code></pre>
 <p>
@@ -541,6 +546,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/47858f3e84cacaa296c3f68f97077bac9d453746/analysis/ecoli.Rmd" target="_blank">47858f3</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-17
+</td>
+<td>
+Added genotype plot
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/02e8cedcebfbefc90470f68ac925107d637147e1/docs/ecoli.html" target="_blank">02e8ced</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2021-12-16
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1360,16 +1399,54 @@ for(sample in samples) {
 }
 
 upset(fromList(ulist), order.by=&#39;freq&#39;, nsets=8)</code></pre>
-<p><img src="figure/ecoli.Rmd/variant_overlap-1.png" width="864" style="display: block; margin: auto;" /> Check how many variants have at least one reference base called.</p>
+<p><img src="figure/ecoli.Rmd/variant_overlap-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-variant_overlap-1">
+Past versions of variant_overlap-1.png
+</button>
+</p>
+<div id="fig-variant_overlap-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/02e8cedcebfbefc90470f68ac925107d637147e1/docs/figure/ecoli.Rmd/variant_overlap-1.png" target="_blank">02e8ced</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2021-12-16
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Check how many variants have at least one reference base called.</p>
 <pre class="r"><code>vcfs &lt;- list.files(variant_dir,
                   full.names = TRUE) %&gt;%
         lapply(., read.vcfR, verbose = FALSE) %&gt;%
         lapply(., vcfR2tidy,
-               format_fields = c(&#39;RDR&#39;, &#39;RDF&#39;, &#39;VDR&#39;, &#39;VDF&#39;),
+               format_fields = c(&#39;GT&#39;, &#39;AD&#39;, &#39;RD&#39;),
                verbose = FALSE)
 
 disc &lt;- lapply(vcfs, function(vcf) {
-          has_ref &lt;- vcf$gt$gt_RDR + vcf$gt$gt_RDF &gt; 0
+          has_ref &lt;- vcf$gt$gt_RD &gt; 0
           row &lt;- c(sum(has_ref), nrow(vcf$gt))
           return(row)
         })
@@ -1382,6 +1459,55 @@ ggplot(melt(disc), aes(value, sample, fill = variable)) +
   geom_histogram(stat = &#39;identity&#39;, position = &#39;dodge&#39;) +
   theme_bw()</code></pre>
 <p><img src="figure/ecoli.Rmd/discordant_variants-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-discordant_variants-1">
+Past versions of discordant_variants-1.png
+</button>
+</p>
+<div id="fig-discordant_variants-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/02e8cedcebfbefc90470f68ac925107d637147e1/docs/figure/ecoli.Rmd/discordant_variants-1.png" target="_blank">02e8ced</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2021-12-16
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>gts &lt;- NULL
+for(i in 1:length(samples)) {
+    vcfs[[i]]$gt$sample &lt;- samples[i]
+    gts &lt;- rbind(gts, vcfs[[i]]$gt)
+}
+
+ggplot(gts, aes(sample, fill = gt_GT)) +
+    geom_histogram(stat = &#39;count&#39;, position = &#39;dodge&#39;) +
+    theme_bw() +
+    coord_flip() +
+    ggtitle(&#39;Variant genotype&#39;)</code></pre>
+<p><img src="figure/ecoli.Rmd/discordant_variants-2.png" width="864" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1390,42 +1516,47 @@ ggplot(melt(disc), aes(value, sample, fill = variable)) +
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 4.1.2 (2021-11-01)
-Platform: x86_64-apple-darwin17.0 (64-bit)
-Running under: macOS Big Sur 10.16
+<pre><code>R version 4.0.5 (2021-03-31)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: CentOS Linux 7 (Core)
 
 Matrix products: default
-BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib
-LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+BLAS:   /stornext/System/data/apps/R/R-4.0.5/lib64/R/lib/libRblas.so
+LAPACK: /stornext/System/data/apps/R/R-4.0.5/lib64/R/lib/libRlapack.so
 
 locale:
-[1] en_AU.UTF-8/en_AU.UTF-8/en_AU.UTF-8/C/en_AU.UTF-8/en_AU.UTF-8
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] tibble_3.1.4      vcfR_1.12.0       here_1.0.1        UpSetR_1.4.0     
+ [1] tibble_3.1.5      vcfR_1.12.0       here_1.0.1        UpSetR_1.4.0     
  [5] R.utils_2.11.0    R.oo_1.24.0       R.methodsS3_1.8.1 dplyr_1.0.7      
  [9] data.table_1.14.0 ggplot2_3.3.5     workflowr_1.6.2  
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.7        ape_5.5           lattice_0.20-45   assertthat_0.2.1 
+ [1] Rcpp_1.0.7        ape_5.5           lattice_0.20-44   assertthat_0.2.1 
  [5] rprojroot_2.0.2   digest_0.6.27     utf8_1.2.2        R6_2.5.1         
- [9] plyr_1.8.6        evaluate_0.14     highr_0.9         pillar_1.6.2     
-[13] rlang_0.4.11      whisker_0.4       vegan_2.5-7       jquerylib_0.1.4  
-[17] Matrix_1.3-4      rmarkdown_2.11    labeling_0.4.2    splines_4.1.2    
-[21] pinfsc50_1.2.0    stringr_1.4.0     munsell_0.5.0     compiler_4.1.2   
-[25] httpuv_1.6.3      xfun_0.25         pkgconfig_2.0.3   mgcv_1.8-38      
+ [9] plyr_1.8.6        evaluate_0.14     highr_0.9         pillar_1.6.4     
+[13] rlang_0.4.12      whisker_0.4       vegan_2.5-7       jquerylib_0.1.4  
+[17] Matrix_1.3-2      rmarkdown_2.11    labeling_0.4.2    splines_4.0.5    
+[21] pinfsc50_1.2.0    stringr_1.4.0     munsell_0.5.0     compiler_4.0.5   
+[25] httpuv_1.6.3      xfun_0.22         pkgconfig_2.0.3   mgcv_1.8-35      
 [29] htmltools_0.5.2   tidyselect_1.1.1  gridExtra_2.3     memuse_4.2-1     
-[33] fansi_0.5.0       permute_0.9-5     viridisLite_0.4.0 crayon_1.4.1     
-[37] withr_2.4.2       later_1.3.0       MASS_7.3-54       grid_4.1.2       
-[41] nlme_3.1-153      jsonlite_1.7.2    gtable_0.3.0      lifecycle_1.0.0  
+[33] fansi_0.5.0       permute_0.9-5     viridisLite_0.4.0 crayon_1.4.2     
+[37] withr_2.4.2       later_1.3.0       MASS_7.3-53.1     grid_4.0.5       
+[41] nlme_3.1-152      jsonlite_1.7.2    gtable_0.3.0      lifecycle_1.0.1  
 [45] DBI_1.1.1         git2r_0.28.0      magrittr_2.0.1    scales_1.1.1     
-[49] stringi_1.7.4     reshape2_1.4.4    farver_2.1.0      fs_1.5.0         
-[53] promises_1.2.0.1  bslib_0.3.1       ellipsis_0.3.2    generics_0.1.0   
-[57] vctrs_0.3.8       tools_4.1.2       glue_1.4.2        purrr_0.3.4      
-[61] parallel_4.1.2    fastmap_1.1.0     yaml_2.2.1        colorspace_2.0-2 
+[49] stringi_1.7.5     reshape2_1.4.4    farver_2.1.0      fs_1.5.0         
+[53] promises_1.2.0.1  bslib_0.3.0       ellipsis_0.3.2    generics_0.1.1   
+[57] vctrs_0.3.8       tools_4.0.5       glue_1.4.2        purrr_0.3.4      
+[61] parallel_4.0.5    fastmap_1.1.0     yaml_2.2.1        colorspace_2.0-0 
 [65] cluster_2.1.2     knitr_1.33        sass_0.4.0       </code></pre>
 </div>
 </div>
