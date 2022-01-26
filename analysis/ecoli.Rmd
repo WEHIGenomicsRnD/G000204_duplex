@@ -37,6 +37,7 @@ library(UpSetR)
 library(here)
 library(vcfR)
 library(tibble)
+library(stringr)
 ```
 
 ```{r functions}
@@ -80,6 +81,57 @@ load_cov_stats <- function(cov, qualimap_dir, samples) {
     
     return(cov_stats)
 }
+
+load_nanoseq_stats <- function(nanoseq_dir) {
+    tsvs <- list.files(nanoseq_dir,
+                   pattern = '.tsv',
+                   full.names = TRUE) %>%
+        grep('GC', ., value = TRUE, invert = TRUE) %>%
+        lapply(., read.delim) 
+
+    for (i in seq(length(samples))) {
+        tsvs[[i]]$Sample <- samples[i]
+        tsvs[[i]]$metric <- rownames(tsvs[[i]])
+    }
+    tsvs <- rbindlist(tsvs)
+    colnames(tsvs)[1] <- 'value'
+    tsvs <- tsvs[!is.na(tsvs$value)]
+    
+    # add GC deviation
+    tmp <- tsvs[grep('GC', tsvs$metric)]
+    gc <- tmp[tmp$metric == 'GC_SINGLE']
+    gc$value <- abs(tmp[tmp$metric == 'GC_BOTH']$value - gc$value)
+    gc$metric <- 'GC_DEVIATION'
+    tsvs <- rbind(tsvs, gc)
+    
+    # extract protocol and nuclease labels
+    tsvs$protocol <- 'NanoSeq'
+    tsvs$protocol[grep('Nux', tsvs$Sample)] <- 'xGen'
+    tsvs$nuclease <- str_split(tsvs$Sample, regex("N(uxg|an)|_")) %>%
+                        lapply(., tail, 2) %>% lapply(., dplyr::first) %>% unlist()
+    
+    return(tsvs)
+}
+
+# plotting functions (for nanoseq stats)
+plot_metric <- function(tsvs, metric, title) {
+    tmp <- data.frame(tsvs)[grep(metric, tsvs$metric),]
+    p <- ggplot(tmp, aes(Sample, value, fill = metric)) +
+            geom_histogram(stat = 'identity', position = 'dodge') +
+            theme_bw() +
+            coord_flip() +
+            ggtitle(title)
+    return(p)
+}
+
+plot_metric_boxplot <- function(tsvs, x, metric, title) {
+    tmp <- data.frame(tsvs)[grep(metric, tsvs$metric),]
+    p <- ggplot(tmp, aes_string(x, 'value')) +
+            geom_boxplot() +
+            theme_bw() +
+            ggtitle(title)
+    return(p)
+}
 ```
 
 
@@ -88,6 +140,7 @@ qualimap_dir <- here('data/ecoli/QC/qualimap/')
 qualimap_cons_dir <- here('data/ecoli/QC/consensus/qualimap/')
 variant_dir <- here('data/ecoli/variants')
 family_size_stats <- here('data/ecoli/family_sizes.txt')
+nanoseq_dir <- here('data/nanoseq_results')
 
 samples <- list.files(qualimap_dir)
 
@@ -99,6 +152,7 @@ vars <- load_data(variant_dir, '.vcf', samples, read.table)
 cov_stats <- load_cov_stats(cov, qualimap_dir, samples)
 ccov_stats <- load_cov_stats(ccov, qualimap_cons_dir, samples)
 fam <- read.delim(family_size_stats, sep='\t')
+tsvs <- load_nanoseq_stats(nanoseq_dir)
 ```
 
 ## Coverage boxplot
@@ -187,12 +241,33 @@ ggplot(mfam, aes(value, sample, colour=variable)) +
     theme(axis.text.x = element_text(size=6)) +
     ggtitle('Family sizes')
     
-
 mfam <- reshape2::melt(fam[,colnames(fam) %like% 'frac|sample'])
 ggplot(mfam, aes(value, sample, fill=variable)) +
     geom_bar(stat='identity', position='dodge') +
     theme_bw() +
     ggtitle('Family reads + paired statistics')
+```
+### Compare single-read fraction  
+
+```{r compare_famsize, fig.width = 6, fig.height = 5}
+# extract protocol and nuclease labels
+fam$protocol <- 'NanoSeq'
+fam$protocol[grep('Nux', fam$sample)] <- 'xGen'
+fam$nuclease <- str_split(fam$sample, regex("N(uxg|an)|_")) %>%
+                    lapply(., tail, 2) %>% lapply(., dplyr::first) %>% unlist()
+
+mfam <- reshape2::melt(fam[,colnames(fam) %like% 'fam_gt1|sample|protocol|nuc'])
+ggplot(mfam, aes(protocol, value)) +
+    geom_boxplot() +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
+    theme_bw() +
+    ggtitle('Fraction families with size > 1 by protocol')
+
+ggplot(mfam, aes(nuclease, value)) +
+    geom_boxplot() +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
+    theme_bw() +
+    ggtitle('Fraction families with size > 1 by nuclease')
 ```
 
 ## Variants
@@ -242,5 +317,67 @@ ggplot(gts, aes(sample, fill = gt_GT)) +
     theme_bw() +
     coord_flip() +
     ggtitle('Variant genotype')
+```
+## Statistics from NanoSeq pipeline
+
+Stats obtained from [NanoSeq](https://github.com/cancerit/NanoSeq) pipeline.
+
+```{r nanoseq_stats}
+plot_metric(tsvs, 'READS$', 'Num reads')
+
+plot_metric(tsvs, 'DUPLICATE', 'Duplicate rate (line = optimal)') +
+    geom_hline(yintercept = 0.81)
+
+plot_metric(tsvs, 'TOTAL', 'Total RBs (read barcodes)')
+
+plot_metric(tsvs, 'PER', 'Reads per RB')
+
+plot_metric(tsvs, 'OK', 'OK RBs (2 on each strand)')
+
+plot_metric(tsvs, 'F-EFF',
+             'F-EFF (drop out fraction, lines show optimal range)') +
+    geom_hline(yintercept = c(0.1, 0.3))
+
+plot_metric(tsvs, 'EFFICIENCY','Efficiency (line shows maximised value)') +
+    geom_hline(yintercept = 0.07)
+
+plot_metric(tsvs, '(GC_BOTH|GC_SINGLE)', 'GC per strand')
+```
+### Comparison of key stats
+
+```{r compare_nanoseq, fig.width = 6, fig.height = 5}
+# duplicate rate
+plot_metric_boxplot(tsvs, 'protocol', 'DUPLICATE', 'Duplicate rate (line = optimal') +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
+    geom_hline(yintercept = 0.81)
+
+plot_metric_boxplot(tsvs, 'nuclease', 'DUPLICATE', 'Duplicate rate (line = optimal') +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
+    geom_hline(yintercept = 0.81)
+
+# efficiency
+plot_metric_boxplot(tsvs, 'protocol', 'EFFICIENCY', 'Efficiency (line = optimal)') +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
+    geom_hline(yintercept = 0.07) 
+
+plot_metric_boxplot(tsvs, 'nuclease', 'EFFICIENCY', 'Efficiency (line = optimal)') +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
+    geom_hline(yintercept = 0.07) 
+
+# drop out rate
+plot_metric_boxplot(tsvs, 'protocol', 'F-EFF', 'Strand drop-out fraction (lines = optimal range)') +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
+    geom_hline(yintercept = c(0.1, 0.3))
+
+plot_metric_boxplot(tsvs, 'nuclease', 'F-EFF', 'Strand drop-out fraction (lines = optimal range)') +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
+    geom_hline(yintercept = c(0.1, 0.3))
+
+# GC deviation between strands
+plot_metric_boxplot(tsvs, 'protocol', 'GC_DEV', 'GC deviation (both strands vs. one)') +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease))
+
+plot_metric_boxplot(tsvs, 'nuclease', 'GC_DEV', 'GC deviation (both strands vs. one)') +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol))
 ```
 
