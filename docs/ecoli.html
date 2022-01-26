@@ -388,7 +388,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-01-17
+<strong>Last updated:</strong> 2022-01-27
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -479,16 +479,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree47858f3e84cacaa296c3f68f97077bac9d453746targetblank47858f3a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/mcmero/rare-mutation-detection/tree/47858f3e84cacaa296c3f68f97077bac9d453746" target="_blank">47858f3</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreeac440bc83c779bdd24667c207eee43eaaf8a677atargetblankac440bca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/mcmero/rare-mutation-detection/tree/ac440bc83c779bdd24667c207eee43eaaf8a677a" target="_blank">ac440bc</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree47858f3e84cacaa296c3f68f97077bac9d453746targetblank47858f3a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreeac440bc83c779bdd24667c207eee43eaaf8a677atargetblankac440bca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/mcmero/rare-mutation-detection/tree/47858f3e84cacaa296c3f68f97077bac9d453746" target="_blank">47858f3</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/mcmero/rare-mutation-detection/tree/ac440bc83c779bdd24667c207eee43eaaf8a677a" target="_blank">ac440bc</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -503,9 +503,10 @@ Ignored files:
 Untracked files:
     Untracked:  ._.DS_Store
     Untracked:  DOCNAME
-    Untracked:  code/.count_family_metrics.py.swp
+    Untracked:  NanMB1_S4.RBs.pdf
     Untracked:  code/count_family_metrics.sh
     Untracked:  data/ecoli/
+    Untracked:  data/nanoseq_results
     Untracked:  prototype_code/
     Untracked:  quali
 
@@ -546,6 +547,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ac440bc83c779bdd24667c207eee43eaaf8a677a/analysis/ecoli.Rmd" target="_blank">ac440bc</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-27
+</td>
+<td>
+Added NanoSeq stats &amp; comparison plots
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/bacece1c5156523ae03ba580852f4e1bf04cea4e/docs/ecoli.html" target="_blank">bacece1</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-17
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -720,7 +755,8 @@ library(R.utils)
 library(UpSetR)
 library(here)
 library(vcfR)
-library(tibble)</code></pre>
+library(tibble)
+library(stringr)</code></pre>
 <pre class="r"><code>load_data &lt;- function(fdir, pattern, samples, read_func=read.delim) {
     df &lt;- list.files(
         fdir,
@@ -760,11 +796,63 @@ load_cov_stats &lt;- function(cov, qualimap_dir, samples) {
     colnames(cov_stats)[2] &lt;- &#39;cov_mean&#39;
     
     return(cov_stats)
+}
+
+load_nanoseq_stats &lt;- function(nanoseq_dir) {
+    tsvs &lt;- list.files(nanoseq_dir,
+                   pattern = &#39;.tsv&#39;,
+                   full.names = TRUE) %&gt;%
+        grep(&#39;GC&#39;, ., value = TRUE, invert = TRUE) %&gt;%
+        lapply(., read.delim) 
+
+    for (i in seq(length(samples))) {
+        tsvs[[i]]$Sample &lt;- samples[i]
+        tsvs[[i]]$metric &lt;- rownames(tsvs[[i]])
+    }
+    tsvs &lt;- rbindlist(tsvs)
+    colnames(tsvs)[1] &lt;- &#39;value&#39;
+    tsvs &lt;- tsvs[!is.na(tsvs$value)]
+    
+    # add GC deviation
+    tmp &lt;- tsvs[grep(&#39;GC&#39;, tsvs$metric)]
+    gc &lt;- tmp[tmp$metric == &#39;GC_SINGLE&#39;]
+    gc$value &lt;- abs(tmp[tmp$metric == &#39;GC_BOTH&#39;]$value - gc$value)
+    gc$metric &lt;- &#39;GC_DEVIATION&#39;
+    tsvs &lt;- rbind(tsvs, gc)
+    
+    # extract protocol and nuclease labels
+    tsvs$protocol &lt;- &#39;NanoSeq&#39;
+    tsvs$protocol[grep(&#39;Nux&#39;, tsvs$Sample)] &lt;- &#39;xGen&#39;
+    tsvs$nuclease &lt;- str_split(tsvs$Sample, regex(&quot;N(uxg|an)|_&quot;)) %&gt;%
+                        lapply(., tail, 2) %&gt;% lapply(., dplyr::first) %&gt;% unlist()
+    
+    return(tsvs)
+}
+
+# plotting functions (for nanoseq stats)
+plot_metric &lt;- function(tsvs, metric, title) {
+    tmp &lt;- data.frame(tsvs)[grep(metric, tsvs$metric),]
+    p &lt;- ggplot(tmp, aes(Sample, value, fill = metric)) +
+            geom_histogram(stat = &#39;identity&#39;, position = &#39;dodge&#39;) +
+            theme_bw() +
+            coord_flip() +
+            ggtitle(title)
+    return(p)
+}
+
+plot_metric_boxplot &lt;- function(tsvs, x, metric, title) {
+    tmp &lt;- data.frame(tsvs)[grep(metric, tsvs$metric),]
+    p &lt;- ggplot(tmp, aes_string(x, &#39;value&#39;)) +
+            geom_boxplot() +
+            theme_bw() +
+            ggtitle(title)
+    return(p)
 }</code></pre>
 <pre class="r"><code>qualimap_dir &lt;- here(&#39;data/ecoli/QC/qualimap/&#39;)
 qualimap_cons_dir &lt;- here(&#39;data/ecoli/QC/consensus/qualimap/&#39;)
 variant_dir &lt;- here(&#39;data/ecoli/variants&#39;)
 family_size_stats &lt;- here(&#39;data/ecoli/family_sizes.txt&#39;)
+nanoseq_dir &lt;- here(&#39;data/nanoseq_results&#39;)
 
 samples &lt;- list.files(qualimap_dir)
 
@@ -775,7 +863,8 @@ cclip &lt;- load_data(qualimap_cons_dir, &#39;mapped_reads_clipping_profile&#39;
 vars &lt;- load_data(variant_dir, &#39;.vcf&#39;, samples, read.table)
 cov_stats &lt;- load_cov_stats(cov, qualimap_dir, samples)
 ccov_stats &lt;- load_cov_stats(ccov, qualimap_cons_dir, samples)
-fam &lt;- read.delim(family_size_stats, sep=&#39;\t&#39;)</code></pre>
+fam &lt;- read.delim(family_size_stats, sep=&#39;\t&#39;)
+tsvs &lt;- load_nanoseq_stats(nanoseq_dir)</code></pre>
 <div id="coverage-boxplot" class="section level2">
 <h2>Coverage boxplot</h2>
 <p>Using coverage summary data from Qualimap (I assume these are summarised to 10kb windows, though I couldn’t find this in the documentation).</p>
@@ -806,6 +895,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/bacece1c5156523ae03ba580852f4e1bf04cea4e/docs/figure/ecoli.Rmd/coverage_boxplots-1.png" target="_blank">bacece1</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/f3d146c8d97fa2d9e3cc3db4b845ccd88494d56e/docs/figure/ecoli.Rmd/coverage_boxplots-1.png" target="_blank">f3d146c</a>
@@ -858,6 +958,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/bacece1c5156523ae03ba580852f4e1bf04cea4e/docs/figure/ecoli.Rmd/coverage_boxplots-2.png" target="_blank">bacece1</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/f3d146c8d97fa2d9e3cc3db4b845ccd88494d56e/docs/figure/ecoli.Rmd/coverage_boxplots-2.png" target="_blank">f3d146c</a>
@@ -916,6 +1027,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/bacece1c5156523ae03ba580852f4e1bf04cea4e/docs/figure/ecoli.Rmd/cov_std-1.png" target="_blank">bacece1</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/f3d146c8d97fa2d9e3cc3db4b845ccd88494d56e/docs/figure/ecoli.Rmd/cov_std-1.png" target="_blank">f3d146c</a>
 </td>
 <td>
@@ -967,6 +1089,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/bacece1c5156523ae03ba580852f4e1bf04cea4e/docs/figure/ecoli.Rmd/cov_std-2.png" target="_blank">bacece1</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/f3d146c8d97fa2d9e3cc3db4b845ccd88494d56e/docs/figure/ecoli.Rmd/cov_std-2.png" target="_blank">f3d146c</a>
@@ -1023,6 +1156,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/bacece1c5156523ae03ba580852f4e1bf04cea4e/docs/figure/ecoli.Rmd/cov_std-3.png" target="_blank">bacece1</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/f3d146c8d97fa2d9e3cc3db4b845ccd88494d56e/docs/figure/ecoli.Rmd/cov_std-3.png" target="_blank">f3d146c</a>
 </td>
 <td>
@@ -1075,6 +1219,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/bacece1c5156523ae03ba580852f4e1bf04cea4e/docs/figure/ecoli.Rmd/cov_std-4.png" target="_blank">bacece1</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/f3d146c8d97fa2d9e3cc3db4b845ccd88494d56e/docs/figure/ecoli.Rmd/cov_std-4.png" target="_blank">f3d146c</a>
@@ -1136,6 +1291,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/bacece1c5156523ae03ba580852f4e1bf04cea4e/docs/figure/ecoli.Rmd/clipping_profile-1.png" target="_blank">bacece1</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/f3d146c8d97fa2d9e3cc3db4b845ccd88494d56e/docs/figure/ecoli.Rmd/clipping_profile-1.png" target="_blank">f3d146c</a>
 </td>
 <td>
@@ -1190,6 +1356,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/bacece1c5156523ae03ba580852f4e1bf04cea4e/docs/figure/ecoli.Rmd/clipping_profile_duplex-1.png" target="_blank">bacece1</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/f3d146c8d97fa2d9e3cc3db4b845ccd88494d56e/docs/figure/ecoli.Rmd/clipping_profile_duplex-1.png" target="_blank">f3d146c</a>
@@ -1253,6 +1430,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/bacece1c5156523ae03ba580852f4e1bf04cea4e/docs/figure/ecoli.Rmd/family_size-1.png" target="_blank">bacece1</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/f3d146c8d97fa2d9e3cc3db4b845ccd88494d56e/docs/figure/ecoli.Rmd/family_size-1.png" target="_blank">f3d146c</a>
 </td>
 <td>
@@ -1310,6 +1498,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/bacece1c5156523ae03ba580852f4e1bf04cea4e/docs/figure/ecoli.Rmd/family_size-2.png" target="_blank">bacece1</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/f3d146c8d97fa2d9e3cc3db4b845ccd88494d56e/docs/figure/ecoli.Rmd/family_size-2.png" target="_blank">f3d146c</a>
 </td>
 <td>
@@ -1364,6 +1563,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/bacece1c5156523ae03ba580852f4e1bf04cea4e/docs/figure/ecoli.Rmd/family_size-3.png" target="_blank">bacece1</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/f3d146c8d97fa2d9e3cc3db4b845ccd88494d56e/docs/figure/ecoli.Rmd/family_size-3.png" target="_blank">f3d146c</a>
 </td>
 <td>
@@ -1387,6 +1597,28 @@ Marek Cmero
 </tbody>
 </table>
 </div>
+</div>
+<div id="compare-single-read-fraction" class="section level3">
+<h3>Compare single-read fraction</h3>
+<pre class="r"><code># extract protocol and nuclease labels
+fam$protocol &lt;- &#39;NanoSeq&#39;
+fam$protocol[grep(&#39;Nux&#39;, fam$sample)] &lt;- &#39;xGen&#39;
+fam$nuclease &lt;- str_split(fam$sample, regex(&quot;N(uxg|an)|_&quot;)) %&gt;%
+                    lapply(., tail, 2) %&gt;% lapply(., dplyr::first) %&gt;% unlist()
+
+mfam &lt;- reshape2::melt(fam[,colnames(fam) %like% &#39;fam_gt1|sample|protocol|nuc&#39;])
+ggplot(mfam, aes(protocol, value)) +
+    geom_boxplot() +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
+    theme_bw() +
+    ggtitle(&#39;Fraction families with size &gt; 1 by protocol&#39;)</code></pre>
+<p><img src="figure/ecoli.Rmd/compare_famsize-1.png" width="576" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(mfam, aes(nuclease, value)) +
+    geom_boxplot() +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
+    theme_bw() +
+    ggtitle(&#39;Fraction families with size &gt; 1 by nuclease&#39;)</code></pre>
+<p><img src="figure/ecoli.Rmd/compare_famsize-2.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="variants" class="section level2">
@@ -1422,6 +1654,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/bacece1c5156523ae03ba580852f4e1bf04cea4e/docs/figure/ecoli.Rmd/variant_overlap-1.png" target="_blank">bacece1</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/02e8cedcebfbefc90470f68ac925107d637147e1/docs/figure/ecoli.Rmd/variant_overlap-1.png" target="_blank">02e8ced</a>
@@ -1483,6 +1726,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/bacece1c5156523ae03ba580852f4e1bf04cea4e/docs/figure/ecoli.Rmd/discordant_variants-1.png" target="_blank">bacece1</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/02e8cedcebfbefc90470f68ac925107d637147e1/docs/figure/ecoli.Rmd/discordant_variants-1.png" target="_blank">02e8ced</a>
 </td>
 <td>
@@ -1508,6 +1762,101 @@ ggplot(gts, aes(sample, fill = gt_GT)) +
     coord_flip() +
     ggtitle(&#39;Variant genotype&#39;)</code></pre>
 <p><img src="figure/ecoli.Rmd/discordant_variants-2.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-discordant_variants-2">
+Past versions of discordant_variants-2.png
+</button>
+</p>
+<div id="fig-discordant_variants-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/bacece1c5156523ae03ba580852f4e1bf04cea4e/docs/figure/ecoli.Rmd/discordant_variants-2.png" target="_blank">bacece1</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-01-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="statistics-from-nanoseq-pipeline" class="section level2">
+<h2>Statistics from NanoSeq pipeline</h2>
+<p>Stats obtained from <a href="https://github.com/cancerit/NanoSeq">NanoSeq</a> pipeline.</p>
+<pre class="r"><code>plot_metric(tsvs, &#39;READS$&#39;, &#39;Num reads&#39;)</code></pre>
+<p><img src="figure/ecoli.Rmd/nanoseq_stats-1.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_metric(tsvs, &#39;DUPLICATE&#39;, &#39;Duplicate rate (line = optimal)&#39;) +
+    geom_hline(yintercept = 0.81)</code></pre>
+<p><img src="figure/ecoli.Rmd/nanoseq_stats-2.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_metric(tsvs, &#39;TOTAL&#39;, &#39;Total RBs (read barcodes)&#39;)</code></pre>
+<p><img src="figure/ecoli.Rmd/nanoseq_stats-3.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_metric(tsvs, &#39;PER&#39;, &#39;Reads per RB&#39;)</code></pre>
+<p><img src="figure/ecoli.Rmd/nanoseq_stats-4.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_metric(tsvs, &#39;OK&#39;, &#39;OK RBs (2 on each strand)&#39;)</code></pre>
+<p><img src="figure/ecoli.Rmd/nanoseq_stats-5.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_metric(tsvs, &#39;F-EFF&#39;,
+             &#39;F-EFF (drop out fraction, lines show optimal range)&#39;) +
+    geom_hline(yintercept = c(0.1, 0.3))</code></pre>
+<p><img src="figure/ecoli.Rmd/nanoseq_stats-6.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_metric(tsvs, &#39;EFFICIENCY&#39;,&#39;Efficiency (line shows maximised value)&#39;) +
+    geom_hline(yintercept = 0.07)</code></pre>
+<p><img src="figure/ecoli.Rmd/nanoseq_stats-7.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_metric(tsvs, &#39;(GC_BOTH|GC_SINGLE)&#39;, &#39;GC per strand&#39;)</code></pre>
+<p><img src="figure/ecoli.Rmd/nanoseq_stats-8.png" width="864" style="display: block; margin: auto;" /> ### Comparison of key stats</p>
+<pre class="r"><code># duplicate rate
+plot_metric_boxplot(tsvs, &#39;protocol&#39;, &#39;DUPLICATE&#39;, &#39;Duplicate rate (line = optimal&#39;) +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
+    geom_hline(yintercept = 0.81)</code></pre>
+<p><img src="figure/ecoli.Rmd/compare_nanoseq-1.png" width="576" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_metric_boxplot(tsvs, &#39;nuclease&#39;, &#39;DUPLICATE&#39;, &#39;Duplicate rate (line = optimal&#39;) +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
+    geom_hline(yintercept = 0.81)</code></pre>
+<p><img src="figure/ecoli.Rmd/compare_nanoseq-2.png" width="576" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># efficiency
+plot_metric_boxplot(tsvs, &#39;protocol&#39;, &#39;EFFICIENCY&#39;, &#39;Efficiency (line = optimal)&#39;) +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
+    geom_hline(yintercept = 0.07) </code></pre>
+<p><img src="figure/ecoli.Rmd/compare_nanoseq-3.png" width="576" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_metric_boxplot(tsvs, &#39;nuclease&#39;, &#39;EFFICIENCY&#39;, &#39;Efficiency (line = optimal)&#39;) +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
+    geom_hline(yintercept = 0.07) </code></pre>
+<p><img src="figure/ecoli.Rmd/compare_nanoseq-4.png" width="576" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># drop out rate
+plot_metric_boxplot(tsvs, &#39;protocol&#39;, &#39;F-EFF&#39;, &#39;Strand drop-out fraction (lines = optimal range)&#39;) +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
+    geom_hline(yintercept = c(0.1, 0.3))</code></pre>
+<p><img src="figure/ecoli.Rmd/compare_nanoseq-5.png" width="576" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_metric_boxplot(tsvs, &#39;nuclease&#39;, &#39;F-EFF&#39;, &#39;Strand drop-out fraction (lines = optimal range)&#39;) +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
+    geom_hline(yintercept = c(0.1, 0.3))</code></pre>
+<p><img src="figure/ecoli.Rmd/compare_nanoseq-6.png" width="576" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># GC deviation between strands
+plot_metric_boxplot(tsvs, &#39;protocol&#39;, &#39;GC_DEV&#39;, &#39;GC deviation (both strands vs. one)&#39;) +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease))</code></pre>
+<p><img src="figure/ecoli.Rmd/compare_nanoseq-7.png" width="576" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_metric_boxplot(tsvs, &#39;nuclease&#39;, &#39;GC_DEV&#39;, &#39;GC deviation (both strands vs. one)&#39;) +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol))</code></pre>
+<p><img src="figure/ecoli.Rmd/compare_nanoseq-8.png" width="576" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1536,9 +1885,9 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] tibble_3.1.5      vcfR_1.12.0       here_1.0.1        UpSetR_1.4.0     
- [5] R.utils_2.11.0    R.oo_1.24.0       R.methodsS3_1.8.1 dplyr_1.0.7      
- [9] data.table_1.14.0 ggplot2_3.3.5     workflowr_1.6.2  
+ [1] stringr_1.4.0     tibble_3.1.5      vcfR_1.12.0       here_1.0.1       
+ [5] UpSetR_1.4.0      R.utils_2.11.0    R.oo_1.24.0       R.methodsS3_1.8.1
+ [9] dplyr_1.0.7       data.table_1.14.0 ggplot2_3.3.5     workflowr_1.6.2  
 
 loaded via a namespace (and not attached):
  [1] Rcpp_1.0.7        ape_5.5           lattice_0.20-44   assertthat_0.2.1 
@@ -1546,18 +1895,18 @@ loaded via a namespace (and not attached):
  [9] plyr_1.8.6        evaluate_0.14     highr_0.9         pillar_1.6.4     
 [13] rlang_0.4.12      whisker_0.4       vegan_2.5-7       jquerylib_0.1.4  
 [17] Matrix_1.3-2      rmarkdown_2.11    labeling_0.4.2    splines_4.0.5    
-[21] pinfsc50_1.2.0    stringr_1.4.0     munsell_0.5.0     compiler_4.0.5   
-[25] httpuv_1.6.3      xfun_0.22         pkgconfig_2.0.3   mgcv_1.8-35      
-[29] htmltools_0.5.2   tidyselect_1.1.1  gridExtra_2.3     memuse_4.2-1     
-[33] fansi_0.5.0       permute_0.9-5     viridisLite_0.4.0 crayon_1.4.2     
-[37] withr_2.4.2       later_1.3.0       MASS_7.3-53.1     grid_4.0.5       
-[41] nlme_3.1-152      jsonlite_1.7.2    gtable_0.3.0      lifecycle_1.0.1  
-[45] DBI_1.1.1         git2r_0.28.0      magrittr_2.0.1    scales_1.1.1     
-[49] stringi_1.7.5     reshape2_1.4.4    farver_2.1.0      fs_1.5.0         
-[53] promises_1.2.0.1  bslib_0.3.0       ellipsis_0.3.2    generics_0.1.1   
-[57] vctrs_0.3.8       tools_4.0.5       glue_1.4.2        purrr_0.3.4      
-[61] parallel_4.0.5    fastmap_1.1.0     yaml_2.2.1        colorspace_2.0-0 
-[65] cluster_2.1.2     knitr_1.33        sass_0.4.0       </code></pre>
+[21] pinfsc50_1.2.0    munsell_0.5.0     compiler_4.0.5    httpuv_1.6.3     
+[25] xfun_0.22         pkgconfig_2.0.3   mgcv_1.8-35       htmltools_0.5.2  
+[29] tidyselect_1.1.1  gridExtra_2.3     memuse_4.2-1      fansi_0.5.0      
+[33] permute_0.9-5     viridisLite_0.4.0 crayon_1.4.2      withr_2.4.2      
+[37] later_1.3.0       MASS_7.3-53.1     grid_4.0.5        nlme_3.1-152     
+[41] jsonlite_1.7.2    gtable_0.3.0      lifecycle_1.0.1   DBI_1.1.1        
+[45] git2r_0.28.0      magrittr_2.0.1    scales_1.1.1      stringi_1.7.5    
+[49] reshape2_1.4.4    farver_2.1.0      fs_1.5.0          promises_1.2.0.1 
+[53] bslib_0.3.0       ellipsis_0.3.2    generics_0.1.1    vctrs_0.3.8      
+[57] tools_4.0.5       glue_1.4.2        purrr_0.3.4       parallel_4.0.5   
+[61] fastmap_1.1.0     yaml_2.2.1        colorspace_2.0-0  cluster_2.1.2    
+[65] knitr_1.33        sass_0.4.0       </code></pre>
 </div>
 </div>
 </div>
