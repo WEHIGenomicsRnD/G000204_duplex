@@ -38,21 +38,29 @@ library(here)
 library(vcfR)
 library(tibble)
 library(stringr)
+library(patchwork)
 ```
 
 ```{r functions}
 load_data <- function(fdir, pattern, samples, read_func=read.delim) {
     df <- list.files(
-        fdir,
-        full.names = TRUE,
-        recursive = TRUE,
-        pattern = pattern) %>%
-    lapply(., read_func)
+            fdir,
+            full.names = TRUE,
+            recursive = TRUE,
+            pattern = pattern) %>%
+        lapply(., read_func)
     
     for (i in seq(length(samples))) {
         df[[i]]$Sample <- samples[i]
     }
     df <- rbindlist(df)
+    
+    # add nuclease + protocol info
+    df$protocol <- 'NanoSeq'
+    df$protocol[grep('Nux', df$Sample)] <- 'xGen'
+    df$nuclease <- str_split(df$Sample, regex("N(uxg|an)|_")) %>%
+        lapply(., tail, 2) %>% lapply(., dplyr::first) %>% unlist()
+
     return(df)
 }
 
@@ -159,15 +167,18 @@ tsvs <- load_nanoseq_stats(nanoseq_dir)
 
 Using coverage summary data from Qualimap (I assume these are summarised to 10kb windows, though I couldn't find this in the documentation).
 
-```{r coverage_boxplots}
+```{r coverage_boxplots, fig.width=16, fig.height=6}
 # order by median coverage
 median_cov <- data.table(cov)[,median(Coverage), by=Sample]
-cov$Sample <- factor(cov$Sample, levels=median_cov[order(median_cov$V1)]$Sample)
-ggplot(cov, aes(Coverage, Sample)) + geom_boxplot() + theme_bw() + ggtitle('Pre-duplex coverage')
+sample_order <- median_cov[order(median_cov$V1)]$Sample
+cov$Sample <- factor(cov$Sample, levels = sample_order)
+p1 <- ggplot(cov, aes(Coverage, Sample, colour = protocol)) + geom_boxplot() + theme_bw() + ggtitle('Pre-duplex coverage')
 
 median_cov <- data.table(ccov)[,median(Coverage), by=Sample]
-ccov$Sample <- factor(ccov$Sample, levels=median_cov[order(median_cov$V1)]$Sample)
-ggplot(ccov, aes(Coverage, Sample)) + geom_boxplot() + theme_bw() + ggtitle('Duplex coverage')
+ccov$Sample <- factor(ccov$Sample, levels = sample_order)
+p2 <- ggplot(ccov, aes(Coverage, Sample, colour = protocol)) + geom_boxplot() + theme_bw() + ggtitle('Duplex coverage')
+
+p1 + p2
 ```
 
 ## Coverage standard deviation bar plot
@@ -343,6 +354,7 @@ plot_metric(tsvs, 'EFFICIENCY','Efficiency (line shows maximised value)') +
 
 plot_metric(tsvs, '(GC_BOTH|GC_SINGLE)', 'GC per strand')
 ```
+
 ### Comparison of key stats
 
 ```{r compare_nanoseq, fig.width = 6, fig.height = 5}

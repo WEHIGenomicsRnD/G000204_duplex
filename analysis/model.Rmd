@@ -27,54 +27,48 @@ library(ggplot2)
 
 # Model
 
-Q: what is the lowest % VAF of mutation we can reliably detect (at >95% confidence) using Nanoseq on bulk WES?
+Q: how many cells (or "cell equivalents") do we need to sequence to detect variants down to a VAF of X%
 
 ## Assumptions
 
-* We consider a human diploid genome without SCNAs
-* The mutation is heterozygous
-* We sequence 15,000 cells
-* Our duplex rate is optimal ~81%
-* Our ligation efficiency is 20%
-* We assume a duplex mutation call equals a real mutation (theoretical error rate of duplex sequencing is <10^-9)
+* We consider a diploid genome without SCNAs
+* The mutation(s) are heterozygous
+* We're not considering DNA extraction efficiency or ligation efficiency
 
 ## Probability of sequencing a mutant cell
 
-Let $f$ be the probability of sequencing a mutation from a single fragment, on both strands.
+Let $p$ be the probability of selecting a mutant cell from a pool of $n$ cells.
 
-$f = (v / p) \times d \times l$
+$p = v / 2$
 
 Where:
 
 * $v$ = target VAF
-* $p$ = ploidy (2)
-* $d$ = duplex efficiency (0.81)
-* $l$ = ligation efficiency (0.2)
 
-We assume the probability of sequencing a mutant fragment is binomially distributed. We want to know the probability of selecting at least one mutant fragment:
+We assume the probability of selecting a mutant cell is binomially distributed. We want to know the probability of selecting at least one mutant:
 
-$P(Bin(f, n)) > 0)$ = 0.95
+$P(Bin(n, p)) > 0)$ = 0.95
 
 This is equivalent to:
 
-$P(Bin(f, n)) = 0)$ = 0.05
+$P(Bin(n, p)) = 0)$ = 0.05
 
-Where $n$ is the number of sequenced cells (15,000). We note that the number of mutant cells will, on average, will be $2nv$. 
+Where $n$ is the number of sequenced cells. We note that the number of mutant cells will, on average, will be $2nv$. 
 
-Since we don't know $v$, we'll define a vector of possible VAFs incremented by $0.001$, $V = \{0.001, 0.002..0.01\}$. Using these values, we can plot the probability of _not_ sequencing the mutant fragment, at each VAF (line is at 0.05). 
+Let's consider how many input cells ($n$) are required to select at least one mutant cell at 1% VAF (95% confidence).
 
-```{r vaf_plot}
-d = 0.81
-l = 0.2
-v = seq(0.001, 0.01, 0.0001)
-f = (v / 2) * d * l
-n = 15000
+We'll consider 100 cell increments from $n = \{100, 200..2000\}$. Using these values, we can plot the probability selecting of sequencing at least one cell.
+
+```{r cells_plot}
+v = 0.01
+n = seq(100, 2000, 100)
 
 vafs <- data.frame(vaf=v,
-                   p=pbinom(0, n, f),
+                   p=pbinom(0, n, v / 2),
+                   input_cells=n,
                    mutant_cells=(n * v * 2))
 
-ggplot(vafs, aes(vaf, p)) +
+ggplot(vafs, aes(input_cells, p)) +
     geom_point() +
     theme_bw() +
     geom_hline(yintercept=0.05, alpha=0.4)
@@ -89,46 +83,49 @@ ggplot(vafs, aes(mutant_cells, p)) +
     geom_hline(yintercept=0.05, alpha=0.4)
 ```
 
-For this range of VAFs, 0.0025 (0.25%) is the smallest VAF for which the probability of missing the mutant is approximately 0.05. A VAF of 0.0025 translates to 75 mutant cells on average in our input of 15,000.
+This shows that for a VAF target of 1%, we should sequence at least 600 cells (12 are mutants).
 
-```{r VAF_at_0.05}
+```{r cells_at_0.05}
 deviation <- abs(0.05 - vafs$p)
 print(vafs[which(deviation == min(deviation)),])
 ```
 
-## Varying the number of input cells
+## Varying the VAF
 
-If we change the number of input cells, how does this change the probability calculation? Let's assume the target VAF is 0.0025 from our previous calculation (line is at 0.05).
+If we select 1000 input cells, what's the lowest VAF we can sequence down to, where $v = {0.0002, 0.0004..0.01}$.
 
-```{r varying_input_cells}
-v = 0.0025
-n = seq(1000, 20000, 1000)
-f = (v / 2) * d * l
+```{r varying_vaf}
+v = seq(0.0002, 0.01, 0.0002)
+n = 1000
 
-cells <- data.frame(vaf=v,
-                    p=pbinom(0, n, f),
-                    total_cells=n,
-                    mutant_cells=(n * v * 2))
+vafs <- data.frame(vaf=v,
+                   p=pbinom(0, n, v / 2),
+                   input_cells=n,
+                   mutant_cells=(n * v * 2))
 
-ggplot(cells, aes(total_cells, p)) +
+ggplot(vafs, aes(vaf, p)) +
     geom_point() +
     theme_bw() +
     geom_hline(yintercept=0.05, alpha=0.4)
 ```
 
-We can then expand this to different target VAFs.
+We can sequence down to approx 0.6% VAF. 
 
-Let's define our VAFs as $V = \{0.01, 0.02..0.2\}$ and put these on a single plot (line at p = 0.05).
+```{r vaf_at_1k_cells}
+deviation <- abs(0.05 - vafs$p)
+print(vafs[which(deviation == min(deviation)),])
+```
+
+We can look at the relationship between input cells and allele frequency: 
 
 ```{r cells_vs_vaf_plot, fig.height=6.5, fig.width=9}
 cells_vs_vaf = NULL
-n = seq(100, 5000, 100)
-V = seq(0.01, 0.20, 0.01)
+n = seq(100, 10000, 100)
+V = seq(0.001, 0.01, 0.001)
 for (v in V) {
-    f = (v / 2) * d * l
     toadd <- data.frame(
         vaf=as.factor(v),
-        p=pbinom(0, n, f),
+        p=pbinom(0, n, v / 2),
         total_cells=n
     )
     cells_vs_vaf <- rbind(cells_vs_vaf, toadd)
@@ -141,8 +138,22 @@ ggplot(cells_vs_vaf, aes(total_cells, p, colour=vaf)) +
     geom_hline(yintercept=0.05, alpha=0.4)
 ```
 
-We can define an equation based on the binomial probability calculation, of obtaining the number of cells to sequence, to be 95% confident of sequencing the mutation:
+We can define an equation based on the binomial probability calculation, of obtaining the number of cells to sequence, to be 95% confident of sequencing the mutation based on the target VAF:
 
-$(1 – f) ^ n = 0.05$
+$(1 – v / 2) ^ n = 0.05$
 
+## Coverage
 
+The above thought experiment won't tell us the probability of sequencing the variant, as sequencing involves a whole host of other factors. Coverage is one of the most important. Given that approximately 30x duplex coverage is required to yield 1x of high quality duplex coverage, we can look at the relationship between coverage and VAF (need the variant to be at least 1x to detect).
+
+Here we can see that at VAF = 0.01 (line), we need to sequence to approx 3000x, and this gets exponentially deeper as we go down in target VAF.
+
+```{r coverage}
+v = seq(0.001, 0.1, 0.001)
+ccov <- data.frame(d = 30 / v,
+                   v = v)
+ggplot(ccov, aes(d, v)) +
+    geom_line() +
+    theme_bw() +
+    geom_hline(yintercept=0.01, alpha=0.4)
+```
