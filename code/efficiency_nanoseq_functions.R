@@ -1,0 +1,99 @@
+# Efficiency metric calculations
+calculate_singletons <- function(rbs) {
+    total_reads <- sum(rbs$x) + sum(rbs$y)
+    singletons <- sum(rbs$x == 1) + sum(rbs$y == 1)
+    frac_singletons <- singletons / total_reads
+    return(frac_singletons)
+}
+
+calculate_metrics <- function(rbs) {
+    metrics <- data.frame(sample = names(rbs))
+    metrics$frac_singletons <- lapply(rbs, calculate_singletons) %>% unlist()
+    metrics$efficiency <- lapply(rbs, calculate_efficiency) %>% unlist()
+    metrics$drop_out_rate <- lapply(rbs, calculate_missed_fraction) %>% unlist()
+    metrics$gc_deviation <- lapply(rbs, calculate_gc) %>% unlist()
+
+    return(metrics)
+}
+
+# functions below are adapted from
+# R/efficiency_nanoseq.R and perl/efficiency_nanoseq.pl
+# from https://github.com/cancerit/NanoSeq
+
+# from cancerit/NanoSeq documentation:
+# "This is the number of duplex bases divided by the number of sequenced bases."
+calculate_efficiency <- function(rbs) {
+    bases_ok_rbs <- nrow(rbs[rbs$x > 1 & rbs$y > 1,]) * ((rlen - skips) * 2)
+    total_reads <- sum(c(rbs$x, rbs$y))
+    bases_sequenced <- total_reads * rlen * 2
+    eff <- bases_ok_rbs / bases_sequenced
+    return(eff)
+}
+
+# from cancerit/NanoSeq documentation:
+# "This shows the fraction of read bundles missing one of the two
+# original strands beyond what would be expected under random sampling
+# (assuming a binomial process).
+calculate_missed_fraction <- function(rbs) {
+    rbs <- data.frame(rbs)
+    rbs$size <- rbs$x + rbs$y
+    rbs$size <- pmin(rbs$size, 10)
+    total_missed <- 0
+    for(size in c(4:10)) {
+        exp_orphan <- (0.5 ** size) * 2
+        total_this_size = nrow(rbs[which(rbs$size == size),])
+        if(total_this_size > 0) {
+            with_both_strands <- nrow(rbs[which(rbs$size == size & rbs$x > 0 & rbs$y > 0),])
+            obs_orphan <- 1 - with_both_strands / total_this_size
+            missed <- (obs_orphan - exp_orphan) * total_this_size
+            total_missed <- total_missed + missed
+        }
+    }
+    total_missed_fraction = total_missed / nrow(rbs[which(rbs$size >= 4),])
+    return(total_missed_fraction)
+}
+
+# from cancerit/NanoSeq documentation:
+# The GC content of RBs with both strands and with just one strand.
+# I return the difference between the two values.
+calculate_gc <- function(rbs, sample_n = 10000) {
+    rbs <- data.frame(rbs)
+    colnames(rbs)[5:6] = c('plus', 'minus')
+
+    rbs$end <- rbs$mpos + rlen - skips
+    rbs$end[rbs$end > genome_max] <- genome_max
+    rbs <- rbs[rbs$pos < rbs$end,]
+
+    rbs <- rbs[rbs$pos != 0,] # scanFa raises errors on these records
+    rbs_both <- rbs[which(rbs$minus + rbs$plus >= 4 & rbs$minus >= 2 & rbs$plus >= 2),]
+    rbs_both <- rbs_both[sample(1:nrow(rbs_both), min(sample_n, nrow(rbs_both))),]
+
+    rbs_single <- rbs[which(rbs$minus + rbs$plus > 4 & (rbs$minus == 0 | rbs$plus == 0)),]
+    rbs_single <- rbs_single[sample(1:nrow(rbs_single), min(sample_n, nrow(rbs_single))),]
+
+    seqs_both <- GRanges(rbs_both$chrom,
+                         IRanges(start=rbs_both$pos,
+                                 end=rbs_both$end)) %>%
+        scanFa(genomeFile, .) %>%
+        as.vector()
+
+    seqs_single <- GRanges(rbs_single$chrom,
+                           IRanges(start=rbs_single$pos,
+                                   end=rbs_single$end)) %>%
+        scanFa(genomeFile, .) %>%
+        as.vector()
+
+    seqs_both_collapsed <- paste(seqs_both, collapse = '')
+    seqs_single_collapsed <- paste(seqs_single, collapse = '')
+
+    tri_both <- DNAString(seqs_both_collapsed) %>% trinucleotideFrequency(.)
+    tri_single <- DNAString(seqs_single_collapsed) %>% trinucleotideFrequency(.)
+
+    tri_both_freqs <- tri_both  / sum(tri_both)
+    tri_single_freqs <- tri_single / sum(tri_single)
+
+    gc_both <- s2c(seqs_both_collapsed) %>% GC()
+    gc_single <- s2c(seqs_single_collapsed) %>% GC()
+
+    return(abs(gc_both - gc_single))
+}

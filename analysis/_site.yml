@@ -9,6 +9,8 @@ navbar:
     href: model.html
   - text: "E coli results"
     href: ecoli.html
+  - text: "Illumina vs. MGI"
+    href: compare_MGI_Illumina.html
   - text: License
     href: license.html
 output:
