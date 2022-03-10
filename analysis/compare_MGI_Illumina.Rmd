@@ -13,7 +13,7 @@ Compare duplex statistics for two libraries, one MGI and one Illumina, containin
 ```{r setup, include=FALSE}
 DOCNAME = "Compare MGI with Illumina"
 knitr::opts_chunk$set(autodep        = TRUE,
-                      cache          = TRUE,
+                      cache          = FALSE,
                       cache.path     = paste0("cache/", DOCNAME, "/"),
                       cache.comments = FALSE,
                       cache.lazy     = FALSE,
