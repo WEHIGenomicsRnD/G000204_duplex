@@ -1,19 +1,20 @@
 ---
-title: "Compare sequencing metrics from E coli data"
+title: "Compare sequencing metrics from jafarJ_201021 E coli data"
 output:
   workflowr::wflow_html:
       code_folding: hide
 ---
 
-# Compare sequencing metrics from E coli data
+# Compare sequencing metrics from jafarJ_201021 E coli data
 
 These are extra stats that are not available in the MultiQC reports. These reports can be found below:
 
-- [MultiQC pre-duplex](multiqc/multiqc_report.html)
-- [MultiQC duplex](multiqc/multiqc_report_consensus.html)
+- [jafarJ_201021 MultiQC pre-duplex](jafarJ_201021_multiqc/multiqc_report.html)
+- [jafarJ_201021 MultiQC duplex](jafarJ_201021_multiqc/multiqc_report_consensus.html)
+
 
 ```{r knitr, include = FALSE}
-DOCNAME = "Ecoli_data"
+DOCNAME = "jafarJ_201021_Ecoli_data"
 knitr::opts_chunk$set(autodep        = TRUE,
                       cache          = FALSE,
                       cache.path     = paste0("cache/", DOCNAME, "/"),
@@ -41,114 +42,18 @@ library(stringr)
 library(patchwork)
 ```
 
-```{r functions}
-load_data <- function(fdir, pattern, samples, read_func=read.delim) {
-    df <- list.files(
-            fdir,
-            full.names = TRUE,
-            recursive = TRUE,
-            pattern = pattern) %>%
-        lapply(., read_func)
-    
-    for (i in seq(length(samples))) {
-        df[[i]]$Sample <- samples[i]
-    }
-    df <- rbindlist(df)
-    
-    # add nuclease + protocol info
-    df$protocol <- 'NanoSeq'
-    df$protocol[grep('Nux', df$Sample)] <- 'xGen'
-    df$nuclease <- str_split(df$Sample, regex("N(uxg|an)|_")) %>%
-        lapply(., tail, 2) %>% lapply(., dplyr::first) %>% unlist()
-
-    return(df)
-}
-
-extract_std <- function(genome_results) {
-    std <- genome_results[grep('std', genome_results$BamQC.report),] %>% 
-            strsplit(., split='=') %>%
-            last() %>% last() %>%
-            gsub(' |X', '', .) %>% as.numeric()
-    return(std)
-}
-
-load_cov_stats <- function(cov, qualimap_dir, samples) {
-    cov_stats <- list.files(
-        qualimap_dir,
-        full.names = TRUE,
-        recursive = TRUE,
-        pattern = 'genome_results.txt') %>%
-        lapply(., read.delim) %>%
-        lapply(., extract_std) %>%
-        unlist()
-    
-    cov_stats <- data.frame(cov_std=cov_stats, Sample=samples)
-    cov_stats <- data.table(cov)[,mean(Coverage), by=Sample] %>%
-                data.frame() %>% inner_join(., cov_stats, by='Sample')
-    colnames(cov_stats)[2] <- 'cov_mean'
-    
-    return(cov_stats)
-}
-
-load_nanoseq_stats <- function(nanoseq_dir) {
-    tsvs <- list.files(nanoseq_dir,
-                   pattern = '.tsv',
-                   full.names = TRUE) %>%
-        grep('GC', ., value = TRUE, invert = TRUE) %>%
-        lapply(., read.delim) 
-
-    for (i in seq(length(samples))) {
-        tsvs[[i]]$Sample <- samples[i]
-        tsvs[[i]]$metric <- rownames(tsvs[[i]])
-    }
-    tsvs <- rbindlist(tsvs)
-    colnames(tsvs)[1] <- 'value'
-    tsvs <- tsvs[!is.na(tsvs$value)]
-    
-    # add GC deviation
-    tmp <- tsvs[grep('GC', tsvs$metric)]
-    gc <- tmp[tmp$metric == 'GC_SINGLE']
-    gc$value <- abs(tmp[tmp$metric == 'GC_BOTH']$value - gc$value)
-    gc$metric <- 'GC_DEVIATION'
-    tsvs <- rbind(tsvs, gc)
-    
-    # extract protocol and nuclease labels
-    tsvs$protocol <- 'NanoSeq'
-    tsvs$protocol[grep('Nux', tsvs$Sample)] <- 'xGen'
-    tsvs$nuclease <- str_split(tsvs$Sample, regex("N(uxg|an)|_")) %>%
-                        lapply(., tail, 2) %>% lapply(., dplyr::first) %>% unlist()
-    
-    return(tsvs)
-}
-
-# plotting functions (for nanoseq stats)
-plot_metric <- function(tsvs, metric, title) {
-    tmp <- data.frame(tsvs)[grep(metric, tsvs$metric),]
-    p <- ggplot(tmp, aes(Sample, value, fill = metric)) +
-            geom_histogram(stat = 'identity', position = 'dodge') +
-            theme_bw() +
-            coord_flip() +
-            ggtitle(title)
-    return(p)
-}
-
-plot_metric_boxplot <- function(tsvs, x, metric, title) {
-    tmp <- data.frame(tsvs)[grep(metric, tsvs$metric),]
-    p <- ggplot(tmp, aes_string(x, 'value')) +
-            geom_boxplot() +
-            theme_bw() +
-            ggtitle(title)
-    return(p)
-}
+```{r source}
+source(here('code/load_data.R'))
+source(here('code/plot.R'))
 ```
 
 
 ```{r load_data}
-qualimap_dir <- here('data/ecoli/QC/qualimap/')
-qualimap_cons_dir <- here('data/ecoli/QC/consensus/qualimap/')
-variant_dir <- here('data/ecoli/variants')
-family_size_stats <- here('data/ecoli/family_sizes.txt')
-nanoseq_dir <- here('data/nanoseq_results')
+qualimap_dir <- here('data/ecoli/jafarJ_201021/QC/qualimap/')
+qualimap_cons_dir <- here('data/ecoli/jafarJ_201021/QC/consensus/qualimap/')
+variant_dir <- here('data/ecoli/jafarJ_201021/variants')
+family_size_stats <- here('data/ecoli/jafarJ_201021_family_sizes.txt')
+nanoseq_dir <- here('data/ecoli/jafarJ_201021_nanoseq_results')
 
 samples <- list.files(qualimap_dir)
 
@@ -160,6 +65,8 @@ vars <- load_data(variant_dir, '.vcf', samples, read.table)
 cov_stats <- load_cov_stats(cov, qualimap_dir, samples)
 ccov_stats <- load_cov_stats(ccov, qualimap_cons_dir, samples)
 fam <- read.delim(family_size_stats, sep='\t')
+
+# TODO: replace these stats with new functions used in compare_MGI_Illumina.Rmd
 tsvs <- load_nanoseq_stats(nanoseq_dir)
 ```
 

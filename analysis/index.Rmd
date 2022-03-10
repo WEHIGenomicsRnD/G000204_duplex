@@ -16,5 +16,8 @@ Analyses
 
 * [Model](model.html)
 * [E coli results](ecoli.html)
-    * [MultiQC pre-duplex](multiqc/multiqc_report.html)
-    * [MultiQC duplex](multiqc/multiqc_report_consensus.html)
+    * [jafarJ_201021 MultiQC pre-duplex](multiqc/multiqc_report.html)
+    * [jafarJ_201021 MultiQC duplex](multiqc/multiqc_report_consensus.html)
+    * [jafarJ_150222 MultiQC pre-duplex](jafarJ_150222_multiqc/multiqc_report.html)
+    * [jafarJ_150222 MultiQC duplex](jafarJ_150222_multiqc/multiqc_report_consensus.html)
+* [Illumina vs MGI](compare_MGI_Illumina.html)

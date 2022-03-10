@@ -1,0 +1,126 @@
+---
+title: "Compare_MGI_Illumina"
+output:
+  workflowr::wflow_html:
+      code_folding: hide
+---
+
+# Compare MGI vs. Illumina
+
+Compare duplex statistics for two libraries, one MGI and one Illumina, containing the same samples.
+
+
+```{r setup, include=FALSE}
+DOCNAME = "Compare MGI with Illumina"
+knitr::opts_chunk$set(autodep        = TRUE,
+                      cache          = TRUE,
+                      cache.path     = paste0("cache/", DOCNAME, "/"),
+                      cache.comments = FALSE,
+                      cache.lazy     = FALSE,
+                      echo           = TRUE,
+                      error          = FALSE,
+                      fig.align      = "center",
+                      fig.width      = 7,
+                      fig.height     = 5,
+                      dev            = c("png"),
+                      message        = FALSE,
+                      warning        = FALSE)
+```
+
+
+```{r libraries, cache=FALSE, message=FALSE}
+library(ggplot2)
+library(data.table)
+library(dplyr)
+library(here)
+library(tibble)
+library(stringr)
+library(Rsamtools)
+library(GenomicRanges)
+library(seqinr)
+```
+
+
+```{r source}
+source(here('code/load_data.R'))
+source(here('code/efficiency_nanoseq_functions.R'))
+```
+
+
+```{r variables}
+# Ecoli genome max size
+genome_max <- 4528118
+```
+
+
+```{r load_data}
+# directory paths
+genomeFile <- here('data/ref/Ecoli_strain_BL21_genome.fasta')
+
+ill_rinfo_dir <- here('data/ecoli/jafarJ_201021/QC/read_info')
+ill_markdup_dir <- here('data/ecoli/jafarJ_201021/QC/mark_duplicates')
+
+mgi_rinfo_dir <- here('data/ecoli/jafarJ_150222/QC/read_info')
+mgi_markdup_dir <- here('data/ecoli/jafarJ_150222/QC/mark_duplicates')
+
+# load and transform read barcode data
+ill_rbs <- load_rbs_data(ill_rinfo_dir)
+ill_sample_names <- list.files(ill_rinfo_dir) %>%
+                str_split('\\.txt.gz') %>%
+                lapply(., dplyr::first) %>%
+                unlist() %>%
+                str_split('_') %>%
+                lapply(., dplyr::first) %>%
+                unlist()
+names(ill_rbs) <- ill_sample_names
+
+mgi_rbs <- load_rbs_data(mgi_rinfo_dir)
+mgi_sample_names <- list.files(mgi_rinfo_dir) %>%
+                str_split('\\.txt.gz') %>%
+                lapply(., dplyr::first) %>% unlist()
+names(mgi_rbs) <- mgi_sample_names
+
+# load and fetch duplicate rate from MarkDuplicates output
+ill_mdup <- load_markdup_data(ill_markdup_dir, ill_sample_names)
+mgi_mdup <- load_markdup_data(mgi_markdup_dir, mgi_sample_names)
+```
+
+```{r calculate_metrics}
+# Nan metrics
+rlen <- 151; skips <- 5
+ill_metrics <- calculate_metrics(head(ill_rbs, 4))
+mgi_metrics <- calculate_metrics(head(mgi_rbs, 3))
+
+# Nuxg metrics
+rlen <- 151; skips <- 8
+ill_metrics <- rbind(ill_metrics,
+                     calculate_metrics(tail(ill_rbs, 4)))
+mgi_metrics <- rbind(mgi_metrics,
+                     calculate_metrics(tail(mgi_rbs, 4)))
+
+ill_metrics$duplicate_rate <- as.numeric(ill_mdup)
+mgi_metrics$duplicate_rate <- as.numeric(mgi_mdup)
+```
+
+## Metric comparison plots
+
+```{r plot_metrics}
+mm <- rbind(data.frame(melt(ill_metrics), platform = "Illumina"),
+            data.frame(melt(mgi_metrics), platform = "MGI"))
+
+metrics <- as.character(mm$variable) %>% unique()
+for(metric in metrics) {
+    p <- ggplot(mm[mm$variable == metric,], aes(sample, value, fill=platform)) +
+        geom_histogram(stat = 'identity', position = 'dodge') +
+        theme_bw() +
+        coord_flip() +
+        scale_fill_brewer(palette = 'Accent') +
+        ggtitle(metric)
+    show(p)
+}
+```
+
+
+
+
+
