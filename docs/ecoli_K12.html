@@ -485,16 +485,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree5964f141b12189eeff85b8d0cc66ace5cd10b5c2targetblank5964f14a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/mcmero/rare-mutation-detection/tree/5964f141b12189eeff85b8d0cc66ace5cd10b5c2" target="_blank">5964f14</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreea3895f7de10a1553a4334b1569d89e8d1cb11698targetblanka3895f7a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/mcmero/rare-mutation-detection/tree/a3895f7de10a1553a4334b1569d89e8d1cb11698" target="_blank">a3895f7</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree5964f141b12189eeff85b8d0cc66ace5cd10b5c2targetblank5964f14a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreea3895f7de10a1553a4334b1569d89e8d1cb11698targetblanka3895f7a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/mcmero/rare-mutation-detection/tree/5964f141b12189eeff85b8d0cc66ace5cd10b5c2" target="_blank">5964f14</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/mcmero/rare-mutation-detection/tree/a3895f7de10a1553a4334b1569d89e8d1cb11698" target="_blank">a3895f7</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -553,6 +553,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a3895f7de10a1553a4334b1569d89e8d1cb11698/analysis/ecoli_K12.Rmd" target="_blank">a3895f7</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+<td>
+Bug fix
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/ecoli_K12.html" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -690,58 +724,722 @@ mm$nuclease &lt;- paste(mm$`Mung bean unit`, mm$`S1 unit`, sep=&#39;+&#39;)</cod
 </div>
 <div id="metric-comparison-plots" class="section level2">
 <h2>Metric comparison plots</h2>
-<pre class="r"><code>metrics_to_plot &lt;- as.character(mm$variable) %&gt;% unique()
+<pre class="r"><code>metrics_to_plot &lt;- as.character(mm$metric) %&gt;% unique()
 for(metric in metrics_to_plot) {
-    p &lt;- ggplot(mm[mm$variable == metric,], aes(sample, value)) +
+    p &lt;- ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         geom_histogram(stat = &#39;identity&#39;, position = &#39;dodge&#39;) +
         theme_bw() +
         coord_flip() +
         ggtitle(metric)
     show(p)
 }</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/plot_metrics-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot_metrics-1">
+Past versions of plot_metrics-1.png
+</button>
+</p>
+<div id="fig-plot_metrics-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/figure/ecoli_K12.Rmd/plot_metrics-1.png" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/e5b39add336bbf4e248b3dd449b8363c00373c76/docs/figure/ecoli_K12.Rmd/plot_metrics-1.png" target="_blank">e5b39ad</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/ecoli_K12.Rmd/plot_metrics-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot_metrics-2">
+Past versions of plot_metrics-2.png
+</button>
+</p>
+<div id="fig-plot_metrics-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/figure/ecoli_K12.Rmd/plot_metrics-2.png" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/e5b39add336bbf4e248b3dd449b8363c00373c76/docs/figure/ecoli_K12.Rmd/plot_metrics-2.png" target="_blank">e5b39ad</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/ecoli_K12.Rmd/plot_metrics-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot_metrics-3">
+Past versions of plot_metrics-3.png
+</button>
+</p>
+<div id="fig-plot_metrics-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/figure/ecoli_K12.Rmd/plot_metrics-3.png" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/e5b39add336bbf4e248b3dd449b8363c00373c76/docs/figure/ecoli_K12.Rmd/plot_metrics-3.png" target="_blank">e5b39ad</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/ecoli_K12.Rmd/plot_metrics-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot_metrics-4">
+Past versions of plot_metrics-4.png
+</button>
+</p>
+<div id="fig-plot_metrics-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/figure/ecoli_K12.Rmd/plot_metrics-4.png" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/e5b39add336bbf4e248b3dd449b8363c00373c76/docs/figure/ecoli_K12.Rmd/plot_metrics-4.png" target="_blank">e5b39ad</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/ecoli_K12.Rmd/plot_metrics-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot_metrics-5">
+Past versions of plot_metrics-5.png
+</button>
+</p>
+<div id="fig-plot_metrics-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/figure/ecoli_K12.Rmd/plot_metrics-5.png" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/e5b39add336bbf4e248b3dd449b8363c00373c76/docs/figure/ecoli_K12.Rmd/plot_metrics-5.png" target="_blank">e5b39ad</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/ecoli_K12.Rmd/plot_metrics-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot_metrics-6">
+Past versions of plot_metrics-6.png
+</button>
+</p>
+<div id="fig-plot_metrics-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/figure/ecoli_K12.Rmd/plot_metrics-6.png" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/e5b39add336bbf4e248b3dd449b8363c00373c76/docs/figure/ecoli_K12.Rmd/plot_metrics-6.png" target="_blank">e5b39ad</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># duplicate rate
 plot_metric_boxplot(mm, &#39;protocol&#39;, &#39;duplicate_rate&#39;, &#39;Duplicate rate (line = optimal)&#39;) +
     geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
     geom_hline(yintercept = 0.81)</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/comparisons-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-comparisons-1">
+Past versions of comparisons-1.png
+</button>
+</p>
+<div id="fig-comparisons-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/figure/ecoli_K12.Rmd/comparisons-1.png" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot_metric_boxplot(mm, &#39;nuclease&#39;, &#39;duplicate_rate&#39;, &#39;Duplicate rate (line = optimal)&#39;) +
     geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
     geom_hline(yintercept = 0.81)</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/comparisons-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-comparisons-2">
+Past versions of comparisons-2.png
+</button>
+</p>
+<div id="fig-comparisons-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/figure/ecoli_K12.Rmd/comparisons-2.png" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># efficiency
 plot_metric_boxplot(mm, &#39;protocol&#39;, &#39;efficiency&#39;, &#39;Efficiency (line = optimal)&#39;) +
     geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
     geom_hline(yintercept = 0.07) </code></pre>
 <p><img src="figure/ecoli_K12.Rmd/comparisons-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-comparisons-3">
+Past versions of comparisons-3.png
+</button>
+</p>
+<div id="fig-comparisons-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/figure/ecoli_K12.Rmd/comparisons-3.png" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot_metric_boxplot(mm, &#39;nuclease&#39;, &#39;efficiency&#39;, &#39;Efficiency (line = optimal)&#39;) +
     geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
     geom_hline(yintercept = 0.07) </code></pre>
 <p><img src="figure/ecoli_K12.Rmd/comparisons-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-comparisons-4">
+Past versions of comparisons-4.png
+</button>
+</p>
+<div id="fig-comparisons-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/figure/ecoli_K12.Rmd/comparisons-4.png" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># drop out rate
 plot_metric_boxplot(mm, &#39;protocol&#39;, &#39;drop_out_rate&#39;, &#39;Strand drop-out fraction (lines = optimal range)&#39;) +
     geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
     geom_hline(yintercept = c(0.1, 0.3))</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/comparisons-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-comparisons-5">
+Past versions of comparisons-5.png
+</button>
+</p>
+<div id="fig-comparisons-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/figure/ecoli_K12.Rmd/comparisons-5.png" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot_metric_boxplot(mm, &#39;nuclease&#39;, &#39;drop_out_rate&#39;, &#39;Strand drop-out fraction (lines = optimal range)&#39;) +
     geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
     geom_hline(yintercept = c(0.1, 0.3))</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/comparisons-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-comparisons-6">
+Past versions of comparisons-6.png
+</button>
+</p>
+<div id="fig-comparisons-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/figure/ecoli_K12.Rmd/comparisons-6.png" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># GC deviation between strands
 plot_metric_boxplot(mm, &#39;protocol&#39;, &#39;gc_deviation&#39;, &#39;GC deviation (both strands vs. one)&#39;) +
     geom_jitter(width=0.1, aes(protocol, value, colour = nuclease))</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/comparisons-7.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-comparisons-7">
+Past versions of comparisons-7.png
+</button>
+</p>
+<div id="fig-comparisons-7" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/figure/ecoli_K12.Rmd/comparisons-7.png" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot_metric_boxplot(mm, &#39;nuclease&#39;, &#39;gc_deviation&#39;, &#39;GC deviation (both strands vs. one)&#39;) +
     geom_jitter(width=0.1, aes(nuclease, value, colour = protocol))</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/comparisons-8.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-comparisons-8">
+Past versions of comparisons-8.png
+</button>
+</p>
+<div id="fig-comparisons-8" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/figure/ecoli_K12.Rmd/comparisons-8.png" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># duplex coverage ratio
 plot_metric_boxplot(mm, &#39;protocol&#39;, &#39;duplex_coverage_ratio&#39;, &#39;Duplex coverage ratio (total cov / duplex cov)&#39;) +
     geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
     geom_hline(yintercept = 30)</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/comparisons-9.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-comparisons-9">
+Past versions of comparisons-9.png
+</button>
+</p>
+<div id="fig-comparisons-9" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/figure/ecoli_K12.Rmd/comparisons-9.png" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot_metric_boxplot(mm, &#39;nuclease&#39;, &#39;duplex_coverage_ratio&#39;, &#39;Duplex coverage ratio (total cov / duplex cov)&#39;) +
     geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
     geom_hline(yintercept = 30)</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/comparisons-10.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-comparisons-10">
+Past versions of comparisons-10.png
+</button>
+</p>
+<div id="fig-comparisons-10" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ea4faf4104730982537c3e8f26d2ccbf7129c558/docs/figure/ecoli_K12.Rmd/comparisons-10.png" target="_blank">ea4faf4</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
