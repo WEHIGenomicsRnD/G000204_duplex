@@ -1,0 +1,114 @@
+---
+title: "E. coli K12 analysis"
+output:
+  workflowr::wflow_html:
+      code_folding: hide
+---
+
+# Metrics for E. coli K12 data
+
+
+
+```{r setup, include=FALSE}
+DOCNAME = "Compare MGI with Illumina"
+knitr::opts_chunk$set(autodep        = TRUE,
+                      cache          = FALSE,
+                      cache.path     = paste0("cache/", DOCNAME, "/"),
+                      cache.comments = FALSE,
+                      cache.lazy     = FALSE,
+                      echo           = TRUE,
+                      error          = FALSE,
+                      fig.align      = "center",
+                      fig.width      = 7,
+                      fig.height     = 5,
+                      dev            = c("png"),
+                      message        = FALSE,
+                      warning        = FALSE)
+```
+
+
+```{r libraries, cache=FALSE, message=FALSE}
+library(ggplot2)
+library(data.table)
+library(dplyr)
+library(here)
+library(tibble)
+library(stringr)
+library(Rsamtools)
+library(GenomicRanges)
+library(seqinr)
+library(parallel)
+```
+
+
+```{r source}
+source(here('code/load_data.R'))
+source(here('code/efficiency_nanoseq_functions.R'))
+```
+
+
+```{r variables}
+# Ecoli genome max size
+# genome_max <- 4528118
+genome_max <- c('2e914854fabb46b9_1' = 4661751,
+                '2e914854fabb46b9_2' = 67365)
+cores = 8
+```
+
+
+```{r paths}
+genomeFile <- here('data/ref/Escherichia_coli_ATCC_10798.fasta')
+rinfo_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/read_info')
+markdup_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/mark_duplicates')
+qualimap_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/qualimap')
+qualimap_cons_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/consensus/qualimap')
+```
+
+
+```{r calculate_metrics}
+sample_names <- list.files(rinfo_dir) %>%
+                str_split('\\.txt.gz') %>%
+                lapply(., dplyr::first) %>%
+                unlist() %>%
+                str_split('_') %>%
+                lapply(., head, 2) %>%
+                lapply(., paste, collapse='-') %>%
+                unlist()
+
+# load and fetch duplicate rate from MarkDuplicates output
+mdup <- load_markdup_data(markdup_dir, sample_names)
+
+# get mean coverage for pre and post-consensus reads
+qmap_cov <- get_qmap_coverage(qualimap_dir, sample_names)
+qmap_cons_cov <- get_qmap_coverage(qualimap_cons_dir, sample_names)
+
+# calculate metrics for nanoseq
+rlen <- 151; skips <- 5
+metrics_nano <- calc_metrics_new_rbs(rinfo_dir, pattern = 'Nano', cores = cores)
+
+# calculate metrics for xGen
+rlen <- 151; skips <- 8
+metrics_xgen <- calc_metrics_new_rbs(rinfo_dir, pattern = 'xGEN', cores = cores)
+
+metrics <- c(metrics_nano, metrics_xgen) %>% bind_rows()
+metrics$duplicate_rate <- as.numeric(mdup)
+metrics$duplex_coverage_ratio <- qmap_cov$coverage / qmap_cons_cov$coverage
+metrics$duplex_coverage_ratio[qmap_cons_cov$coverage < 1] <- 0 # fix when < 1 duplex cov
+metrics$sample <- sample_names
+```
+
+## Metric comparison plots
+
+```{r plot_metrics}
+mm <- data.frame(melt(metrics))
+
+metrics_to_plot <- as.character(mm$variable) %>% unique()
+for(metric in metrics_to_plot) {
+    p <- ggplot(mm[mm$variable == metric,], aes(sample, value)) +
+        geom_histogram(stat = 'identity', position = 'dodge') +
+        theme_bw() +
+        coord_flip() +
+        ggtitle(metric)
+    show(p)
+}
+```
