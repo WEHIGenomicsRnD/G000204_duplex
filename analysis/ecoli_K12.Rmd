@@ -7,7 +7,9 @@ output:
 
 # Metrics for E. coli K12 data
 
-
+## MultiQC reports:
+* [AGRF_CAGRF22029764_HJK2GDSX3 MultiQC pre-duplex](AGRF_CAGRF22029764_HJK2GDSX3_multiqc/multiqc_report.html)
+* [AGRF_CAGRF22029764_HJK2GDSX3 MultiQC duplex](AGRF_CAGRF22029764_HJK2GDSX3_multiqc/multiqc_report_consensus.html)
 
 ```{r setup, include=FALSE}
 DOCNAME = "Compare MGI with Illumina"
@@ -38,11 +40,13 @@ library(Rsamtools)
 library(GenomicRanges)
 library(seqinr)
 library(parallel)
+library(readxl)
 ```
 
 
 ```{r source}
 source(here('code/load_data.R'))
+source(here('code/plot.R'))
 source(here('code/efficiency_nanoseq_functions.R'))
 ```
 
@@ -62,6 +66,7 @@ rinfo_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/read_info')
 markdup_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/mark_duplicates')
 qualimap_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/qualimap')
 qualimap_cons_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/consensus/qualimap')
+metadata_file <- here('data/metadata/NovaSeq data E coli.xlsx')
 ```
 
 
@@ -95,13 +100,25 @@ metrics$duplicate_rate <- as.numeric(mdup)
 metrics$duplex_coverage_ratio <- qmap_cov$coverage / qmap_cons_cov$coverage
 metrics$duplex_coverage_ratio[qmap_cons_cov$coverage < 1] <- 0 # fix when < 1 duplex cov
 metrics$sample <- sample_names
+
+# load metadata
+metadata <- read_excel(metadata_file)
+metadata$`sample name` <- gsub('_', '-', metadata$`sample name`)
+
+# prepare for plotting
+mm <- data.frame(melt(metrics))
+mm$protocol <- 'NanoSeq'
+mm$protocol[grep('xGEN', mm$sample)] <- 'xGen'
+mm$sample <- gsub('-HJK2GDSX3', '', mm$sample)
+
+mm <- inner_join(mm, metadata, by=c('sample' = 'sample name'))
+colnames(mm)[2] <- 'metric'
+mm$nuclease <- paste(mm$`Mung bean unit`, mm$`S1 unit`, sep='+')
 ```
 
 ## Metric comparison plots
 
 ```{r plot_metrics}
-mm <- data.frame(melt(metrics))
-
 metrics_to_plot <- as.character(mm$variable) %>% unique()
 for(metric in metrics_to_plot) {
     p <- ggplot(mm[mm$variable == metric,], aes(sample, value)) +
@@ -112,3 +129,50 @@ for(metric in metrics_to_plot) {
     show(p)
 }
 ```
+
+
+```{r comparisons}
+# duplicate rate
+plot_metric_boxplot(mm, 'protocol', 'duplicate_rate', 'Duplicate rate (line = optimal)') +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
+    geom_hline(yintercept = 0.81)
+
+plot_metric_boxplot(mm, 'nuclease', 'duplicate_rate', 'Duplicate rate (line = optimal)') +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
+    geom_hline(yintercept = 0.81)
+
+# efficiency
+plot_metric_boxplot(mm, 'protocol', 'efficiency', 'Efficiency (line = optimal)') +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
+    geom_hline(yintercept = 0.07) 
+
+plot_metric_boxplot(mm, 'nuclease', 'efficiency', 'Efficiency (line = optimal)') +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
+    geom_hline(yintercept = 0.07) 
+
+# drop out rate
+plot_metric_boxplot(mm, 'protocol', 'drop_out_rate', 'Strand drop-out fraction (lines = optimal range)') +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
+    geom_hline(yintercept = c(0.1, 0.3))
+
+plot_metric_boxplot(mm, 'nuclease', 'drop_out_rate', 'Strand drop-out fraction (lines = optimal range)') +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
+    geom_hline(yintercept = c(0.1, 0.3))
+
+# GC deviation between strands
+plot_metric_boxplot(mm, 'protocol', 'gc_deviation', 'GC deviation (both strands vs. one)') +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease))
+
+plot_metric_boxplot(mm, 'nuclease', 'gc_deviation', 'GC deviation (both strands vs. one)') +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol))
+
+# duplex coverage ratio
+plot_metric_boxplot(mm, 'protocol', 'duplex_coverage_ratio', 'Duplex coverage ratio (total cov / duplex cov)') +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
+    geom_hline(yintercept = 30)
+
+plot_metric_boxplot(mm, 'nuclease', 'duplex_coverage_ratio', 'Duplex coverage ratio (total cov / duplex cov)') +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
+    geom_hline(yintercept = 30)
+```
+
