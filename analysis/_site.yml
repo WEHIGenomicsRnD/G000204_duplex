@@ -7,8 +7,10 @@ navbar:
     href: index.html
   - text: Model
     href: model.html
-  - text: "E coli results"
+  - text: "E coli BL21 results"
     href: ecoli.html
+  - text: "E coli K12 results"
+    href: ecoli_K12.html
   - text: "Illumina vs. MGI"
     href: compare_MGI_Illumina.html
   - text: License

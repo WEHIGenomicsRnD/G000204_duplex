@@ -1,3 +1,5 @@
+source(here('code/efficiency_nanoseq_functions.R'))
+
 load_data <- function(fdir, pattern, samples, read_func=read.delim) {
     df <- list.files(
         fdir,
@@ -79,10 +81,10 @@ load_nanoseq_stats <- function(nanoseq_dir) {
 
 load_rbs_data <- function(rinfo_dir) {
     rbs <- list.files(
-        rinfo_dir,
-        full.names = TRUE,
-        recursive = TRUE,
-        pattern = 'txt') %>%
+            rinfo_dir,
+            full.names = TRUE,
+            recursive = TRUE,
+            pattern = '\\.txt.gz') %>%
         lapply(., fread) %>%
         lapply(., get_rbs)
 
@@ -115,4 +117,18 @@ load_markdup_data <- function(markdup_dir, sample_names) {
     mdup <- mdup %>% lapply(., function(x){x$PERCENT_DUPLICATION}) %>% unlist()
 
     return(mdup)
+}
+
+get_qmap_coverage <- function(qualimap_dir, sample_names) {
+    qmap <- load_data(qualimap_dir, 'genome_results.txt', sample_names)
+    qmap <- qmap[qmap$BamQC.report %like% 'mean cov',]
+    qmap$coverage <-
+        str_split(qmap$BamQC.report, ' = ') %>%
+        lapply(., last) %>%
+        unlist() %>%
+        gsub('X|,', '', .) %>%
+        lapply(., as.numeric) %>%
+        unlist()
+    qmap <- qmap[,c('Sample', 'coverage')]
+    return(qmap)
 }

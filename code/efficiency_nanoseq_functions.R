@@ -12,6 +12,29 @@ calculate_metrics <- function(rbs) {
     metrics$efficiency <- lapply(rbs, calculate_efficiency) %>% unlist()
     metrics$drop_out_rate <- lapply(rbs, calculate_missed_fraction) %>% unlist()
     metrics$gc_deviation <- lapply(rbs, calculate_gc) %>% unlist()
+    return(metrics)
+}
+
+calculate_metrics_single <- function(rbs) {
+    metrics <- NULL
+    metrics$frac_singletons <- calculate_singletons(rbs)
+    metrics$efficiency <- calculate_efficiency(rbs)
+    metrics$drop_out_rate <- calculate_missed_fraction(rbs)
+    metrics$gc_deviation <- calculate_gc(rbs)
+    metrics <- data.frame(metrics)
+    return(metrics)
+}
+
+calc_metrics_new_rbs <- function(rinfo_dir, pattern="\\.txt.gz", cores=8) {
+    metrics <-
+        list.files(
+            rinfo_dir,
+            full.names = TRUE,
+            recursive = TRUE,
+            pattern = pattern
+        ) %>%
+        mclapply(., fread, mc.cores=cores) %>%
+        mclapply(., calculate_metrics_single, mc.cores=cores)
 
     return(metrics)
 }
@@ -56,15 +79,28 @@ calculate_missed_fraction <- function(rbs) {
 # from cancerit/NanoSeq documentation:
 # The GC content of RBs with both strands and with just one strand.
 # I return the difference between the two values.
-calculate_gc <- function(rbs, sample_n = 10000) {
+calculate_gc <- function(rbs, sample_n = 10000, max_gap = 100000) {
     rbs <- data.frame(rbs)
     colnames(rbs)[5:6] = c('plus', 'minus')
 
+    # remove records with mate positions exceeding genome max
     rbs$end <- rbs$mpos + rlen - skips
-    rbs$end[rbs$end > genome_max] <- genome_max
-    rbs <- rbs[rbs$pos < rbs$end,]
+    if(length(genome_max) > 1) {
+        for(i in 1:length(genome_max)) {
+            chrom <- names(genome_max[i])
+            chrom_max <- genome_max[i]
+            rbs <- rbs[!(rbs$chrom == chrom & rbs$end > chrom_max),]
+        }
+    } else {
+        rbs <- rbs[!rbs$end > genome_max,]
+    }
 
-    rbs <- rbs[rbs$pos != 0,] # scanFa raises errors on these records
+    # remove records with large distances between mates
+    rbs <- rbs[rbs$end - rbs$pos < max_gap,]
+
+    # remove zero-records
+    rbs <- rbs[rbs$pos != 0,]
+
     rbs_both <- rbs[which(rbs$minus + rbs$plus >= 4 & rbs$minus >= 2 & rbs$plus >= 2),]
     rbs_both <- rbs_both[sample(1:nrow(rbs_both), min(sample_n, nrow(rbs_both))),]
 
