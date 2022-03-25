@@ -119,9 +119,9 @@ mm$nuclease <- paste(mm$`Mung bean unit`, mm$`S1 unit`, sep='+')
 ## Metric comparison plots
 
 ```{r plot_metrics}
-metrics_to_plot <- as.character(mm$variable) %>% unique()
+metrics_to_plot <- as.character(mm$metric) %>% unique()
 for(metric in metrics_to_plot) {
-    p <- ggplot(mm[mm$variable == metric,], aes(sample, value)) +
+    p <- ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         geom_histogram(stat = 'identity', position = 'dodge') +
         theme_bw() +
         coord_flip() +
