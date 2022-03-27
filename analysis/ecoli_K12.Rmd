@@ -129,9 +129,16 @@ for(metric in metrics_to_plot) {
     show(p)
 }
 ```
-
+Compare protocols and nucleases directly.
 
 ```{r comparisons}
+# singletons
+plot_metric_boxplot(mm, 'protocol', 'frac_singletons', 'Fraction of singleton reads') +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease))
+
+plot_metric_boxplot(mm, 'nuclease', 'frac_singletons', 'Fraction of singleton reads') +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) 
+
 # duplicate rate
 plot_metric_boxplot(mm, 'protocol', 'duplicate_rate', 'Duplicate rate (line = optimal)') +
     geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
@@ -174,5 +181,18 @@ plot_metric_boxplot(mm, 'protocol', 'duplex_coverage_ratio', 'Duplex coverage ra
 plot_metric_boxplot(mm, 'nuclease', 'duplex_coverage_ratio', 'Duplex coverage ratio (total cov / duplex cov)') +
     geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
     geom_hline(yintercept = 30)
+```
+Facet boxplots by nuclease and protocol to show overall results.
+
+```{r fig.width=9, fig.height=6}
+ggplot(mm, aes(nuclease, value)) + 
+    geom_boxplot() +
+    theme_bw() +
+    facet_wrap(~metric, scales = 'free')
+
+ggplot(mm, aes(protocol, value)) + 
+    geom_boxplot() +
+    theme_bw() +
+    facet_wrap(~metric, scales = 'free')
 ```
 
