@@ -11,7 +11,7 @@ plot_metric <- function(tsvs, metric, title) {
 plot_metric_boxplot <- function(tsvs, x, metric, title) {
     tmp <- data.frame(tsvs)[grep(metric, tsvs$metric),]
     p <- ggplot(tmp, aes_string(x, 'value')) +
-        geom_boxplot() +
+        geom_boxplot(outlier.shape = NA) +
         theme_bw() +
         ggtitle(title)
     return(p)
