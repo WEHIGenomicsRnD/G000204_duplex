@@ -41,6 +41,7 @@ library(GenomicRanges)
 library(seqinr)
 library(parallel)
 library(readxl)
+library(patchwork)
 ```
 
 
@@ -70,7 +71,7 @@ metadata_file <- here('data/metadata/NovaSeq data E coli.xlsx')
 ```
 
 
-```{r calculate_metrics}
+```{r calculate_metrics, cache=TRUE}
 sample_names <- list.files(rinfo_dir) %>%
                 str_split('\\.txt.gz') %>%
                 lapply(., dplyr::first) %>%
@@ -101,6 +102,10 @@ metrics$duplex_coverage_ratio <- qmap_cov$coverage / qmap_cons_cov$coverage
 metrics$duplex_coverage_ratio[qmap_cons_cov$coverage < 1] <- 0 # fix when < 1 duplex cov
 metrics$sample <- sample_names
 
+# cache metrics object
+# saveRDS(metrics, file = 'metrics.rds')
+# metrics <- readRDS(here('metrics.rds'))
+
 # load metadata
 metadata <- read_excel(metadata_file)
 metadata$`sample name` <- gsub('_', '-', metadata$`sample name`)
@@ -118,81 +123,199 @@ mm$nuclease <- paste(mm$`Mung bean unit`, mm$`S1 unit`, sep='+')
 
 ## Metric comparison plots
 
-```{r plot_metrics}
-metrics_to_plot <- as.character(mm$metric) %>% unique()
-for(metric in metrics_to_plot) {
-    p <- ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+### Duplicate rate
+
+Fraction of duplicate reads calculated by [Picard's MarkDuplicates](https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-MarkDuplicates-Picard-). This is based on barcode-aware aligned duplicates mapping to the same 5' positions for both read pairs. The [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq) states the optimal empirical duplicate rate is 75-76\% (marked in the plot).
+
+```{r duplicate_rate}
+metric <- 'duplicate_rate'
+ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+        geom_histogram(stat = 'identity', position = 'dodge') +
+        theme_bw() +
+        coord_flip() +
+        geom_hline(yintercept = c(0.75, 0.76), alpha = 0.4)  +
+        ggtitle(metric)
+```
+
+### Fraction of single-read families
+
+Shows the number of single-read families divided by the total number of families. As suggested by [Stoler et al.](https://doi.org/10.1186/s13059-016-1039-4), this metric can server as a proxy for error rate, as (uncorrected) barcode mismatches will manifest as single-read familites. The lower the fraction of singletons, the better.
+
+```{r singletons}
+metric <- 'frac_singletons'
+ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         geom_histogram(stat = 'identity', position = 'dodge') +
         theme_bw() +
         coord_flip() +
         ggtitle(metric)
-    show(p)
-}
 ```
+
+### Drop-out rate
+
+This is the same calculation as F-EFF in the [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq):
+
+"This shows the fraction of read bundles missing one of the two original strands beyond what would be expected under random sampling (assuming a binomial process). Good values are between 0.10-0.30, and larger values are likely due to DNA damage such as modified bases or internal nicks that prevent amplification of one of the two strands. Larger values do not impact the quality of the results, just reduce the efficiency of the protocol."
+
+This is similar to the singleton fraction, but taking into account loss of pairs due to sampling. The optimal range is shown by the lines.
+
+```{r drop_out_rate}
+metric <- 'drop_out_rate'
+ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+        geom_histogram(stat = 'identity', position = 'dodge') +
+        theme_bw() +
+        coord_flip() +
+        geom_hline(yintercept = c(0.1, 0.3), alpha = 0.4)  +
+        ggtitle(metric)
+```
+
+
+### Efficiency
+
+Efficiency is the number of duplex bases divided by the number of sequenced bases. According the [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq), this value is maximised at ~0.07 when duplicate rates and strand drop-outs are optimal.
+
+```{r efficiency}
+metric <- 'efficiency'
+ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+        geom_histogram(stat = 'identity', position = 'dodge') +
+        theme_bw() +
+        coord_flip() +
+        geom_hline(yintercept = c(0.07), alpha = 0.4)  +
+        ggtitle(metric)
+```
+
+### GC deviation
+
+GC deviation is the absolute difference between `GC_BOTH` and `GC_SINGLE` calculated by the  [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq). The lower this deviation, the better.
+
+"GC_BOTH and GC_SINGLE: the GC content of RBs with both strands and with just one strand. The two values should be similar between them and similar to the genome average. If there are large deviations that is possibly due to biases during PCR amplification. If GC_BOTH is substantially larger than GC_SINGLE, DNA denaturation before dilution may have taken place."
+
+
+```{r gc_deviation}
+metric <- 'gc_deviation'
+ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+        geom_histogram(stat = 'identity', position = 'dodge') +
+        theme_bw() +
+        coord_flip() +
+        geom_hline(yintercept = c(0.07), alpha = 0.4)  +
+        ggtitle(metric)
+```
+
+
+### Duplex Coverage ratio
+
+The mean sequence (pre-duplex) coverage divided by mean duplex coverage. Indicates the yield of how much duplex coverage we get at each sample's sequence coverage. [Abascal et al.](https://doi.org/10.1038/s41586-021-03477-4) report that their yield was approximately 30x (marked on the plot).
+
+
+```{r duplex_coverage_ratio}
+metric <- 'duplex_coverage_ratio'
+ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+        geom_histogram(stat = 'identity', position = 'dodge') +
+        theme_bw() +
+        coord_flip() +
+        geom_hline(yintercept = 30, alpha = 0.4)  +
+        ggtitle(metric)
+```
+
+## Compare metrics side-by-side
+
 Compare protocols and nucleases directly.
 
-```{r comparisons}
-# singletons
-plot_metric_boxplot(mm, 'protocol', 'frac_singletons', 'Fraction of singleton reads') +
-    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease))
-
-plot_metric_boxplot(mm, 'nuclease', 'frac_singletons', 'Fraction of singleton reads') +
-    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) 
-
+```{r metrics_comp, fid.width=20, fig.height=4}
 # duplicate rate
-plot_metric_boxplot(mm, 'protocol', 'duplicate_rate', 'Duplicate rate (line = optimal)') +
+p1 <- plot_metric_boxplot(mm, 'protocol', 'duplicate_rate', 'Duplicate rate (line = optimal)') +
     geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
-    geom_hline(yintercept = 0.81)
+    geom_hline(yintercept = 0.81) +
+    theme(legend.position = 'bottom')
 
-plot_metric_boxplot(mm, 'nuclease', 'duplicate_rate', 'Duplicate rate (line = optimal)') +
+p2 <- plot_metric_boxplot(mm, 'nuclease', 'duplicate_rate', 'Duplicate rate (line = optimal)') +
     geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
-    geom_hline(yintercept = 0.81)
+    geom_hline(yintercept = 0.81) +
+    theme(legend.position = 'bottom')
 
-# efficiency
-plot_metric_boxplot(mm, 'protocol', 'efficiency', 'Efficiency (line = optimal)') +
+show(p1 + p2)
+
+# singletons
+p1 <- plot_metric_boxplot(mm, 'protocol', 'frac_singletons', 'Fraction of singleton reads') +
     geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
-    geom_hline(yintercept = 0.07) 
+    theme(legend.position = 'bottom') +
+    ylim(c(0,1))
 
-plot_metric_boxplot(mm, 'nuclease', 'efficiency', 'Efficiency (line = optimal)') +
-    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
-    geom_hline(yintercept = 0.07) 
+p2 <- plot_metric_boxplot(mm, 'nuclease', 'frac_singletons', 'Fraction of singleton reads') +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol))  +
+    theme(legend.position = 'bottom') +
+    ylim(c(0,1))
+
+show(p1 + p2)
 
 # drop out rate
-plot_metric_boxplot(mm, 'protocol', 'drop_out_rate', 'Strand drop-out fraction (lines = optimal range)') +
+p1 <- plot_metric_boxplot(mm, 'protocol', 'drop_out_rate', 'Strand drop-out fraction (lines = optimal range)') +
     geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
-    geom_hline(yintercept = c(0.1, 0.3))
+    geom_hline(yintercept = c(0.1, 0.3)) +
+    theme(legend.position = 'bottom') +
+    ylim(c(0,1))
 
-plot_metric_boxplot(mm, 'nuclease', 'drop_out_rate', 'Strand drop-out fraction (lines = optimal range)') +
+
+p2 <- plot_metric_boxplot(mm, 'nuclease', 'drop_out_rate', 'Strand drop-out fraction (lines = optimal range)') +
     geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
-    geom_hline(yintercept = c(0.1, 0.3))
+    geom_hline(yintercept = c(0.1, 0.3)) +
+    theme(legend.position = 'bottom') +
+    ylim(c(0,1))
+
+show(p1 + p2)
+
+# efficiency
+p1 <- plot_metric_boxplot(mm, 'protocol', 'efficiency', 'Efficiency (line = optimal)') +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
+    geom_hline(yintercept = 0.07) +
+    theme(legend.position = 'bottom')
+
+p2 <- plot_metric_boxplot(mm, 'nuclease', 'efficiency', 'Efficiency (line = optimal)') +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
+    geom_hline(yintercept = 0.07) +
+    theme(legend.position = 'bottom')
+
+show(p1 + p2)
 
 # GC deviation between strands
-plot_metric_boxplot(mm, 'protocol', 'gc_deviation', 'GC deviation (both strands vs. one)') +
-    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease))
+p1 <- plot_metric_boxplot(mm, 'protocol', 'gc_deviation', 'GC deviation (both strands vs. one)') +
+    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
+    theme(legend.position = 'bottom')
 
-plot_metric_boxplot(mm, 'nuclease', 'gc_deviation', 'GC deviation (both strands vs. one)') +
-    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol))
+p2 <- plot_metric_boxplot(mm, 'nuclease', 'gc_deviation', 'GC deviation (both strands vs. one)') +
+    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
+    theme(legend.position = 'bottom')
+
+show(p1 + p2)
 
 # duplex coverage ratio
-plot_metric_boxplot(mm, 'protocol', 'duplex_coverage_ratio', 'Duplex coverage ratio (total cov / duplex cov)') +
+p1 <- plot_metric_boxplot(mm, 'protocol', 'duplex_coverage_ratio', 'Duplex coverage ratio (total cov / duplex cov)') +
     geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
-    geom_hline(yintercept = 30)
+    geom_hline(yintercept = 30) +
+    theme(legend.position = 'bottom')
 
-plot_metric_boxplot(mm, 'nuclease', 'duplex_coverage_ratio', 'Duplex coverage ratio (total cov / duplex cov)') +
+p2 <- plot_metric_boxplot(mm, 'nuclease', 'duplex_coverage_ratio', 'Duplex coverage ratio (total cov / duplex cov)') +
     geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
-    geom_hline(yintercept = 30)
+    geom_hline(yintercept = 30) +
+    theme(legend.position = 'bottom')
+
+show(p1 + p2)
 ```
+
+## Facet summary plots
+
 Facet boxplots by nuclease and protocol to show overall results.
 
 ```{r fig.width=9, fig.height=6}
-ggplot(mm, aes(nuclease, value)) + 
-    geom_boxplot() +
-    theme_bw() +
-    facet_wrap(~metric, scales = 'free')
-
 ggplot(mm, aes(protocol, value)) + 
     geom_boxplot() +
     theme_bw() +
-    facet_wrap(~metric, scales = 'free')
+    facet_wrap(~metric, scales = 'free') +
+    ggtitle('by protocol')
+
+ggplot(mm, aes(nuclease, value)) + 
+    geom_boxplot() +
+    theme_bw() +
+    facet_wrap(~metric, scales = 'free') +
+    ggtitle('by nuclease')
 ```
 
