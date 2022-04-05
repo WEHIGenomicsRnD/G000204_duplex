@@ -14,7 +14,7 @@ output:
 ```{r setup, include=FALSE}
 DOCNAME = "Compare MGI with Illumina"
 knitr::opts_chunk$set(autodep        = TRUE,
-                      cache          = FALSE,
+                      cache          = TRUE,
                       cache.path     = paste0("cache/", DOCNAME, "/"),
                       cache.comments = FALSE,
                       cache.lazy     = FALSE,
@@ -318,4 +318,47 @@ ggplot(mm, aes(nuclease, value)) +
     facet_wrap(~metric, scales = 'free') +
     ggtitle('by nuclease')
 ```
+
+## Statistical test results by protocol
+
+For each metric, take the average of each replicate and perform a two-sided, unpaired T-test between protocols.
+
+```{r tests_by_protocol}
+stats <- NULL
+metric_names <- unique(mm$metric) %>% as.character()
+for(metric_name in metric_names) {
+    nano <- mm[mm$metric == metric_name & mm$protocol == 'NanoSeq',]
+    xgen <- mm[mm$metric == metric_name & mm$protocol == 'xGen',]
+    nano_vals <- data.table(nano)[, mean(value), by = nuclease]$V1
+    xgen_vals <- data.table(xgen)[, mean(value), by = nuclease]$V1
+    wtest <- t.test(nano_vals, xgen_vals)
+    stats <- rbind(stats,
+                   data.frame(metric = metric_name, pvalue = wtest$p.value))
+}
+stats$significant <- stats$pvalue < 0.05
+print(stats)
+```
+
+## Two-way ANOVA analysis
+
+We consider a two-way ANOVA, modelling the protocol, Mung Bean Unit and S1 Unit variables, as well as the interaction effect between the units and the protocol.
+
+```{r tests_by_nuclease}
+stats <- NULL
+metric_names <- unique(mm$metric) %>% as.character()
+for(metric_name in metric_names) {
+    x <- mm[mm$metric == metric_name,]
+    x$MungBeanUnit <- as.factor(x$`Mung bean unit`)
+    x$S1Unit <- as.factor(x$`S1 unit`)
+    x <- x[,c('MungBeanUnit', 'S1Unit', 'protocol', 'nuclease', 'value')]
+    x_aov <- aov(value ~ MungBeanUnit * protocol + S1Unit * protocol, data = x) %>% summary() %>% dplyr::first()
+    stats <- rbind(stats,
+                   data.frame(metric = metric_name,
+                              variable = rownames(x_aov)[1:5],
+                              pvalue = x_aov[['Pr(>F)']][1:5]))
+}
+stats$significant <- stats$pvalue < 0.05
+print(stats)
+```
+
 
