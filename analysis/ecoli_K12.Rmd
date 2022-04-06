@@ -42,6 +42,7 @@ library(seqinr)
 library(parallel)
 library(readxl)
 library(patchwork)
+library(RColorBrewer)
 ```
 
 
@@ -71,7 +72,7 @@ metadata_file <- here('data/metadata/NovaSeq data E coli.xlsx')
 ```
 
 
-```{r calculate_metrics, cache=TRUE}
+```{r calculate_metrics, cache=FALSE}
 sample_names <- list.files(rinfo_dir) %>%
                 str_split('\\.txt.gz') %>%
                 lapply(., dplyr::first) %>%
@@ -100,7 +101,7 @@ metrics <- c(metrics_nano, metrics_xgen) %>% bind_rows()
 metrics$duplicate_rate <- as.numeric(mdup)
 metrics$duplex_coverage_ratio <- qmap_cov$coverage / qmap_cons_cov$coverage
 metrics$duplex_coverage_ratio[qmap_cons_cov$coverage < 1] <- 0 # fix when < 1 duplex cov
-metrics$sample <- sample_names
+metrics$sample <- gsub('-HJK2GDSX3', '', sample_names)
 
 # cache metrics object
 # saveRDS(metrics, file = 'metrics.rds')
@@ -114,7 +115,6 @@ metadata$`sample name` <- gsub('_', '-', metadata$`sample name`)
 mm <- data.frame(melt(metrics))
 mm$protocol <- 'NanoSeq'
 mm$protocol[grep('xGEN', mm$sample)] <- 'xGen'
-mm$sample <- gsub('-HJK2GDSX3', '', mm$sample)
 
 mm <- inner_join(mm, metadata, by=c('sample' = 'sample name'))
 colnames(mm)[2] <- 'metric'
@@ -139,7 +139,7 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
 
 ### Fraction of single-read families
 
-Shows the number of single-read families divided by the total number of families. As suggested by [Stoler et al.](https://doi.org/10.1186/s13059-016-1039-4), this metric can server as a proxy for error rate, as (uncorrected) barcode mismatches will manifest as single-read familites. The lower the fraction of singletons, the better.
+Shows the number of single-read families divided by the total number of reads. As suggested by [Stoler et al. 2016](https://doi.org/10.1186/s13059-016-1039-4), this metric can server as a proxy for error rate, as (uncorrected) barcode mismatches will manifest as single-read families. The lower the fraction of singletons, the better.
 
 ```{r singletons}
 metric <- 'frac_singletons'
@@ -359,6 +359,50 @@ for(metric_name in metric_names) {
 }
 stats$significant <- stats$pvalue < 0.05
 print(stats)
+```
+
+## Relationships between variables
+
+```{r relationships, fig.width=10, fig.height=8}
+mm$replicate <- str_split(mm$sample, 'Rep') %>% lapply(., dplyr::last) %>% unlist() %>% as.numeric()
+mm$sample <- str_split(mm$sample, 'Rep') %>% lapply(., dplyr::first) %>% unlist()
+
+mm <- mm[,c('sample', 'metric', 'value', 'protocol', 'nuclease', 'replicate')]
+dm <- reshape2::dcast(mm, sample + protocol + nuclease + replicate ~ metric)
+
+cols <- c(brewer.pal(5, 'Greens')[2:5],
+          brewer.pal(6, 'Blues')[2:6])
+names(cols) <- as.factor(dm$sample) %>% levels()
+
+ggplot(dm, aes(frac_singletons, drop_out_rate, colour=sample)) +
+    geom_point() +
+    theme_bw() +
+    scale_colour_manual(values = cols) +
+    ggtitle('Singletons vs. drop-out rate')
+
+ggplot(dm, aes(efficiency, duplicate_rate, colour=sample)) +
+    geom_point() +
+    theme_bw() +
+    scale_colour_manual(values = cols) +
+    ggtitle('Efficiency vs. duplicate rate')
+
+ggplot(dm, aes(efficiency, drop_out_rate, colour=sample)) +
+    geom_point() +
+    theme_bw() +
+    scale_colour_manual(values = cols) +
+    ggtitle('Efficiency vs. drop-out rate')
+
+ggplot(dm, aes(efficiency, duplex_coverage_ratio, colour=sample)) +
+    geom_point() +
+    theme_bw() +
+    scale_colour_manual(values = cols) +
+    ggtitle('Efficiency vs. duplex coverage ratio')
+
+ggplot(dm, aes(duplicate_rate, duplex_coverage_ratio, colour=sample)) +
+    geom_point() +
+    theme_bw() +
+    scale_colour_manual(values = cols) +
+    ggtitle('Duplicate rate vs. duplex coverage ratio')
 ```
 
 
