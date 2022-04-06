@@ -1,7 +1,8 @@
 # Efficiency metric calculations
 calculate_singletons <- function(rbs) {
+    total_reads <- sum(rbs$x, rbs$y)
     singletons <- sum(rbs$x == 1 & rbs$y == 0 | rbs$x == 0 & rbs$y == 1)
-    frac_singletons <- singletons / nrow(rbs)
+    frac_singletons <- singletons / total_reads
     return(frac_singletons)
 }
 
