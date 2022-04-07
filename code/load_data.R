@@ -22,6 +22,18 @@ load_data <- function(fdir, pattern, samples, read_func=read.delim) {
     return(df)
 }
 
+
+load_variants <- function(fdir) {
+    vars <- list.files(
+        fdir,
+        full.names = TRUE,
+        recursive = TRUE,
+        pattern = '.vcf') %>%
+        lapply(., read.vcfR, verbose = FALSE)
+
+    return(vars)
+}
+
 extract_std <- function(genome_results) {
     std <- genome_results[grep('std', genome_results$BamQC.report),] %>%
         strsplit(., split='=') %>%
