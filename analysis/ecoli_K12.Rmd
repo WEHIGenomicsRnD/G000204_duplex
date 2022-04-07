@@ -43,6 +43,8 @@ library(parallel)
 library(readxl)
 library(patchwork)
 library(RColorBrewer)
+library(UpSetR)
+library(vcfR)
 ```
 
 
@@ -69,6 +71,7 @@ markdup_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/mark_duplicates'
 qualimap_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/qualimap')
 qualimap_cons_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/consensus/qualimap')
 metadata_file <- here('data/metadata/NovaSeq data E coli.xlsx')
+variant_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/variants')
 ```
 
 
@@ -81,6 +84,9 @@ sample_names <- list.files(rinfo_dir) %>%
                 lapply(., head, 2) %>%
                 lapply(., paste, collapse='-') %>%
                 unlist()
+
+# load variant data
+vars <- load_variants(variant_dir)
 
 # load and fetch duplicate rate from MarkDuplicates output
 mdup <- load_markdup_data(markdup_dir, sample_names)
@@ -405,4 +411,29 @@ ggplot(dm, aes(duplicate_rate, duplex_coverage_ratio, colour=sample)) +
     ggtitle('Duplicate rate vs. duplex coverage ratio')
 ```
 
+## Variant calls
+
+Upset plot showing duplex variant calls. 
+
+```{r variants}
+var_df <- NULL
+for (i in 1:length(vars)) {
+    svars <- vars[[i]]@fix %>% data.frame()
+    if (nrow(svars) > 0) {
+        svars$sample <- sample_names[i]
+        var_df <- rbind(var_df, svars) 
+    }
+}
+var_df$id <- paste(var_df$CHROM, var_df$POS, sep = '_')
+
+ulist <- NULL
+for(sample in sample_names) {
+    ids <- var_df[var_df$sample %in% sample,]$id
+    if (length(ids) > 0) {
+        ulist[[sample]] <- ids
+    }
+}
+
+upset(fromList(ulist), order.by='freq', nsets=8)
+```
 
