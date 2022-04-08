@@ -413,7 +413,7 @@ ggplot(dm, aes(duplicate_rate, duplex_coverage_ratio, colour=sample)) +
 
 ## Variant calls
 
-Upset plot showing duplex variant calls. 
+Upset plot showing duplex variant calls. Variants were called in areas with at least 4x coverage with at least 2 supporting reads and a VAF of $\geq2$.
 
 ```{r variants}
 var_df <- NULL
