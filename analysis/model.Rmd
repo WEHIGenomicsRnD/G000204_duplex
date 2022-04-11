@@ -157,3 +157,33 @@ ggplot(ccov, aes(d, v)) +
     theme_bw() +
     geom_hline(yintercept=0.01, alpha=0.4)
 ```
+## Mixture experiments
+
+How much total coverage will we need, in order to detect a mixture of $X\%?$ We define this as successfully calling at least 50\% of the variants at VAF $v = \{0.1, 0.01, 0.001\}$ with at least one supporting duplex read. We assume our duplex yield is 28 (i.e., 28x coverage yields 1x duplex coverage).
+
+Our binomial calculation takes the form of:
+
+$P(Bin(n, v)) = 0)$ = 0.5 where $n =$ duplex coverage.
+
+```{r mixture_variant_calling}
+df <- NULL
+min_reads <- 1
+duplex_yield <- 28
+duplex_seq_range <- seq(1, 10000, 1)
+fraction_we_can_miss <- 0.5
+
+for(vaf in c(0.1, 0.01, 0.001)) {
+    tmp <- data.frame(
+        pval=pbinom(min_reads - 1, duplex_seq_range, vaf),
+        vaf=vaf,
+        duplex_cov=duplex_seq_range,
+        total_cov=duplex_seq_range * duplex_yield
+    )
+    tmp <- tmp[tmp$pval < fraction_we_can_miss,]
+    tmp <- tmp[tmp$pval == max(tmp$pval),]
+    df <- rbind(df, tmp)
+}
+
+print(df)
+```
+
