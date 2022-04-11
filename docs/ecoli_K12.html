@@ -394,7 +394,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-04-08
+<strong>Last updated:</strong> 2022-04-11
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -485,16 +485,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreebffbb7e47a044808e3459c496c93f7423760ba2dtargetblankbffbb7ea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/mcmero/rare-mutation-detection/tree/bffbb7e47a044808e3459c496c93f7423760ba2d" target="_blank">bffbb7e</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree6f2c2bbbb905f8c6561f46c3b8a8a015551320d9targetblank6f2c2bba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/mcmero/rare-mutation-detection/tree/6f2c2bbbb905f8c6561f46c3b8a8a015551320d9" target="_blank">6f2c2bb</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreebffbb7e47a044808e3459c496c93f7423760ba2dtargetblankbffbb7ea" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree6f2c2bbbb905f8c6561f46c3b8a8a015551320d9targetblank6f2c2bba" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/mcmero/rare-mutation-detection/tree/bffbb7e47a044808e3459c496c93f7423760ba2d" target="_blank">bffbb7e</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/mcmero/rare-mutation-detection/tree/6f2c2bbbb905f8c6561f46c3b8a8a015551320d9" target="_blank">6f2c2bb</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -519,6 +519,9 @@ Untracked files:
     Untracked:  data/
     Untracked:  metrics.rds
     Untracked:  prototype_code/
+
+Unstaged changes:
+    Modified:   analysis/model.Rmd
 
 </code></pre>
 <p>
@@ -557,6 +560,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/6f2c2bbbb905f8c6561f46c3b8a8a015551320d9/analysis/ecoli_K12.Rmd" target="_blank">6f2c2bb</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-04-11
+</td>
+<td>
+Add family stats, boxplot fixes
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/a2f0a4a07b138167d30f1fb7c80004ee4f59937a/docs/ecoli_K12.html" target="_blank">a2f0a4a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-04-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -976,7 +1013,7 @@ metrics$duplex_coverage_ratio[qmap_cons_cov$coverage &lt; 1] &lt;- 0 # fix when 
 metrics$sample &lt;- gsub(&#39;-HJK2GDSX3&#39;, &#39;&#39;, sample_names)
 
 # cache metrics object
-# saveRDS(metrics, file = &#39;metrics.rds&#39;)
+# saveRDS(metrics, file = here(&#39;metrics.rds&#39;))
 # metrics &lt;- readRDS(here(&#39;metrics.rds&#39;))
 
 # load metadata
@@ -1065,8 +1102,8 @@ Marek Cmero
 </div>
 </div>
 </div>
-<div id="fraction-of-single-read-families" class="section level3">
-<h3>Fraction of single-read families</h3>
+<div id="fraction-of-singleton-reads" class="section level3">
+<h3>Fraction of singleton reads</h3>
 <p>Shows the number of single-read families divided by the total number of reads. As suggested by <a href="https://doi.org/10.1186/s13059-016-1039-4">Stoler et al. 2016</a>, this metric can server as a proxy for error rate, as (uncorrected) barcode mismatches will manifest as single-read families. The lower the fraction of singletons, the better.</p>
 <pre class="r"><code>metric &lt;- &#39;frac_singletons&#39;
 ggplot(mm[mm$metric == metric,], aes(sample, value)) +
@@ -1299,7 +1336,6 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         geom_histogram(stat = &#39;identity&#39;, position = &#39;dodge&#39;) +
         theme_bw() +
         coord_flip() +
-        geom_hline(yintercept = c(0.07), alpha = 0.4)  +
         ggtitle(metric)</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/gc_deviation-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -1324,6 +1360,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a2f0a4a07b138167d30f1fb7c80004ee4f59937a/docs/figure/ecoli_K12.Rmd/gc_deviation-1.png" target="_blank">a2f0a4a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-04-08
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/c246dc2fe2999e98e6daf86e38b31414df507d7e/docs/figure/ecoli_K12.Rmd/gc_deviation-1.png" target="_blank">c246dc2</a>
@@ -1456,22 +1503,52 @@ Marek Cmero
 </div>
 </div>
 </div>
+<div id="family-statistics" class="section level2">
+<h2>Family statistics</h2>
+<p>Comparison of family pair sizes between samples (these are calculated from total reads of paired AB and BA families).</p>
+<pre class="r"><code>ggplot(mm[mm$metric %like% &#39;family&#39;, ], aes(value, sample, colour = metric)) +
+        geom_point() +
+        coord_trans(x=&#39;log2&#39;) +
+        scale_x_continuous(breaks=seq(0, 94, 8)) +
+        theme(axis.text.x = element_text(size=5)) +
+        theme_bw() +
+        ggtitle(&#39;Family pair sizes&#39;)</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/family_sizes-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>The following plot shows:</p>
+<ul>
+<li>families_gt1: number of family pairs where at least one family (AB or BA) has &gt; 1 reads.</li>
+<li>paired_families: number of family pairs where both families (AB and BA) have &gt; 0 reads.</li>
+<li>paired_and_gt1: number of family pairs where both families (AB and BA) have &gt; 1 reads.</li>
+</ul>
+<pre class="r"><code>ggplot(mm[mm$metric %like% &#39;pair|gt1&#39;, ], aes(value, sample, fill = metric)) +
+        geom_bar(stat=&#39;identity&#39;, position=&#39;dodge&#39;) +
+        theme_bw() +
+        ggtitle(&#39;Family statistics&#39;)</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/family_stats-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
 <div id="compare-metrics-side-by-side" class="section level2">
 <h2>Compare metrics side-by-side</h2>
 <p>Compare protocols and nucleases directly.</p>
-<pre class="r"><code># duplicate rate
-p1 &lt;- plot_metric_boxplot(mm, &#39;protocol&#39;, &#39;duplicate_rate&#39;, &#39;Duplicate rate (line = optimal)&#39;) +
-    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
-    geom_hline(yintercept = 0.81) +
-    theme(legend.position = &#39;bottom&#39;)
+<pre class="r"><code>gg_prot &lt;- list(geom_boxplot(outlier.shape = NA),
+               geom_jitter(width = 0.1, size = 2, aes(colour = nuclease, shape = nuclease)),
+               theme_bw(),
+               theme(legend.position = &#39;left&#39;))
+gg_nuc &lt;- list(geom_boxplot(outlier.shape = NA),
+               geom_jitter(width = 0.1, size = 2, aes(colour = protocol, shape = protocol)),
+               theme_bw(),
+               theme(legend.position = &#39;right&#39;))
 
-p2 &lt;- plot_metric_boxplot(mm, &#39;nuclease&#39;, &#39;duplicate_rate&#39;, &#39;Duplicate rate (line = optimal)&#39;) +
-    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
-    geom_hline(yintercept = 0.81) +
-    theme(legend.position = &#39;bottom&#39;)
+# duplicate rate
+metric &lt;- &#39;duplicate_rate&#39;
+p1 &lt;- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
+        gg_prot + geom_hline(yintercept = 0.81) +
+        ggtitle(&#39;Duplicate rate (line = optimal)&#39;)
 
+p2 &lt;- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
+        gg_nuc + geom_hline(yintercept = 0.81) +
+        ggtitle(&#39;Duplicate rate (line = optimal)&#39;)
 show(p1 + p2)</code></pre>
-<p><img src="figure/ecoli_K12.Rmd/metrics_comp-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/ecoli_K12.Rmd/metrics_comp-1.png" width="960" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-metrics_comp-1">
 Past versions of metrics_comp-1.png
@@ -1532,18 +1609,16 @@ Marek Cmero
 </div>
 </div>
 <pre class="r"><code># singletons
-p1 &lt;- plot_metric_boxplot(mm, &#39;protocol&#39;, &#39;frac_singletons&#39;, &#39;Fraction of singleton reads&#39;) +
-    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
-    theme(legend.position = &#39;bottom&#39;) +
-    ylim(c(0,1))
+metric &lt;- &#39;frac_singletons&#39;
+p1 &lt;- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
+        gg_prot +
+        ggtitle(&#39;Fraction of singleton reads&#39;)
 
-p2 &lt;- plot_metric_boxplot(mm, &#39;nuclease&#39;, &#39;frac_singletons&#39;, &#39;Fraction of singleton reads&#39;) +
-    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol))  +
-    theme(legend.position = &#39;bottom&#39;) +
-    ylim(c(0,1))
-
+p2 &lt;- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
+        gg_nuc + 
+        ggtitle(&#39;Fraction of singleton reads&#39;)
 show(p1 + p2)</code></pre>
-<p><img src="figure/ecoli_K12.Rmd/metrics_comp-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/ecoli_K12.Rmd/metrics_comp-2.png" width="960" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-metrics_comp-2">
 Past versions of metrics_comp-2.png
@@ -1614,22 +1689,17 @@ Marek Cmero
 </table>
 </div>
 </div>
-<pre class="r"><code># drop out rate
-p1 &lt;- plot_metric_boxplot(mm, &#39;protocol&#39;, &#39;drop_out_rate&#39;, &#39;Strand drop-out fraction (lines = optimal range)&#39;) +
-    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
-    geom_hline(yintercept = c(0.1, 0.3)) +
-    theme(legend.position = &#39;bottom&#39;) +
-    ylim(c(0,1))
+<pre class="r"><code># drop-out rate
+metric &lt;- &#39;drop_out_rate&#39;
+p1 &lt;- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
+        gg_prot + geom_hline(yintercept = c(0.1, 0.3)) + ylim(c(0,1)) +
+        ggtitle(&#39;Drop-out fraction\n(lines = optimal range)&#39;)
 
-
-p2 &lt;- plot_metric_boxplot(mm, &#39;nuclease&#39;, &#39;drop_out_rate&#39;, &#39;Strand drop-out fraction (lines = optimal range)&#39;) +
-    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
-    geom_hline(yintercept = c(0.1, 0.3)) +
-    theme(legend.position = &#39;bottom&#39;) +
-    ylim(c(0,1))
-
+p2 &lt;- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
+        gg_nuc + geom_hline(yintercept = c(0.1, 0.3)) + ylim(c(0,1)) +
+        ggtitle(&#39;Drop-out fraction\n(lines = optimal range)&#39;)
 show(p1 + p2)</code></pre>
-<p><img src="figure/ecoli_K12.Rmd/metrics_comp-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/ecoli_K12.Rmd/metrics_comp-3.png" width="960" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-metrics_comp-3">
 Past versions of metrics_comp-3.png
@@ -1690,18 +1760,16 @@ Marek Cmero
 </div>
 </div>
 <pre class="r"><code># efficiency
-p1 &lt;- plot_metric_boxplot(mm, &#39;protocol&#39;, &#39;efficiency&#39;, &#39;Efficiency (line = optimal)&#39;) +
-    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
-    geom_hline(yintercept = 0.07) +
-    theme(legend.position = &#39;bottom&#39;)
+metric &lt;- &#39;efficiency&#39;
+p1 &lt;- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
+        gg_prot + geom_hline(yintercept = 0.07) +
+        ggtitle(&#39;Drop-out fraction\n(lines = optimal range)&#39;)
 
-p2 &lt;- plot_metric_boxplot(mm, &#39;nuclease&#39;, &#39;efficiency&#39;, &#39;Efficiency (line = optimal)&#39;) +
-    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
-    geom_hline(yintercept = 0.07) +
-    theme(legend.position = &#39;bottom&#39;)
-
+p2 &lt;- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
+        gg_nuc + geom_hline(yintercept = 0.07) +
+        ggtitle(&#39;Drop-out fraction\n(lines = optimal range)&#39;)
 show(p1 + p2)</code></pre>
-<p><img src="figure/ecoli_K12.Rmd/metrics_comp-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/ecoli_K12.Rmd/metrics_comp-4.png" width="960" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-metrics_comp-4">
 Past versions of metrics_comp-4.png
@@ -1761,17 +1829,17 @@ Marek Cmero
 </table>
 </div>
 </div>
-<pre class="r"><code># GC deviation between strands
-p1 &lt;- plot_metric_boxplot(mm, &#39;protocol&#39;, &#39;gc_deviation&#39;, &#39;GC deviation (both strands vs. one)&#39;) +
-    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
-    theme(legend.position = &#39;bottom&#39;)
+<pre class="r"><code># GC deviation
+metric &lt;- &#39;gc_deviation&#39;
+p1 &lt;- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
+        gg_prot +
+        ggtitle(&#39;GC deviation\n(both strands vs. one)&#39;)
 
-p2 &lt;- plot_metric_boxplot(mm, &#39;nuclease&#39;, &#39;gc_deviation&#39;, &#39;GC deviation (both strands vs. one)&#39;) +
-    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
-    theme(legend.position = &#39;bottom&#39;)
-
+p2 &lt;- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
+        gg_nuc + 
+        ggtitle(&#39;GC deviation\n(both strands vs. one)&#39;)
 show(p1 + p2)</code></pre>
-<p><img src="figure/ecoli_K12.Rmd/metrics_comp-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/ecoli_K12.Rmd/metrics_comp-5.png" width="960" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-metrics_comp-5">
 Past versions of metrics_comp-5.png
@@ -1794,6 +1862,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a2f0a4a07b138167d30f1fb7c80004ee4f59937a/docs/figure/ecoli_K12.Rmd/metrics_comp-5.png" target="_blank">a2f0a4a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-04-08
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/c246dc2fe2999e98e6daf86e38b31414df507d7e/docs/figure/ecoli_K12.Rmd/metrics_comp-5.png" target="_blank">c246dc2</a>
@@ -1854,18 +1933,16 @@ Marek Cmero
 </div>
 </div>
 <pre class="r"><code># duplex coverage ratio
-p1 &lt;- plot_metric_boxplot(mm, &#39;protocol&#39;, &#39;duplex_coverage_ratio&#39;, &#39;Duplex coverage ratio (total cov / duplex cov)&#39;) +
-    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
-    geom_hline(yintercept = 30) +
-    theme(legend.position = &#39;bottom&#39;)
+metric &lt;- &#39;duplex_coverage_ratio&#39;
+p1 &lt;- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
+        gg_prot + geom_hline(yintercept = 30) +
+        ggtitle(&#39;Duplex coverage ratio\n(total cov / duplex cov)&#39;)
 
-p2 &lt;- plot_metric_boxplot(mm, &#39;nuclease&#39;, &#39;duplex_coverage_ratio&#39;, &#39;Duplex coverage ratio (total cov / duplex cov)&#39;) +
-    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
-    geom_hline(yintercept = 30) +
-    theme(legend.position = &#39;bottom&#39;)
-
+p2 &lt;- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
+        gg_nuc + geom_hline(yintercept = 30) +
+        ggtitle(&#39;Duplex coverage ratio\n(total cov / duplex cov)&#39;)
 show(p1 + p2)</code></pre>
-<p><img src="figure/ecoli_K12.Rmd/metrics_comp-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/ecoli_K12.Rmd/metrics_comp-6.png" width="960" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-metrics_comp-6">
 Past versions of metrics_comp-6.png
@@ -1957,6 +2034,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a2f0a4a07b138167d30f1fb7c80004ee4f59937a/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">a2f0a4a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-04-08
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/c246dc2fe2999e98e6daf86e38b31414df507d7e/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">c246dc2</a>
@@ -2068,6 +2156,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a2f0a4a07b138167d30f1fb7c80004ee4f59937a/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-2.png" target="_blank">a2f0a4a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-04-08
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/c246dc2fe2999e98e6daf86e38b31414df507d7e/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-2.png" target="_blank">c246dc2</a>
 </td>
 <td>
@@ -2164,13 +2263,19 @@ for(metric_name in metric_names) {
 }
 stats$significant &lt;- stats$pvalue &lt; 0.05
 print(stats)</code></pre>
-<pre><code>                 metric      pvalue significant
-1       frac_singletons 0.350920599       FALSE
-2            efficiency 0.001645545        TRUE
-3         drop_out_rate 0.001656330        TRUE
-4          gc_deviation 0.001544453        TRUE
-5        duplicate_rate 0.922536682       FALSE
-6 duplex_coverage_ratio 0.316697444       FALSE</code></pre>
+<pre><code>                  metric       pvalue significant
+1        frac_singletons 0.3509205995       FALSE
+2             efficiency 0.0016455448        TRUE
+3          drop_out_rate 0.0016563300        TRUE
+4           gc_deviation 0.0008310818        TRUE
+5            family_mean 0.2739786956       FALSE
+6          family_median 0.3816330944       FALSE
+7             family_max 0.4142481163       FALSE
+8           families_gt1 0.6326687504       FALSE
+9        paired_families 0.0006261990        TRUE
+10        paired_and_gt1 0.0003304955        TRUE
+11        duplicate_rate 0.9225366816       FALSE
+12 duplex_coverage_ratio 0.3166974439       FALSE</code></pre>
 </div>
 <div id="two-way-anova-analysis" class="section level2">
 <h2>Two-way ANOVA analysis</h2>
@@ -2206,21 +2311,51 @@ print(stats)</code></pre>
 13         drop_out_rate S1Unit                0.0904262242       FALSE
 14         drop_out_rate MungBeanUnit:protocol 0.8387881526       FALSE
 15         drop_out_rate protocol:S1Unit       0.3182162279       FALSE
-16          gc_deviation MungBeanUnit          0.9377278830       FALSE
-17          gc_deviation protocol              0.0058150274        TRUE
-18          gc_deviation S1Unit                0.6088535179       FALSE
-19          gc_deviation MungBeanUnit:protocol 0.7539765086       FALSE
-20          gc_deviation protocol:S1Unit       0.8038907079       FALSE
-21        duplicate_rate MungBeanUnit          0.3209743574       FALSE
-22        duplicate_rate protocol              0.6617113407       FALSE
-23        duplicate_rate S1Unit                0.4855983121       FALSE
-24        duplicate_rate MungBeanUnit:protocol 0.8160371321       FALSE
-25        duplicate_rate protocol:S1Unit       0.5516726318       FALSE
-26 duplex_coverage_ratio MungBeanUnit          0.0515969116       FALSE
-27 duplex_coverage_ratio protocol              0.0059993368        TRUE
-28 duplex_coverage_ratio S1Unit                0.4875101164       FALSE
-29 duplex_coverage_ratio MungBeanUnit:protocol 0.0621558351       FALSE
-30 duplex_coverage_ratio protocol:S1Unit       0.0041291841        TRUE</code></pre>
+16          gc_deviation MungBeanUnit          0.9790965296       FALSE
+17          gc_deviation protocol              0.0053340027        TRUE
+18          gc_deviation S1Unit                0.5436516290       FALSE
+19          gc_deviation MungBeanUnit:protocol 0.9873813522       FALSE
+20          gc_deviation protocol:S1Unit       0.9754399078       FALSE
+21           family_mean MungBeanUnit          0.3721341384       FALSE
+22           family_mean protocol              0.2541550650       FALSE
+23           family_mean S1Unit                0.2914711924       FALSE
+24           family_mean MungBeanUnit:protocol 0.2723545197       FALSE
+25           family_mean protocol:S1Unit       0.1501250836       FALSE
+26         family_median MungBeanUnit          0.6347857947       FALSE
+27         family_median protocol              0.4810155294       FALSE
+28         family_median S1Unit                0.3250056081       FALSE
+29         family_median MungBeanUnit:protocol 0.4997581250       FALSE
+30         family_median protocol:S1Unit       0.3250056081       FALSE
+31            family_max MungBeanUnit          0.3849414781       FALSE
+32            family_max protocol              0.5270991535       FALSE
+33            family_max S1Unit                0.1424841525       FALSE
+34            family_max MungBeanUnit:protocol 0.9819905871       FALSE
+35            family_max protocol:S1Unit       0.0605658200       FALSE
+36          families_gt1 MungBeanUnit          0.1793349230       FALSE
+37          families_gt1 protocol              0.9876271265       FALSE
+38          families_gt1 S1Unit                0.6881757434       FALSE
+39          families_gt1 MungBeanUnit:protocol 0.6170001142       FALSE
+40          families_gt1 protocol:S1Unit       0.0301632029        TRUE
+41       paired_families MungBeanUnit          0.3217761699       FALSE
+42       paired_families protocol              0.0002319573        TRUE
+43       paired_families S1Unit                0.1990511038       FALSE
+44       paired_families MungBeanUnit:protocol 0.9226482412       FALSE
+45       paired_families protocol:S1Unit       0.8092463937       FALSE
+46        paired_and_gt1 MungBeanUnit          0.6527042939       FALSE
+47        paired_and_gt1 protocol              0.0007082361        TRUE
+48        paired_and_gt1 S1Unit                0.8872835419       FALSE
+49        paired_and_gt1 MungBeanUnit:protocol 0.5304733713       FALSE
+50        paired_and_gt1 protocol:S1Unit       0.2688705912       FALSE
+51        duplicate_rate MungBeanUnit          0.3209743574       FALSE
+52        duplicate_rate protocol              0.6617113407       FALSE
+53        duplicate_rate S1Unit                0.4855983121       FALSE
+54        duplicate_rate MungBeanUnit:protocol 0.8160371321       FALSE
+55        duplicate_rate protocol:S1Unit       0.5516726318       FALSE
+56 duplex_coverage_ratio MungBeanUnit          0.0515969116       FALSE
+57 duplex_coverage_ratio protocol              0.0059993368        TRUE
+58 duplex_coverage_ratio S1Unit                0.4875101164       FALSE
+59 duplex_coverage_ratio MungBeanUnit:protocol 0.0621558351       FALSE
+60 duplex_coverage_ratio protocol:S1Unit       0.0041291841        TRUE</code></pre>
 </div>
 <div id="relationships-between-variables" class="section level2">
 <h2>Relationships between variables</h2>
@@ -2495,6 +2630,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a2f0a4a07b138167d30f1fb7c80004ee4f59937a/docs/figure/ecoli_K12.Rmd/variants-1.png" target="_blank">a2f0a4a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-04-08
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/c246dc2fe2999e98e6daf86e38b31414df507d7e/docs/figure/ecoli_K12.Rmd/variants-1.png" target="_blank">c246dc2</a>
