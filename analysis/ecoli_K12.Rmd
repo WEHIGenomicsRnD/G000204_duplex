@@ -110,7 +110,7 @@ metrics$duplex_coverage_ratio[qmap_cons_cov$coverage < 1] <- 0 # fix when < 1 du
 metrics$sample <- gsub('-HJK2GDSX3', '', sample_names)
 
 # cache metrics object
-# saveRDS(metrics, file = 'metrics.rds')
+# saveRDS(metrics, file = here('metrics.rds'))
 # metrics <- readRDS(here('metrics.rds'))
 
 # load metadata
@@ -143,7 +143,7 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         ggtitle(metric)
 ```
 
-### Fraction of single-read families
+### Fraction of singleton reads
 
 Shows the number of single-read families divided by the total number of reads. As suggested by [Stoler et al. 2016](https://doi.org/10.1186/s13059-016-1039-4), this metric can server as a proxy for error rate, as (uncorrected) barcode mismatches will manifest as single-read families. The lower the fraction of singletons, the better.
 
@@ -202,7 +202,6 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         geom_histogram(stat = 'identity', position = 'dodge') +
         theme_bw() +
         coord_flip() +
-        geom_hline(yintercept = c(0.07), alpha = 0.4)  +
         ggtitle(metric)
 ```
 
@@ -222,88 +221,114 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         ggtitle(metric)
 ```
 
+
+## Family statistics
+
+Comparison of family pair sizes between samples (these are calculated from total reads of paired AB and BA families).
+
+```{r family_sizes, fig.width = 8, fig.height = 5}
+ggplot(mm[mm$metric %like% 'family', ], aes(value, sample, colour = metric)) +
+        geom_point() +
+        coord_trans(x='log2') +
+        scale_x_continuous(breaks=seq(0, 94, 8)) +
+        theme(axis.text.x = element_text(size=5)) +
+        theme_bw() +
+        ggtitle('Family pair sizes')
+```
+
+
+The following plot shows:
+
+- families_gt1: number of family pairs where at least one family (AB or BA) has > 1 reads.
+- paired_families: number of family pairs where both families (AB and BA) have > 0 reads.
+- paired_and_gt1: number of family pairs where both families (AB and BA) have > 1 reads.
+
+```{r family_stats, fig.width = 8, fig.height = 5}
+ggplot(mm[mm$metric %like% 'pair|gt1', ], aes(value, sample, fill = metric)) +
+        geom_bar(stat='identity', position='dodge') +
+        theme_bw() +
+        ggtitle('Family statistics')
+```
+
+
 ## Compare metrics side-by-side
 
 Compare protocols and nucleases directly.
 
-```{r metrics_comp, fid.width=20, fig.height=4}
+```{r metrics_comp, fig.width=10, fig.height=4}
+gg_prot <- list(geom_boxplot(outlier.shape = NA),
+               geom_jitter(width = 0.1, size = 2, aes(colour = nuclease, shape = nuclease)),
+               theme_bw(),
+               theme(legend.position = 'left'))
+gg_nuc <- list(geom_boxplot(outlier.shape = NA),
+               geom_jitter(width = 0.1, size = 2, aes(colour = protocol, shape = protocol)),
+               theme_bw(),
+               theme(legend.position = 'right'))
+
 # duplicate rate
-p1 <- plot_metric_boxplot(mm, 'protocol', 'duplicate_rate', 'Duplicate rate (line = optimal)') +
-    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
-    geom_hline(yintercept = 0.81) +
-    theme(legend.position = 'bottom')
+metric <- 'duplicate_rate'
+p1 <- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
+        gg_prot + geom_hline(yintercept = 0.81) +
+        ggtitle('Duplicate rate (line = optimal)')
 
-p2 <- plot_metric_boxplot(mm, 'nuclease', 'duplicate_rate', 'Duplicate rate (line = optimal)') +
-    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
-    geom_hline(yintercept = 0.81) +
-    theme(legend.position = 'bottom')
-
+p2 <- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
+        gg_nuc + geom_hline(yintercept = 0.81) +
+        ggtitle('Duplicate rate (line = optimal)')
 show(p1 + p2)
 
 # singletons
-p1 <- plot_metric_boxplot(mm, 'protocol', 'frac_singletons', 'Fraction of singleton reads') +
-    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
-    theme(legend.position = 'bottom') +
-    ylim(c(0,1))
+metric <- 'frac_singletons'
+p1 <- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
+        gg_prot +
+        ggtitle('Fraction of singleton reads')
 
-p2 <- plot_metric_boxplot(mm, 'nuclease', 'frac_singletons', 'Fraction of singleton reads') +
-    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol))  +
-    theme(legend.position = 'bottom') +
-    ylim(c(0,1))
-
+p2 <- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
+        gg_nuc + 
+        ggtitle('Fraction of singleton reads')
 show(p1 + p2)
 
-# drop out rate
-p1 <- plot_metric_boxplot(mm, 'protocol', 'drop_out_rate', 'Strand drop-out fraction (lines = optimal range)') +
-    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
-    geom_hline(yintercept = c(0.1, 0.3)) +
-    theme(legend.position = 'bottom') +
-    ylim(c(0,1))
+# drop-out rate
+metric <- 'drop_out_rate'
+p1 <- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
+        gg_prot + geom_hline(yintercept = c(0.1, 0.3)) + ylim(c(0,1)) +
+        ggtitle('Drop-out fraction\n(lines = optimal range)')
 
-
-p2 <- plot_metric_boxplot(mm, 'nuclease', 'drop_out_rate', 'Strand drop-out fraction (lines = optimal range)') +
-    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
-    geom_hline(yintercept = c(0.1, 0.3)) +
-    theme(legend.position = 'bottom') +
-    ylim(c(0,1))
-
+p2 <- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
+        gg_nuc + geom_hline(yintercept = c(0.1, 0.3)) + ylim(c(0,1)) +
+        ggtitle('Drop-out fraction\n(lines = optimal range)')
 show(p1 + p2)
 
 # efficiency
-p1 <- plot_metric_boxplot(mm, 'protocol', 'efficiency', 'Efficiency (line = optimal)') +
-    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
-    geom_hline(yintercept = 0.07) +
-    theme(legend.position = 'bottom')
+metric <- 'efficiency'
+p1 <- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
+        gg_prot + geom_hline(yintercept = 0.07) +
+        ggtitle('Drop-out fraction\n(lines = optimal range)')
 
-p2 <- plot_metric_boxplot(mm, 'nuclease', 'efficiency', 'Efficiency (line = optimal)') +
-    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
-    geom_hline(yintercept = 0.07) +
-    theme(legend.position = 'bottom')
-
+p2 <- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
+        gg_nuc + geom_hline(yintercept = 0.07) +
+        ggtitle('Drop-out fraction\n(lines = optimal range)')
 show(p1 + p2)
 
-# GC deviation between strands
-p1 <- plot_metric_boxplot(mm, 'protocol', 'gc_deviation', 'GC deviation (both strands vs. one)') +
-    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
-    theme(legend.position = 'bottom')
+# GC deviation
+metric <- 'gc_deviation'
+p1 <- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
+        gg_prot +
+        ggtitle('GC deviation\n(both strands vs. one)')
 
-p2 <- plot_metric_boxplot(mm, 'nuclease', 'gc_deviation', 'GC deviation (both strands vs. one)') +
-    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
-    theme(legend.position = 'bottom')
-
+p2 <- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
+        gg_nuc + 
+        ggtitle('GC deviation\n(both strands vs. one)')
 show(p1 + p2)
 
 # duplex coverage ratio
-p1 <- plot_metric_boxplot(mm, 'protocol', 'duplex_coverage_ratio', 'Duplex coverage ratio (total cov / duplex cov)') +
-    geom_jitter(width=0.1, aes(protocol, value, colour = nuclease)) +
-    geom_hline(yintercept = 30) +
-    theme(legend.position = 'bottom')
+metric <- 'duplex_coverage_ratio'
+p1 <- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
+        gg_prot + geom_hline(yintercept = 30) +
+        ggtitle('Duplex coverage ratio\n(total cov / duplex cov)')
 
-p2 <- plot_metric_boxplot(mm, 'nuclease', 'duplex_coverage_ratio', 'Duplex coverage ratio (total cov / duplex cov)') +
-    geom_jitter(width=0.1, aes(nuclease, value, colour = protocol)) +
-    geom_hline(yintercept = 30) +
-    theme(legend.position = 'bottom')
-
+p2 <- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
+        gg_nuc + geom_hline(yintercept = 30) +
+        ggtitle('Duplex coverage ratio\n(total cov / duplex cov)')
 show(p1 + p2)
 ```
 
