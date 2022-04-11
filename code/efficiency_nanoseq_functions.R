@@ -6,12 +6,25 @@ calculate_singletons <- function(rbs) {
     return(frac_singletons)
 }
 
+calculate_family_stats <- function(rbs) {
+    rbs$size <- rbs$x + rbs$y
+    return(c(family_mean = mean(rbs$size),
+             family_median = median(rbs$size),
+             family_max = max(rbs$size),
+             families_gt1 = sum(rbs$x > 1 | rbs$y > 1),
+             paired_families = sum(rbs$x > 0 & rbs$y > 0),
+             paired_and_gt1 = sum(rbs$x > 1 & rbs$y > 1)))
+}
+
 calculate_metrics <- function(rbs) {
     metrics <- data.frame(sample = names(rbs))
     metrics$frac_singletons <- lapply(rbs, calculate_singletons) %>% unlist()
     metrics$efficiency <- lapply(rbs, calculate_efficiency) %>% unlist()
     metrics$drop_out_rate <- lapply(rbs, calculate_missed_fraction) %>% unlist()
     metrics$gc_deviation <- lapply(rbs, calculate_gc) %>% unlist()
+    metrics <- lapply(rbs, calculate_family_stats) %>%
+                    data.frame %>% t() %>%
+                    cbind(metrics, .)
     return(metrics)
 }
 
@@ -21,7 +34,8 @@ calculate_metrics_single <- function(rbs) {
     metrics$efficiency <- calculate_efficiency(rbs)
     metrics$drop_out_rate <- calculate_missed_fraction(rbs)
     metrics$gc_deviation <- calculate_gc(rbs)
-    metrics <- data.frame(metrics)
+    family_stats <- calculate_family_stats(rbs)
+    metrics <- data.frame(metrics, t(family_stats))
     return(metrics)
 }
 
