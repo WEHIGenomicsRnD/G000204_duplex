@@ -302,11 +302,11 @@ show(p1 + p2)
 metric <- 'efficiency'
 p1 <- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
         gg_prot + geom_hline(yintercept = 0.07) +
-        ggtitle('Drop-out fraction\n(lines = optimal range)')
+        ggtitle('Efficiency\n(line = optimal)')
 
 p2 <- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
         gg_nuc + geom_hline(yintercept = 0.07) +
-        ggtitle('Drop-out fraction\n(lines = optimal range)')
+        ggtitle('Efficiency\n(line = optomal)')
 show(p1 + p2)
 
 # GC deviation
@@ -336,7 +336,7 @@ show(p1 + p2)
 
 Facet boxplots by nuclease and protocol to show overall results.
 
-```{r fig.width=9, fig.height=6}
+```{r facet_summary, fig.width=9, fig.height=6}
 ggplot(mm, aes(protocol, value)) + 
     geom_boxplot() +
     theme_bw() +
@@ -349,6 +349,24 @@ ggplot(mm, aes(nuclease, value)) +
     facet_wrap(~metric, scales = 'free') +
     ggtitle('by nuclease')
 ```
+
+Plots again removing the outlier xGEN rep 1.
+
+```{r facet_summary_remove_outlier, fig.width=9, fig.height=6}
+mmo <- mm[mm$sample != 'xGEN-xGENRep1',]
+ggplot(mmo, aes(protocol, value)) + 
+    geom_boxplot() +
+    theme_bw() +
+    facet_wrap(~metric, scales = 'free') +
+    ggtitle('by protocol')
+
+ggplot(mmo, aes(nuclease, value)) + 
+    geom_boxplot() +
+    theme_bw() +
+    facet_wrap(~metric, scales = 'free') +
+    ggtitle('by nuclease')
+```
+
 
 ## Statistical test results by protocol
 
@@ -370,9 +388,28 @@ stats$significant <- stats$pvalue < 0.05
 print(stats)
 ```
 
+
+Rerun tests removing outlier (xGEN rep1). The results are similar.
+
+```{r test_by_protocol_remove_outlier}
+stats <- NULL
+for(metric_name in metric_names) {
+    nano <- mmo[mmo$metric == metric_name & mmo$protocol == 'NanoSeq',]
+    xgen <- mmo[mmo$metric == metric_name & mmo$protocol == 'xGen',]
+    nano_vals <- data.table(nano)[, mean(value), by = nuclease]$V1
+    xgen_vals <- data.table(xgen)[, mean(value), by = nuclease]$V1
+    wtest <- t.test(nano_vals, xgen_vals)
+    stats <- rbind(stats,
+                   data.frame(metric = metric_name, pvalue = wtest$p.value))
+}
+stats$significant <- stats$pvalue < 0.05
+print(stats)
+```
+
+
 ## Two-way ANOVA analysis
 
-We consider a two-way ANOVA, modelling the protocol, Mung Bean Unit and S1 Unit variables, as well as the interaction effect between the units and the protocol.
+We consider a two-way ANOVA, modelling the protocol, Mung Bean Unit and S1 Unit variables, as well as the interaction effect between the units and the protocol. 
 
 ```{r tests_by_nuclease}
 stats <- NULL
@@ -391,6 +428,27 @@ for(metric_name in metric_names) {
 stats$significant <- stats$pvalue < 0.05
 print(stats)
 ```
+
+We remove the outlier xGEN rep 1 and test again.
+
+```{r tests_by_nuclease_remove_outlier}
+stats <- NULL
+metric_names <- unique(mmo$metric) %>% as.character()
+for(metric_name in metric_names) {
+    x <- mmo[mmo$metric == metric_name,]
+    x$MungBeanUnit <- as.factor(x$`Mung bean unit`)
+    x$S1Unit <- as.factor(x$`S1 unit`)
+    x <- x[,c('MungBeanUnit', 'S1Unit', 'protocol', 'nuclease', 'value')]
+    x_aov <- aov(value ~ MungBeanUnit * protocol + S1Unit * protocol, data = x) %>% summary() %>% dplyr::first()
+    stats <- rbind(stats,
+                   data.frame(metric = metric_name,
+                              variable = rownames(x_aov)[1:5],
+                              pvalue = x_aov[['Pr(>F)']][1:5]))
+}
+stats$significant <- stats$pvalue < 0.05
+print(stats)
+```
+
 
 ## Relationships between variables
 

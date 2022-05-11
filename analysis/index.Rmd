@@ -15,11 +15,12 @@ Analyses
 --------
 
 * [Model](model.html)
-* [E coli results](ecoli.html)
+* [E coli results (BL21)](ecoli.html)
     * [jafarJ_201021 MultiQC pre-duplex](jafarJ_201021_multiqc/multiqc_report.html)
     * [jafarJ_201021 MultiQC duplex](jafarJ_201021_multiqc/multiqc_report_consensus.html)
     * [jafarJ_150222 MultiQC pre-duplex](jafarJ_150222_multiqc/multiqc_report.html)
     * [jafarJ_150222 MultiQC duplex](jafarJ_150222_multiqc/multiqc_report_consensus.html)
+* [E coli results (K12)](ecoli_K12.html)
     * [AGRF_CAGRF22029764_HJK2GDSX3 MultiQC pre-duplex](AGRF_CAGRF22029764_HJK2GDSX3_multiqc/multiqc_report.html)
     * [AGRF_CAGRF22029764_HJK2GDSX3 MultiQC duplex](AGRF_CAGRF22029764_HJK2GDSX3_multiqc/multiqc_report_consensus.html)
 * [Illumina vs MGI](compare_MGI_Illumina.html)
