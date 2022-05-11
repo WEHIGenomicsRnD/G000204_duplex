@@ -354,6 +354,9 @@ Plots again removing the outlier xGEN rep 1.
 
 ```{r facet_summary_remove_outlier, fig.width=9, fig.height=6}
 mmo <- mm[mm$sample != 'xGEN-xGENRep1',]
+mmo$replicate <- str_split(mmo$sample, 'Rep') %>% lapply(., dplyr::last) %>% unlist() %>% as.numeric()
+mmo$sample <- str_split(mmo$sample, 'Rep') %>% lapply(., dplyr::first) %>% unlist()
+
 ggplot(mmo, aes(protocol, value)) + 
     geom_boxplot() +
     theme_bw() +
@@ -365,6 +368,18 @@ ggplot(mmo, aes(nuclease, value)) +
     theme_bw() +
     facet_wrap(~metric, scales = 'free') +
     ggtitle('by nuclease')
+```
+
+Summary plot including separated by all experimental factors.
+
+```{r plot_by_sample, fig.width=16, fig.height=10}
+ggplot(mmo, aes(sample, value, colour = protocol, shape = nuclease)) + 
+    geom_point() +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 90)) +
+    facet_wrap(~metric, scales = 'free') +
+    scale_colour_brewer(palette = 'Dark2') +
+    ggtitle('by protocol')
 ```
 
 
@@ -493,6 +508,7 @@ ggplot(dm, aes(duplicate_rate, duplex_coverage_ratio, colour=sample)) +
     scale_colour_manual(values = cols) +
     ggtitle('Duplicate rate vs. duplex coverage ratio')
 ```
+
 
 ## Variant calls
 
