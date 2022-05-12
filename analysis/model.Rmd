@@ -31,29 +31,22 @@ Q: how many cells (or "cell equivalents") do we need to sequence to detect varia
 
 ## Assumptions
 
-* We consider a diploid genome without SCNAs
-* The mutation(s) are heterozygous
+* We consider a haploid genome without SCNAs
 * We're not considering DNA extraction efficiency or ligation efficiency
 
 ## Probability of sequencing a mutant cell
 
-Let $p$ be the probability of selecting a mutant cell from a pool of $n$ cells.
-
-$p = v / 2$
-
-Where:
-
-* $v$ = target VAF
+The probability of selecting a cell with a given variant from a pool of $n$ cells is the variant allele frequency (VAF) $v$. This indicates that a VAF of 0.01 means 1 cell in 100 is a mutant ($nv$). 
 
 We assume the probability of selecting a mutant cell is binomially distributed. We want to know the probability of selecting at least one mutant:
 
-$P(Bin(n, p)) > 0)$ = 0.95
+$P(Bin(n, v)) > 0)$ = 0.95
 
 This is equivalent to:
 
-$P(Bin(n, p)) = 0)$ = 0.05
+$P(Bin(n, v)) = 0)$ = 0.05
 
-Where $n$ is the number of sequenced cells. We note that the number of mutant cells will, on average, will be $2nv$. 
+Where $n$ is the number of sequenced cells.
 
 Let's consider how many input cells ($n$) are required to select at least one mutant cell at 1% VAF (95% confidence).
 
@@ -64,9 +57,9 @@ v = 0.01
 n = seq(100, 2000, 100)
 
 vafs <- data.frame(vaf=v,
-                   p=pbinom(0, n, v / 2),
+                   p=pbinom(0, n, v),
                    input_cells=n,
-                   mutant_cells=(n * v * 2))
+                   mutant_cells=(n * v))
 
 ggplot(vafs, aes(input_cells, p)) +
     geom_point() +
@@ -83,7 +76,7 @@ ggplot(vafs, aes(mutant_cells, p)) +
     geom_hline(yintercept=0.05, alpha=0.4)
 ```
 
-This shows that for a VAF target of 1%, we should sequence at least 600 cells (12 are mutants).
+This shows that for a VAF target of 1%, we should sequence at least 300 cells (3 are mutants).
 
 ```{r cells_at_0.05}
 deviation <- abs(0.05 - vafs$p)
@@ -99,9 +92,9 @@ v = seq(0.0002, 0.01, 0.0002)
 n = 1000
 
 vafs <- data.frame(vaf=v,
-                   p=pbinom(0, n, v / 2),
+                   p=pbinom(0, n, v),
                    input_cells=n,
-                   mutant_cells=(n * v * 2))
+                   mutant_cells=(n * v))
 
 ggplot(vafs, aes(vaf, p)) +
     geom_point() +
@@ -109,7 +102,7 @@ ggplot(vafs, aes(vaf, p)) +
     geom_hline(yintercept=0.05, alpha=0.4)
 ```
 
-We can sequence down to approx 0.6% VAF. 
+We can sequence down to approx 0.3% VAF. 
 
 ```{r vaf_at_1k_cells}
 deviation <- abs(0.05 - vafs$p)
@@ -125,7 +118,7 @@ V = seq(0.001, 0.01, 0.001)
 for (v in V) {
     toadd <- data.frame(
         vaf=as.factor(v),
-        p=pbinom(0, n, v / 2),
+        p=pbinom(0, n, v),
         total_cells=n
     )
     cells_vs_vaf <- rbind(cells_vs_vaf, toadd)
@@ -140,7 +133,7 @@ ggplot(cells_vs_vaf, aes(total_cells, p, colour=vaf)) +
 
 We can define an equation based on the binomial probability calculation, of obtaining the number of cells to sequence, to be 95% confident of sequencing the mutation based on the target VAF:
 
-$(1 – v / 2) ^ n = 0.05$
+$(1 – v) ^ n = 0.05$
 
 ## Coverage
 
@@ -159,7 +152,7 @@ ggplot(ccov, aes(d, v)) +
 ```
 ## Mixture experiments
 
-How much total coverage will we need, in order to detect a mixture of $X\%?$ We define this as successfully calling at least 50\% of the variants at VAF $v = \{0.1, 0.01, 0.001\}$ with at least one supporting duplex read. We assume our duplex yield is 28 (i.e., 28x coverage yields 1x duplex coverage).
+How much total coverage will we need, in order to detect a mixture of $X\%?$ We define this as successfully calling at least 50\% of the variants at VAF $v = \{0.1, 0.01, 0.001\}$ with at least one supporting duplex read. We assume our duplex yield is 30 (i.e., 30x coverage yields 1x duplex coverage).
 
 Our binomial calculation takes the form of:
 
@@ -168,7 +161,7 @@ $P(Bin(n, v)) = 0)$ = 0.5 where $n =$ duplex coverage.
 ```{r mixture_variant_calling}
 df <- NULL
 min_reads <- 1
-duplex_yield <- 28
+duplex_yield <- 30
 duplex_seq_range <- seq(1, 10000, 1)
 fraction_we_can_miss <- 0.5
 
