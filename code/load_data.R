@@ -23,7 +23,7 @@ load_data <- function(fdir, pattern, samples, read_func=read.delim) {
 }
 
 
-load_variants <- function(fdir) {
+load_variants <- function(fdir, sample_names) {
     vars <- list.files(
         fdir,
         full.names = TRUE,
@@ -31,7 +31,17 @@ load_variants <- function(fdir) {
         pattern = '.vcf') %>%
         lapply(., read.vcfR, verbose = FALSE)
 
-    return(vars)
+    var_df <- NULL
+    for (i in 1:length(vars)) {
+        svars <- vars[[i]]@fix %>% data.frame()
+        if (nrow(svars) > 0) {
+            svars$sample <- sample_names[i]
+            var_df <- rbind(var_df, svars)
+        }
+    }
+    var_df$id <- paste(var_df$CHROM, var_df$POS, sep = '_')
+
+    return(var_df)
 }
 
 extract_std <- function(genome_results) {
