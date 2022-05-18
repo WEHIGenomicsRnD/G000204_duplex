@@ -398,7 +398,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-05-11
+<strong>Last updated:</strong> 2022-05-18
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -529,15 +529,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree71e857b316760c9cd2a477592928f57b4bd34448targetblank71e857ba">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreeaacf423a01dfd4c2f8e4d8d701f3fc0469efd94etargetblankaacf423a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/71e857b316760c9cd2a477592928f57b4bd34448" target="_blank">71e857b</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/aacf423a01dfd4c2f8e4d8d701f3fc0469efd94e" target="_blank">aacf423</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree71e857b316760c9cd2a477592928f57b4bd34448targetblank71e857ba"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreeaacf423a01dfd4c2f8e4d8d701f3fc0469efd94etargetblankaacf423a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -547,7 +547,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/71e857b316760c9cd2a477592928f57b4bd34448" target="_blank">71e857b</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/aacf423a01dfd4c2f8e4d8d701f3fc0469efd94e" target="_blank">aacf423</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -571,14 +571,11 @@ Ignored files:
 
 Untracked files:
     Untracked:  ._.DS_Store
-    Untracked:  ._metrics.rds
     Untracked:  DOCNAME
     Untracked:  analysis/._.DS_Store
     Untracked:  analysis/cache/
     Untracked:  analysis/calc_nanoseq_metrics.Rmd
-    Untracked:  analysis/metrics.rds
     Untracked:  data/
-    Untracked:  metrics.rds
     Untracked:  prototype_code/
 
 Unstaged changes:
@@ -628,6 +625,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/aacf423a01dfd4c2f8e4d8d701f3fc0469efd94e/analysis/ecoli_K12.Rmd" target="_blank">aacf423</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-18
+</td>
+<td>
+Add coverage &amp; variant results without requiring SSC
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/4da22442742ce535db365adc322853bc3bb8635d/docs/ecoli_K12.html" target="_blank">4da2244</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-11
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1151,8 +1182,10 @@ rinfo_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/read_info&#
 markdup_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/mark_duplicates&#39;)
 qualimap_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/qualimap&#39;)
 qualimap_cons_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/consensus/qualimap&#39;)
+qualimap_cons_nossc_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/consensus/qualimap_nossc&#39;)
 metadata_file &lt;- here(&#39;data/metadata/NovaSeq data E coli.xlsx&#39;)
-variant_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/variants&#39;)</code></pre>
+variant_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/variants&#39;)
+variant_nossc_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/variants_nossc&#39;)</code></pre>
 <pre class="r"><code>sample_names &lt;- list.files(rinfo_dir) %&gt;%
                 str_split(&#39;\\.txt.gz&#39;) %&gt;%
                 lapply(., dplyr::first) %&gt;%
@@ -1163,7 +1196,8 @@ variant_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/variants&#39
                 unlist()
 
 # load variant data
-vars &lt;- load_variants(variant_dir)
+var_df &lt;- load_variants(variant_dir, sample_names)
+var_df_nossc &lt;- load_variants(variant_nossc_dir, sample_names[-9])
 
 # load and fetch duplicate rate from MarkDuplicates output
 mdup &lt;- load_markdup_data(markdup_dir, sample_names)
@@ -1171,24 +1205,26 @@ mdup &lt;- load_markdup_data(markdup_dir, sample_names)
 # get mean coverage for pre and post-consensus reads
 qmap_cov &lt;- get_qmap_coverage(qualimap_dir, sample_names)
 qmap_cons_cov &lt;- get_qmap_coverage(qualimap_cons_dir, sample_names)
+qmap_cons_cov_nossc &lt;- get_qmap_coverage(qualimap_cons_nossc_dir, sample_names[-9])
 
-# calculate metrics for nanoseq
-rlen &lt;- 151; skips &lt;- 5
-metrics_nano &lt;- calc_metrics_new_rbs(rinfo_dir, pattern = &#39;Nano&#39;, cores = cores)
-
-# calculate metrics for xGen
-rlen &lt;- 151; skips &lt;- 8
-metrics_xgen &lt;- calc_metrics_new_rbs(rinfo_dir, pattern = &#39;xGEN&#39;, cores = cores)
-
-metrics &lt;- c(metrics_nano, metrics_xgen) %&gt;% bind_rows()
-metrics$duplicate_rate &lt;- as.numeric(mdup)
-metrics$duplex_coverage_ratio &lt;- qmap_cov$coverage / qmap_cons_cov$coverage
-metrics$duplex_coverage_ratio[qmap_cons_cov$coverage &lt; 1] &lt;- 0 # fix when &lt; 1 duplex cov
-metrics$sample &lt;- gsub(&#39;-HJK2GDSX3&#39;, &#39;&#39;, sample_names)
+# uncomment below to calculate metrics
+# # calculate metrics for nanoseq
+# rlen &lt;- 151; skips &lt;- 5
+# metrics_nano &lt;- calc_metrics_new_rbs(rinfo_dir, pattern = &#39;Nano&#39;, cores = cores)
+# 
+# # calculate metrics for xGen
+# rlen &lt;- 151; skips &lt;- 8
+# metrics_xgen &lt;- calc_metrics_new_rbs(rinfo_dir, pattern = &#39;xGEN&#39;, cores = cores)
+# 
+# metrics &lt;- c(metrics_nano, metrics_xgen) %&gt;% bind_rows()
+# metrics$duplicate_rate &lt;- as.numeric(mdup)
+# metrics$duplex_coverage_ratio &lt;- qmap_cov$coverage / qmap_cons_cov$coverage
+# metrics$duplex_coverage_ratio[qmap_cons_cov$coverage &lt; 1] &lt;- 0 # fix when &lt; 1 duplex cov
+# metrics$sample &lt;- gsub(&#39;-HJK2GDSX3&#39;, &#39;&#39;, sample_names)
 
 # cache metrics object
-# saveRDS(metrics, file = here(&#39;metrics.rds&#39;))
-# metrics &lt;- readRDS(here(&#39;metrics.rds&#39;))
+# saveRDS(metrics, file = here(&#39;data/metrics.rds&#39;))
+metrics &lt;- readRDS(here(&#39;data/metrics.rds&#39;))
 
 # load metadata
 metadata &lt;- read_excel(metadata_file)
@@ -1567,6 +1603,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/4da22442742ce535db365adc322853bc3bb8635d/docs/figure/ecoli_K12.Rmd/gc_deviation-1.png" target="_blank">4da2244</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-11
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/cc380cc389100b3ecdc5c9cdf5616276fb4d1fd0/docs/figure/ecoli_K12.Rmd/gc_deviation-1.png" target="_blank">cc380cc</a>
@@ -2241,6 +2288,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/4da22442742ce535db365adc322853bc3bb8635d/docs/figure/ecoli_K12.Rmd/metrics_comp-5.png" target="_blank">4da2244</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-11
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/cc380cc389100b3ecdc5c9cdf5616276fb4d1fd0/docs/figure/ecoli_K12.Rmd/metrics_comp-5.png" target="_blank">cc380cc</a>
 </td>
 <td>
@@ -2457,6 +2515,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/4da22442742ce535db365adc322853bc3bb8635d/docs/figure/ecoli_K12.Rmd/facet_summary-1.png" target="_blank">4da2244</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-11
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/cc380cc389100b3ecdc5c9cdf5616276fb4d1fd0/docs/figure/ecoli_K12.Rmd/facet_summary-1.png" target="_blank">cc380cc</a>
 </td>
 <td>
@@ -2498,6 +2567,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/4da22442742ce535db365adc322853bc3bb8635d/docs/figure/ecoli_K12.Rmd/facet_summary-2.png" target="_blank">4da2244</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-11
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/cc380cc389100b3ecdc5c9cdf5616276fb4d1fd0/docs/figure/ecoli_K12.Rmd/facet_summary-2.png" target="_blank">cc380cc</a>
@@ -2548,6 +2628,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/4da22442742ce535db365adc322853bc3bb8635d/docs/figure/ecoli_K12.Rmd/facet_summary_remove_outlier-1.png" target="_blank">4da2244</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-11
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/cc380cc389100b3ecdc5c9cdf5616276fb4d1fd0/docs/figure/ecoli_K12.Rmd/facet_summary_remove_outlier-1.png" target="_blank">cc380cc</a>
 </td>
 <td>
@@ -2591,6 +2682,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/4da22442742ce535db365adc322853bc3bb8635d/docs/figure/ecoli_K12.Rmd/facet_summary_remove_outlier-2.png" target="_blank">4da2244</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-11
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/cc380cc389100b3ecdc5c9cdf5616276fb4d1fd0/docs/figure/ecoli_K12.Rmd/facet_summary_remove_outlier-2.png" target="_blank">cc380cc</a>
 </td>
 <td>
@@ -2613,6 +2715,43 @@ Marek Cmero
     scale_colour_brewer(palette = &#39;Dark2&#39;) +
     ggtitle(&#39;by protocol&#39;)</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/plot_by_sample-1.png" width="1536" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot_by_sample-1">
+Past versions of plot_by_sample-1.png
+</button>
+</p>
+<div id="fig-plot_by_sample-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/4da22442742ce535db365adc322853bc3bb8635d/docs/figure/ecoli_K12.Rmd/plot_by_sample-1.png" target="_blank">4da2244</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-11
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="statistical-test-results-by-protocol" class="section level2">
 <h2>Statistical test results by protocol</h2>
@@ -2635,7 +2774,7 @@ print(stats)</code></pre>
 1        frac_singletons 0.3509205995       FALSE
 2             efficiency 0.0016455448        TRUE
 3          drop_out_rate 0.0016563300        TRUE
-4           gc_deviation 0.0040357425        TRUE
+4           gc_deviation 0.0195493871        TRUE
 5            family_mean 0.2739786956       FALSE
 6          family_median 0.3816330944       FALSE
 7             family_max 0.4142481163       FALSE
@@ -2662,7 +2801,7 @@ print(stats)</code></pre>
 1        frac_singletons 0.885668764       FALSE
 2             efficiency 0.017624387        TRUE
 3          drop_out_rate 0.010803300        TRUE
-4           gc_deviation 0.003557276        TRUE
+4           gc_deviation 0.002863331        TRUE
 5            family_mean 0.408145893       FALSE
 6          family_median 0.617803978       FALSE
 7             family_max 0.517858472       FALSE
@@ -2708,11 +2847,11 @@ print(stats)</code></pre>
 13         drop_out_rate S1Unit                0.0904262242       FALSE
 14         drop_out_rate MungBeanUnit:protocol 0.8387881526       FALSE
 15         drop_out_rate protocol:S1Unit       0.3182162279       FALSE
-16          gc_deviation MungBeanUnit          0.6285060853       FALSE
-17          gc_deviation protocol              0.0018277217        TRUE
-18          gc_deviation S1Unit                0.4464714388       FALSE
-19          gc_deviation MungBeanUnit:protocol 0.9058873254       FALSE
-20          gc_deviation protocol:S1Unit       0.5294801515       FALSE
+16          gc_deviation MungBeanUnit          0.5321833114       FALSE
+17          gc_deviation protocol              0.0087584727        TRUE
+18          gc_deviation S1Unit                0.7094314628       FALSE
+19          gc_deviation MungBeanUnit:protocol 0.4019325303       FALSE
+20          gc_deviation protocol:S1Unit       0.9145680596       FALSE
 21           family_mean MungBeanUnit          0.3721341384       FALSE
 22           family_mean protocol              0.2541550650       FALSE
 23           family_mean S1Unit                0.2914711924       FALSE
@@ -2785,11 +2924,11 @@ print(stats)</code></pre>
 13         drop_out_rate S1Unit                2.501322e-05        TRUE
 14         drop_out_rate MungBeanUnit:protocol 9.115253e-02       FALSE
 15         drop_out_rate protocol:S1Unit       1.679681e-03        TRUE
-16          gc_deviation MungBeanUnit          1.055426e-01       FALSE
-17          gc_deviation protocol              3.681082e-05        TRUE
-18          gc_deviation S1Unit                1.905513e-01       FALSE
-19          gc_deviation MungBeanUnit:protocol 7.350969e-01       FALSE
-20          gc_deviation protocol:S1Unit       2.745185e-01       FALSE
+16          gc_deviation MungBeanUnit          5.973605e-02       FALSE
+17          gc_deviation protocol              1.140481e-04        TRUE
+18          gc_deviation S1Unit                4.637927e-01       FALSE
+19          gc_deviation MungBeanUnit:protocol 5.772604e-02       FALSE
+20          gc_deviation protocol:S1Unit       8.311211e-01       FALSE
 21           family_mean MungBeanUnit          4.646379e-01       FALSE
 22           family_mean protocol              8.429941e-02       FALSE
 23           family_mean S1Unit                1.077790e-01       FALSE
@@ -3064,17 +3203,7 @@ Marek Cmero
 <p>Upset plot showing duplex variant calls. Variants were called in
 areas with at least 4x coverage with at least 2 supporting reads and a
 VAF of <span class="math inline">\(\geq2\)</span>.</p>
-<pre class="r"><code>var_df &lt;- NULL
-for (i in 1:length(vars)) {
-    svars &lt;- vars[[i]]@fix %&gt;% data.frame()
-    if (nrow(svars) &gt; 0) {
-        svars$sample &lt;- sample_names[i]
-        var_df &lt;- rbind(var_df, svars) 
-    }
-}
-var_df$id &lt;- paste(var_df$CHROM, var_df$POS, sep = &#39;_&#39;)
-
-ulist &lt;- NULL
+<pre class="r"><code>ulist &lt;- NULL
 for(sample in sample_names) {
     ids &lt;- var_df[var_df$sample %in% sample,]$id
     if (length(ids) &gt; 0) {
@@ -3143,6 +3272,64 @@ Marek Cmero
 </table>
 </div>
 </div>
+</div>
+<div id="duplex-coverage-without-requiring-ssc" class="section level2">
+<h2>Duplex coverage without requiring SSC</h2>
+<p>The pipeline was run only requiring a single read on each strand.
+Here we plot the difference in mean coverage. As we would expect,
+skipping SSC step increases duplex coverage. For some samples with
+disproportionately higher single-read families (NanoMB-S1), this
+increases duplex coverage significantly more.</p>
+<pre class="r"><code>ccov &lt;- inner_join(qmap_cons_cov,
+                   qmap_cons_cov_nossc,
+                   by = &#39;Sample&#39;,
+                   suffix = c(&#39;_ssc&#39;, &#39;_nossc&#39;)) %&gt;%
+          inner_join(., qmap_cov, by = &#39;Sample&#39;)
+ccov$sample &lt;- str_split(ccov$Sample, &#39;Rep&#39;) %&gt;% lapply(., dplyr::first) %&gt;% unlist()
+ccov$duplex_cov_ratio &lt;- ccov$coverage / ccov$coverage_ssc
+ccov$duplex_cov_ratio_noscc &lt;- ccov$coverage / ccov$coverage_nossc
+
+p1 &lt;- ggplot(ccov, aes(coverage_ssc, coverage_nossc, colour = sample)) +
+  geom_point() +
+  theme_bw() +
+  xlim(0, 550) +
+  ylim(0, 550) +
+  xlab(&#39;with SSC&#39;) +
+  ylab(&#39;without SSC&#39;) +
+  geom_abline(slope = 1) +
+  theme(legend.position = &#39;left&#39;) +
+  scale_colour_brewer(palette = &#39;Dark2&#39;) +
+  ggtitle(&#39;Mean duplex coverage&#39;)
+
+p2 &lt;- ggplot(ccov, aes(duplex_cov_ratio, duplex_cov_ratio_noscc, colour = sample)) +
+  geom_point() +
+  theme_bw() +
+  xlim(0, 100) +
+  ylim(0, 100) +
+  xlab(&#39;with SSC&#39;) +
+  ylab(&#39;without SSC&#39;) +
+  geom_abline(slope = 1) +
+  theme(legend.position = &#39;right&#39;) +
+  scale_colour_brewer(palette = &#39;Dark2&#39;) +
+  ggtitle(&#39;Duplex coverage ratio&#39;)
+
+p1 + p2</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/coverage_without_ssc-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="variant-calls-without-ssc" class="section level2">
+<h2>Variant calls without SSC</h2>
+<p>Here we show the variant calls from the duplex sequences without SSC
+in the same Upset plot format.</p>
+<pre class="r"><code>ulist &lt;- NULL
+for(sample in sample_names) {
+    ids &lt;- var_df_nossc[var_df_nossc$sample %in% sample,]$id
+    if (length(ids) &gt; 0) {
+        ulist[[sample]] &lt;- ids
+    }
+}
+
+upset(fromList(ulist), order.by=&#39;freq&#39;, nsets=length(sample_names))</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/variants_nossc-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
