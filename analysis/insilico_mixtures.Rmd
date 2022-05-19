@@ -65,7 +65,7 @@ var_df$VAF <- var_df$AD / (var_df$AD + var_df$RD)
 var_df <- var_df[var_df$VAF < 0.3,] # filter low frequency VAFs
 ```
 
-## Variant allele frequencies (10\% mixture)
+## VAFs (10\% mixture)
 
 NanoSeq MB2
 

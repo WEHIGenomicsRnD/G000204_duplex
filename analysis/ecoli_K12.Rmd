@@ -10,9 +10,10 @@ output:
 ## MultiQC reports:
 * [AGRF_CAGRF22029764_HJK2GDSX3 MultiQC pre-duplex](AGRF_CAGRF22029764_HJK2GDSX3_multiqc/multiqc_report.html)
 * [AGRF_CAGRF22029764_HJK2GDSX3 MultiQC duplex](AGRF_CAGRF22029764_HJK2GDSX3_multiqc/multiqc_report_consensus.html)
+* [AGRF_CAGRF22029764_HJK2GDSX3 MultiQC duplex without SSCs](AGRF_CAGRF22029764_HJK2GDSX3_multiqc/multiqc_report_consensus_nossc.html)
 
 ```{r setup, include=FALSE}
-DOCNAME = "Compare MGI with Illumina"
+DOCNAME = "Analyse E. coli K12 results"
 knitr::opts_chunk$set(autodep        = TRUE,
                       cache          = FALSE,
                       cache.path     = paste0("cache/", DOCNAME, "/"),
