@@ -349,6 +349,9 @@ div.tocify {
 <li>
   <a href="license.html">License</a>
 </li>
+<li>
+  <a href="insilico_mixtures.html">in silico mixtures</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -529,15 +532,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree572a31d0493beff8d66c691ae8d78b5617fd1148targetblank572a31da">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree434e8b9da30508bd132082864b42679824a086c3targetblank434e8b9a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/572a31d0493beff8d66c691ae8d78b5617fd1148" target="_blank">572a31d</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/434e8b9da30508bd132082864b42679824a086c3" target="_blank">434e8b9</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree572a31d0493beff8d66c691ae8d78b5617fd1148targetblank572a31da"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree434e8b9da30508bd132082864b42679824a086c3targetblank434e8b9a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -547,7 +550,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/572a31d0493beff8d66c691ae8d78b5617fd1148" target="_blank">572a31d</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/434e8b9da30508bd132082864b42679824a086c3" target="_blank">434e8b9</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -579,8 +582,8 @@ Untracked files:
     Untracked:  prototype_code/
 
 Unstaged changes:
+    Modified:   analysis/_site.yml
     Modified:   analysis/ecoli.Rmd
-    Modified:   analysis/ecoli_K12.Rmd
 
 </code></pre>
 <p>
@@ -626,6 +629,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/434e8b9da30508bd132082864b42679824a086c3/analysis/insilico_mixtures.Rmd" target="_blank">434e8b9</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-19
+</td>
+<td>
+Added in silico mixtures to navigation
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/ff1f6650f92859cc73d3182fd88cb603c3510bb1/docs/insilico_mixtures.html" target="_blank">ff1f665</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-19
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -679,8 +716,8 @@ var_df$AD &lt;- lapply(tmp, tail, 1) %&gt;% unlist()
 
 var_df$VAF &lt;- var_df$AD / (var_df$AD + var_df$RD)
 var_df &lt;- var_df[var_df$VAF &lt; 0.3,] # filter low frequency VAFs</code></pre>
-<div id="variant-allele-frequencies-10-mixture" class="section level2">
-<h2>Variant allele frequencies (10% mixture)</h2>
+<div id="vafs-10-mixture" class="section level2">
+<h2>VAFs (10% mixture)</h2>
 <p>NanoSeq MB2</p>
 <ul>
 <li>10x – K12</li>
@@ -691,6 +728,43 @@ var_df &lt;- var_df[var_df$VAF &lt; 0.3,] # filter low frequency VAFs</code></pr
     theme_minimal() +
     scale_x_continuous(breaks = seq(0, 1, 0.1), limits = c(0, 1))</code></pre>
 <p><img src="figure/insilico_mixtures.Rmd/plot_vafs-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot_vafs-1">
+Past versions of plot_vafs-1.png
+</button>
+</p>
+<div id="fig-plot_vafs-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ff1f6650f92859cc73d3182fd88cb603c3510bb1/docs/figure/insilico_mixtures.Rmd/plot_vafs-1.png" target="_blank">ff1f665</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-19
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
