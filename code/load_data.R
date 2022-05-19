@@ -33,7 +33,7 @@ load_variants <- function(fdir, sample_names) {
 
     var_df <- NULL
     for (i in 1:length(vars)) {
-        svars <- vars[[i]]@fix %>% data.frame()
+        svars <- data.frame(vars[[i]]@fix, vars[[i]]@gt)
         if (nrow(svars) > 0) {
             svars$sample <- sample_names[i]
             var_df <- rbind(var_df, svars)
