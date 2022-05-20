@@ -532,15 +532,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree77280c2ea52e7599d12a74e4278156fabfa33baetargetblank77280c2a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreed97ddd6ddb160020ee44ef8f177db38ea59c480ftargetblankd97ddd6a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/77280c2ea52e7599d12a74e4278156fabfa33bae" target="_blank">77280c2</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/d97ddd6ddb160020ee44ef8f177db38ea59c480f" target="_blank">d97ddd6</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree77280c2ea52e7599d12a74e4278156fabfa33baetargetblank77280c2a"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreed97ddd6ddb160020ee44ef8f177db38ea59c480ftargetblankd97ddd6a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -550,7 +550,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/77280c2ea52e7599d12a74e4278156fabfa33bae" target="_blank">77280c2</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/d97ddd6ddb160020ee44ef8f177db38ea59c480f" target="_blank">d97ddd6</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -629,6 +629,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/d97ddd6ddb160020ee44ef8f177db38ea59c480f/analysis/insilico_mixtures.Rmd" target="_blank">d97ddd6</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-20
+</td>
+<td>
+Update experiment text
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/44995023c331c8f3f6d88fa4e05295b8a9090b5c/docs/insilico_mixtures.html" target="_blank">4499502</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-20
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -756,11 +790,11 @@ Added initial results from in silico mixture experiment
 </div>
 </div>
 <p>In this experiment, the duplex reads from NanoSeq MB2 rep 1 from E
-coli K12 was mixed (in silico) at 10x depth with the duplex reads from
-NanoSeq MB2 (MGI) from E coli BL21 at 90x depth creating a 10% mixed
-genome. There are &gt;33k SNP and INDEL differences between the E coli
-species, so we would expect to find approximately this many SNPs at the
-mixture frequency.</p>
+coli K12 was mixed in pairs (in silico) at four depths (0.1x, 1x, 5x and
+10x) with the duplex reads from NanoSeq MB2 (MGI) from E coli BL21 at
+four depths (99.9x, 99x, 95x and 90x). There are &gt;33k SNP and INDEL
+differences between the E coli species, so we would expect to find
+approximately this many SNPs at the mixture frequency.</p>
 <pre class="r"><code>library(ggplot2)
 library(data.table)
 library(dplyr)
@@ -794,6 +828,7 @@ var_df$sample &lt;- factor(var_df$sample, levels = c(&#39;NanoMB2-0.001&#39;, &#
 <h2>VAF mixture distributions</h2>
 <p>NanoSeq MB2 mixes:</p>
 <ul>
+<li>0.1:99.9x KL12:BL21 (0.001 mix)</li>
 <li>1:99x K12:BL21 (0.01 mix)</li>
 <li>5:95x K12:BL21 (0.05 mix)</li>
 <li>10:90x K12:BL21 (0.10 mix)</li>
@@ -832,6 +867,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/44995023c331c8f3f6d88fa4e05295b8a9090b5c/docs/figure/insilico_mixtures.Rmd/plot_vafs-1.png" target="_blank">4499502</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-20
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/98aadc0715152313af191cdb372820d2925dec4c/docs/figure/insilico_mixtures.Rmd/plot_vafs-1.png" target="_blank">98aadc0</a>
