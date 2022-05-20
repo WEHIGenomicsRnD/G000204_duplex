@@ -5,7 +5,7 @@ output:
       code_folding: hide
 ---
 
-In this experiment, the duplex reads from NanoSeq MB2 rep 1 from E coli K12 was mixed (in silico) at 10x depth with the duplex reads from NanoSeq MB2 (MGI) from E coli BL21 at 90x depth creating a 10\% mixed genome. There are >33k SNP and INDEL differences between the E coli species, so we would expect to find approximately this many SNPs at the mixture frequency.
+In this experiment, the duplex reads from NanoSeq MB2 rep 1 from E coli K12 was mixed in pairs (in silico) at four depths (0.1x, 1x, 5x and 10x) with the duplex reads from NanoSeq MB2 (MGI) from E coli BL21 at four depths (99.9x, 99x, 95x and 90x). There are >33k SNP and INDEL differences between the E coli species, so we would expect to find approximately this many SNPs at the mixture frequency.
 
 ```{r setup, include=FALSE}
 DOCNAME = "Ecoli in silico mixture results"
@@ -74,6 +74,7 @@ var_df$sample <- factor(var_df$sample, levels = c('NanoMB2-0.001', 'NanoMB2-0.01
 
 NanoSeq MB2 mixes:
 
+- 0.1:99.9x KL12:BL21 (0.001 mix)
 - 1:99x K12:BL21 (0.01 mix)
 - 5:95x K12:BL21 (0.05 mix)
 - 10:90x K12:BL21 (0.10 mix)
