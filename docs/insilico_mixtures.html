@@ -532,15 +532,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree727938e09a356a6c6c30774e88e18a83915baae2targetblank727938ea">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree77280c2ea52e7599d12a74e4278156fabfa33baetargetblank77280c2a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/727938e09a356a6c6c30774e88e18a83915baae2" target="_blank">727938e</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/77280c2ea52e7599d12a74e4278156fabfa33bae" target="_blank">77280c2</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree727938e09a356a6c6c30774e88e18a83915baae2targetblank727938ea"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree77280c2ea52e7599d12a74e4278156fabfa33baetargetblank77280c2a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -550,7 +550,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/727938e09a356a6c6c30774e88e18a83915baae2" target="_blank">727938e</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/77280c2ea52e7599d12a74e4278156fabfa33bae" target="_blank">77280c2</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -629,6 +629,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/77280c2ea52e7599d12a74e4278156fabfa33bae/analysis/insilico_mixtures.Rmd" target="_blank">77280c2</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-20
+</td>
+<td>
+Added 0.001 mix results
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/98aadc0715152313af191cdb372820d2925dec4c/docs/insilico_mixtures.html" target="_blank">98aadc0</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-20
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -754,7 +788,8 @@ calculate_vafs &lt;- function(var_df, freq_filter = 0.3) {
     return(var_df)
 }</code></pre>
 <pre class="r"><code>variant_dir &lt;- here(&#39;data/mixtures&#39;)</code></pre>
-<pre class="r"><code>var_df &lt;- load_variants(variant_dir, c(&#39;NanoMB2-0.01&#39;, &#39;NanoMB2-0.05&#39;, &#39;ManoMB2-0.10&#39;)) %&gt;% calculate_vafs()</code></pre>
+<pre class="r"><code>var_df &lt;- load_variants(variant_dir, c(&#39;NanoMB2-0.001&#39;, &#39;NanoMB2-0.01&#39;, &#39;NanoMB2-0.05&#39;, &#39;ManoMB2-0.10&#39;)) %&gt;% calculate_vafs()
+var_df$sample &lt;- factor(var_df$sample, levels = c(&#39;NanoMB2-0.001&#39;, &#39;NanoMB2-0.01&#39;, &#39;NanoMB2-0.05&#39;, &#39;ManoMB2-0.10&#39;))</code></pre>
 <div id="vaf-mixture-distributions" class="section level2">
 <h2>VAF mixture distributions</h2>
 <p>NanoSeq MB2 mixes:</p>
@@ -764,16 +799,17 @@ calculate_vafs &lt;- function(var_df, freq_filter = 0.3) {
 <li>10:90x K12:BL21 (0.10 mix)</li>
 </ul>
 <pre class="r"><code>data.table(var_df)[, list(VAF_mean = mean(VAF), nvars = length(POS)), by=sample] %&gt;% print()</code></pre>
-<pre><code>         sample   VAF_mean nvars
-1: NanoMB2-0.01 0.02880655  6141
-2: NanoMB2-0.05 0.05095621 28579
-3: ManoMB2-0.10 0.09227845 32283</code></pre>
+<pre><code>          sample   VAF_mean nvars
+1: NanoMB2-0.001 0.08053132   281
+2:  NanoMB2-0.01 0.02880655  6141
+3:  NanoMB2-0.05 0.05095621 28579
+4:  ManoMB2-0.10 0.09227845 32283</code></pre>
 <pre class="r"><code>ggplot(var_df, aes(VAF)) +
     geom_histogram(bins = 50) +
     theme_minimal() +
-    facet_grid(~sample) +
+    facet_wrap(~sample) +
     scale_x_continuous(breaks = seq(0, 1, 0.1), limits = c(0, 1))</code></pre>
-<p><img src="figure/insilico_mixtures.Rmd/plot_vafs-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p><img src="figure/insilico_mixtures.Rmd/plot_vafs-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot_vafs-1">
 Past versions of plot_vafs-1.png
@@ -796,6 +832,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/98aadc0715152313af191cdb372820d2925dec4c/docs/figure/insilico_mixtures.Rmd/plot_vafs-1.png" target="_blank">98aadc0</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-20
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/ff1f6650f92859cc73d3182fd88cb603c3510bb1/docs/figure/insilico_mixtures.Rmd/plot_vafs-1.png" target="_blank">ff1f665</a>
