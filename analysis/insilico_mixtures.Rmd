@@ -17,7 +17,7 @@ knitr::opts_chunk$set(autodep        = TRUE,
                       echo           = TRUE,
                       error          = FALSE,
                       fig.align      = "center",
-                      fig.width      = 7,
+                      fig.width      = 9,
                       fig.height     = 5,
                       dev            = c("png"),
                       message        = FALSE,
@@ -45,6 +45,17 @@ library(vcfR)
 
 ```{r source}
 source(here('code/load_data.R'))
+
+calculate_vafs <- function(var_df, freq_filter = 0.3) {
+    tmp <- var_df$Sample1 %>% str_split(':') %>% lapply(., function(x){as.numeric(x[5:6])}) 
+    var_df$RD <- lapply(tmp, head, 1) %>% unlist()
+    var_df$AD <- lapply(tmp, tail, 1) %>% unlist()
+    
+    var_df$VAF <- var_df$AD / (var_df$AD + var_df$RD)
+    var_df <- var_df[var_df$VAF < freq_filter,]
+    
+    return(var_df)
+}
 ```
 
 
@@ -54,28 +65,26 @@ variant_dir <- here('data/mixtures')
 
 
 ```{r load_data}
-var_df <- load_variants(variant_dir, 'NanoMB2-0.1')
-```
-```{r calculate_vafs}
-tmp <- var_df$Sample1 %>% str_split(':') %>% lapply(., function(x){as.numeric(x[5:6])}) 
-var_df$RD <- lapply(tmp, head, 1) %>% unlist()
-var_df$AD <- lapply(tmp, tail, 1) %>% unlist()
-
-var_df$VAF <- var_df$AD / (var_df$AD + var_df$RD)
-var_df <- var_df[var_df$VAF < 0.3,] # filter low frequency VAFs
+var_df <- load_variants(variant_dir, c('NanoMB2-0.01', 'NanoMB2-0.05', 'ManoMB2-0.10')) %>% calculate_vafs()
 ```
 
-## VAFs (10\% mixture)
 
-NanoSeq MB2
+## VAF mixture distributions
 
-- 10x -- K12
-- 90x -- BL21
+NanoSeq MB2 mixes:
+
+- 1:99x K12:BL21 (0.01 mix)
+- 5:95x K12:BL21 (0.05 mix)
+- 10:90x K12:BL21 (0.10 mix)
+
 
 ```{r plot_vafs}
+data.table(var_df)[, list(VAF_mean = mean(VAF), nvars = length(POS)), by=sample] %>% print()
+
 ggplot(var_df, aes(VAF)) +
     geom_histogram(bins = 50) +
     theme_minimal() +
+    facet_grid(~sample) +
     scale_x_continuous(breaks = seq(0, 1, 0.1), limits = c(0, 1))
 ```
 
