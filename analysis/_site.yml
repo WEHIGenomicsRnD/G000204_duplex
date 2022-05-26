@@ -13,6 +13,8 @@ navbar:
     href: ecoli_K12.html
   - text: "Illumina vs. MGI"
     href: compare_MGI_Illumina.html
+  - text: "in silico mixtures"
+    href: insilico_mixtures.html
   - text: License
     href: license.html
 output:
