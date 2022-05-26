@@ -180,3 +180,64 @@ for(vaf in c(0.1, 0.01, 0.001)) {
 print(df)
 ```
 
+## Revised model
+
+Attempting to combine both coverage and cell input, we can take the following formula:
+
+$(1 - v) ^ {(n * c * d)} = p$
+
+Where $v$ = target VAF, $n$ = number of input cells, $c$ = coverage per input cell, $d$ = duplex efficiency and $p$ = probability of missing a variant.
+
+We set:
+
+* $c = 10$ (coverage we are aiming for for each genome equivalent)
+* $d = 0.057$ (average efficiency for NanoSeq MB2)
+* $p = 0.05$ (fraction of variants we are okay to miss)
+* $v = \{0.001, 0.01, 0.05, 0.1\}$ (target VAFs)
+* $n = \{100, 200..10000\}$ (range of input cells)
+
+We also need to check whether the number of genome equivalents we take forward for sequencing exceeds the lane capacity (600GB). Our sequenced bases will be:
+
+$b = g * c * n$ where $g$ = genome size. 
+
+```{r}
+lane_cap <- 6e11
+g <- 5e6
+pmiss <- 0.05
+c <- 10
+e <- 0.057
+
+vafs <- c(0.001, 0.01, 0.05, 0.1)
+n <- seq(100, 10000, 100)
+
+# calculate duplex coverage
+dcov <- n * c * e
+
+# calculate total sequenced bases
+bases <- g * c * n
+
+probs <- NULL
+min_cells <- NULL
+for(vaf in vafs) {
+    prob <- data.frame(ncells = n,
+                        dcov = dcov,
+                        p = pbinom(0, dcov, vaf),
+                        vaf = vaf,
+                        bases = bases,
+                        within_capacity = bases < lane_cap)
+    
+    tmp <- prob[prob$p < pmiss,]
+    tmp <- tmp[tmp$p == max(tmp$p),]
+    min_cells <- rbind(tmp, min_cells)
+
+    probs <- rbind(probs, prob)
+}
+
+print(min_cells)
+ggplot(probs, aes(ncells, p, colour = factor(vaf))) +
+    geom_point() +
+    theme_minimal() +
+    geom_hline(yintercept = pmiss, alpha=0.4) +
+    scale_color_brewer(palette = 'Dark2')
+```
+

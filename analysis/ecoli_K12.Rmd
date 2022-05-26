@@ -590,3 +590,19 @@ for(sample in sample_names) {
 upset(fromList(ulist), order.by='freq', nsets=length(sample_names))
 ```
 
+## Input cells
+
+Estimate the number of input cells using formula $d / e / c = n$ where d = mean duplex coverage, e = duplex efficiency, c = coverage per genome equivalent and n = number of cells.
+
+```{r}
+coverage_per_genome <- 10
+qmap_cons_cov$Sample <- gsub('-HJK2GDSX3', '', qmap_cons_cov$Sample)
+metrics <- inner_join(metrics, qmap_cons_cov, by = c('sample' = 'Sample'))
+metrics$estimated_cells <- metrics$coverage / metrics$efficiency / coverage_per_genome
+
+ggplot(metrics, aes(sample, estimated_cells)) +
+    geom_bar(stat = 'identity') + 
+    theme_minimal() +
+    coord_flip()
+```
+

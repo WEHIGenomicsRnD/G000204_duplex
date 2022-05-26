@@ -23,5 +23,6 @@ Analyses
 * [E coli results (K12)](ecoli_K12.html)
     * [AGRF_CAGRF22029764_HJK2GDSX3 MultiQC pre-duplex](AGRF_CAGRF22029764_HJK2GDSX3_multiqc/multiqc_report.html)
     * [AGRF_CAGRF22029764_HJK2GDSX3 MultiQC duplex](AGRF_CAGRF22029764_HJK2GDSX3_multiqc/multiqc_report_consensus.html)
+    * [AGRF_CAGRF22029764_HJK2GDSX3 MultiQC duplex without SSCs](AGRF_CAGRF22029764_HJK2GDSX3_multiqc/multiqc_report_consensus_nossc.html)
 * [Illumina vs MGI](compare_MGI_Illumina.html)
 * [in silico mixtures](insilico_mixtures.html)

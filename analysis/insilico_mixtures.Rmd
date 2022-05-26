@@ -5,7 +5,7 @@ output:
       code_folding: hide
 ---
 
-In this experiment, the duplex reads from NanoSeq MB2 rep 1 from E coli K12 was mixed in pairs (in silico) at four depths (0.1x, 1x, 5x and 10x) with the duplex reads from NanoSeq MB2 (MGI) from E coli BL21 at four depths (99.9x, 99x, 95x and 90x). There are >33k SNP and INDEL differences between the E coli species, so we would expect to find approximately this many SNPs at the mixture frequency.
+In this experiment, the duplex reads from NanoSeq MB2 rep 1 from E coli K12 was mixed in pairs (in silico) at four depths (0.1x, 1x, 5x and 10x) with the duplex reads from NanoSeq MB2 (MGI) from E coli BL21 at four depths (99.9x, 99x, 95x and 90x). Variants called required a coverage of at least 4 and at least 1 supporting variant read. There are >33k SNP and INDEL differences between the E coli species. Given the mixture and total depth we can calculate the number of SNPs that we expect to find.
 
 ```{r setup, include=FALSE}
 DOCNAME = "Ecoli in silico mixture results"
@@ -60,13 +60,13 @@ calculate_vafs <- function(var_df, freq_filter = 0.3) {
 
 
 ```{r paths}
-variant_dir <- here('data/mixtures')
+variant_dir <- here('data/mixtures/min_1_read')
 ```
 
 
 ```{r load_data}
-var_df <- load_variants(variant_dir, c('NanoMB2-0.001', 'NanoMB2-0.01', 'NanoMB2-0.05', 'ManoMB2-0.10')) %>% calculate_vafs()
-var_df$sample <- factor(var_df$sample, levels = c('NanoMB2-0.001', 'NanoMB2-0.01', 'NanoMB2-0.05', 'ManoMB2-0.10'))
+var_df <- load_variants(variant_dir, c('NanoMB2-0.001', 'NanoMB2-0.01', 'NanoMB2-0.05', 'NanoMB2-0.10')) %>% calculate_vafs()
+var_df$sample <- factor(var_df$sample, levels = c('NanoMB2-0.001', 'NanoMB2-0.01', 'NanoMB2-0.05', 'NanoMB2-0.10'))
 ```
 
 
@@ -81,7 +81,13 @@ NanoSeq MB2 mixes:
 
 
 ```{r plot_vafs}
-data.table(var_df)[, list(VAF_mean = mean(VAF), nvars = length(POS)), by=sample] %>% print()
+# NOTE: variant number obtained from nucdiff difference between two genomes
+# cat G000204/workflow/jafarJ_201021_duplex/duplex-pipe/ref/nucdiff/ecoli_BL21_vs_ATCCecoli_BL21_vs_ATCC_1.snps | cut -f 1-2 | grep -v "\." | cut -f 1 | sort | uniq | wc -l
+
+vaf_sm <- data.table(var_df)[, list(VAF_mean = mean(VAF), nvars = length(POS)), by=sample] %>%
+            mutate(VAF_mix = as.character(sample) %>% strsplit('-') %>% lapply(last) %>% unlist() %>% as.numeric())
+vaf_sm$expected <- (1 - (1 - vaf_sm$VAF_mix) ^ 100) * 33655
+print(vaf_sm)
 
 ggplot(var_df, aes(VAF)) +
     geom_histogram(bins = 50) +
