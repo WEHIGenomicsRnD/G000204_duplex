@@ -347,10 +347,10 @@ div.tocify {
   <a href="compare_MGI_Illumina.html">Illumina vs. MGI</a>
 </li>
 <li>
-  <a href="license.html">License</a>
+  <a href="insilico_mixtures.html">in silico mixtures</a>
 </li>
 <li>
-  <a href="insilico_mixtures.html">in silico mixtures</a>
+  <a href="license.html">License</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -401,7 +401,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-05-20
+<strong>Last updated:</strong> 2022-05-26
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -532,15 +532,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreed97ddd6ddb160020ee44ef8f177db38ea59c480ftargetblankd97ddd6a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreeafd79e57f54101b6546d69af08f398f1d12dc29etargetblankafd79e5a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/d97ddd6ddb160020ee44ef8f177db38ea59c480f" target="_blank">d97ddd6</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/afd79e57f54101b6546d69af08f398f1d12dc29e" target="_blank">afd79e5</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreed97ddd6ddb160020ee44ef8f177db38ea59c480ftargetblankd97ddd6a"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreeafd79e57f54101b6546d69af08f398f1d12dc29etargetblankafd79e5a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -550,7 +550,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/d97ddd6ddb160020ee44ef8f177db38ea59c480f" target="_blank">d97ddd6</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/afd79e57f54101b6546d69af08f398f1d12dc29e" target="_blank">afd79e5</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -629,6 +629,41 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/afd79e57f54101b6546d69af08f398f1d12dc29e/analysis/insilico_mixtures.Rmd" target="_blank">afd79e5</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-26
+</td>
+<td>
+Added revised model, in silico mixtures redone with 1 supporting read,
+added input cell estimates
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/39c5a18b3b39dbf7475980f1527f93a6f6eb9462/docs/insilico_mixtures.html" target="_blank">39c5a18</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-20
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -792,9 +827,11 @@ Added initial results from in silico mixture experiment
 <p>In this experiment, the duplex reads from NanoSeq MB2 rep 1 from E
 coli K12 was mixed in pairs (in silico) at four depths (0.1x, 1x, 5x and
 10x) with the duplex reads from NanoSeq MB2 (MGI) from E coli BL21 at
-four depths (99.9x, 99x, 95x and 90x). There are &gt;33k SNP and INDEL
-differences between the E coli species, so we would expect to find
-approximately this many SNPs at the mixture frequency.</p>
+four depths (99.9x, 99x, 95x and 90x). Variants called required a
+coverage of at least 4 and at least 1 supporting variant read. There are
+&gt;33k SNP and INDEL differences between the E coli species. Given the
+mixture and total depth we can calculate the number of SNPs that we
+expect to find.</p>
 <pre class="r"><code>library(ggplot2)
 library(data.table)
 library(dplyr)
@@ -821,9 +858,9 @@ calculate_vafs &lt;- function(var_df, freq_filter = 0.3) {
     
     return(var_df)
 }</code></pre>
-<pre class="r"><code>variant_dir &lt;- here(&#39;data/mixtures&#39;)</code></pre>
-<pre class="r"><code>var_df &lt;- load_variants(variant_dir, c(&#39;NanoMB2-0.001&#39;, &#39;NanoMB2-0.01&#39;, &#39;NanoMB2-0.05&#39;, &#39;ManoMB2-0.10&#39;)) %&gt;% calculate_vafs()
-var_df$sample &lt;- factor(var_df$sample, levels = c(&#39;NanoMB2-0.001&#39;, &#39;NanoMB2-0.01&#39;, &#39;NanoMB2-0.05&#39;, &#39;ManoMB2-0.10&#39;))</code></pre>
+<pre class="r"><code>variant_dir &lt;- here(&#39;data/mixtures/min_1_read&#39;)</code></pre>
+<pre class="r"><code>var_df &lt;- load_variants(variant_dir, c(&#39;NanoMB2-0.001&#39;, &#39;NanoMB2-0.01&#39;, &#39;NanoMB2-0.05&#39;, &#39;NanoMB2-0.10&#39;)) %&gt;% calculate_vafs()
+var_df$sample &lt;- factor(var_df$sample, levels = c(&#39;NanoMB2-0.001&#39;, &#39;NanoMB2-0.01&#39;, &#39;NanoMB2-0.05&#39;, &#39;NanoMB2-0.10&#39;))</code></pre>
 <div id="vaf-mixture-distributions" class="section level2">
 <h2>VAF mixture distributions</h2>
 <p>NanoSeq MB2 mixes:</p>
@@ -833,12 +870,18 @@ var_df$sample &lt;- factor(var_df$sample, levels = c(&#39;NanoMB2-0.001&#39;, &#
 <li>5:95x K12:BL21 (0.05 mix)</li>
 <li>10:90x K12:BL21 (0.10 mix)</li>
 </ul>
-<pre class="r"><code>data.table(var_df)[, list(VAF_mean = mean(VAF), nvars = length(POS)), by=sample] %&gt;% print()</code></pre>
-<pre><code>          sample   VAF_mean nvars
-1: NanoMB2-0.001 0.08053132   281
-2:  NanoMB2-0.01 0.02880655  6141
-3:  NanoMB2-0.05 0.05095621 28579
-4:  ManoMB2-0.10 0.09227845 32283</code></pre>
+<pre class="r"><code># NOTE: variant number obtained from nucdiff difference between two genomes
+# cat G000204/workflow/jafarJ_201021_duplex/duplex-pipe/ref/nucdiff/ecoli_BL21_vs_ATCCecoli_BL21_vs_ATCC_1.snps | cut -f 1-2 | grep -v &quot;\.&quot; | cut -f 1 | sort | uniq | wc -l
+
+vaf_sm &lt;- data.table(var_df)[, list(VAF_mean = mean(VAF), nvars = length(POS)), by=sample] %&gt;%
+            mutate(VAF_mix = as.character(sample) %&gt;% strsplit(&#39;-&#39;) %&gt;% lapply(last) %&gt;% unlist() %&gt;% as.numeric())
+vaf_sm$expected &lt;- (1 - (1 - vaf_sm$VAF_mix) ^ 100) * 33655
+print(vaf_sm)</code></pre>
+<pre><code>          sample   VAF_mean nvars VAF_mix expected
+1: NanoMB2-0.001 0.01774953  3100   0.001  3204.22
+2:  NanoMB2-0.01 0.01768270 18358   0.010 21336.18
+3:  NanoMB2-0.05 0.04655841 32537   0.050 33455.74
+4:  NanoMB2-0.10 0.08925551 33697   0.100 33654.11</code></pre>
 <pre class="r"><code>ggplot(var_df, aes(VAF)) +
     geom_histogram(bins = 50) +
     theme_minimal() +
