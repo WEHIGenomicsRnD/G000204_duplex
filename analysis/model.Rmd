@@ -137,7 +137,7 @@ $(1 – v) ^ n = 0.05$
 
 ## Coverage
 
-The above thought experiment won't tell us the probability of sequencing the variant, as sequencing involves a whole host of other factors. Coverage is one of the most important. Given that approximately 30x duplex coverage is required to yield 1x of high quality duplex coverage, we can look at the relationship between coverage and VAF (need the variant to be at least 1x to detect).
+The above thought experiment won't tell us the probability of sequencing the variant, as sequencing involves a whole host of other factors. Coverage is one of the most important. Given that approximately 30x raw coverage is required to yield 1x of high quality duplex coverage, we can look at the relationship between coverage and VAF (need the variant to be at least 1x to detect).
 
 Here we can see that at VAF = 0.01 (line), we need to sequence to approx 3000x, and this gets exponentially deeper as we go down in target VAF.
 
