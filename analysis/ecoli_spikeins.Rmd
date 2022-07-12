@@ -1,0 +1,292 @@
+---
+title: "E coli spike-in experiments"
+output:
+  workflowr::wflow_html:
+      code_folding: hide
+---
+
+# E coli spike-in experiment results
+
+E coli K12 strain was spiked into E coli BL21 with different proportions:
+
+| Lib Name     | Spike in %           | \~Cell equivalent\* |
+|--------------|----------------------|----------------------|
+| 0-K12Rep1    | 0%K12Rep1(BL2 only)  | 318                  |
+| 0-K12Rep2    | 0%K12Rep2 (BL2 only) | 202                  |
+| 1-K12Rep1    | 1%K12Rep1            | 601                  |
+| 1-K12Rep2    | 1%K12Rep2            | 585                  |
+| 10-K12Rep1   | 10%K12Rep1           | 86                   |
+| 10-K12Rep2   | 10%K12Rep2           | 74                   |
+| 1_10-K12Rep1 | 0.1%K12Rep1          | 11,139               |
+| 5-K12Rep1    | 5%K12Rep1            | 188                  |
+| 5-K12Rep2    | 5%K12Rep2            | 228                  |
+
+\*based on R1 unique read number.
+
+The 1_10-K12Rep1 sample is currently omitted in this analysis as it is too large to process with the existing script.
+
+## MultiQC reports:
+
+-   [AGRF_CAGRF220410419_HFVGHDSX3 MultiQC pre-duplex](AGRF_CAGRF220410419_HFVGHDSX3_multiqc/multiqc_report.html)
+-   [AGRF_CAGRF220410419_HFVGHDSX3 MultiQC duplex](AGRF_CAGRF220410419_HFVGHDSX3_multiqc/multiqc_report_consensus.html)
+
+```{r setup, include=FALSE}
+DOCNAME = "Analyse E. coli spike-ins"
+knitr::opts_chunk$set(autodep        = TRUE,
+                      cache          = FALSE,
+                      cache.path     = paste0("cache/", DOCNAME, "/"),
+                      cache.comments = FALSE,
+                      cache.lazy     = FALSE,
+                      echo           = TRUE,
+                      error          = FALSE,
+                      fig.align      = "center",
+                      fig.width      = 7,
+                      fig.height     = 5,
+                      dev            = c("png"),
+                      message        = FALSE,
+                      warning        = FALSE)
+```
+
+
+```{r libraries, cache=FALSE, message=FALSE}
+library(ggplot2)
+library(data.table)
+library(dplyr)
+library(here)
+library(tibble)
+library(stringr)
+library(Rsamtools)
+library(GenomicRanges)
+library(seqinr)
+library(parallel)
+library(readxl)
+library(patchwork)
+library(RColorBrewer)
+library(UpSetR)
+library(vcfR)
+```
+
+```{r source}
+source(here('code/load_data.R'))
+source(here('code/plot.R'))
+source(here('code/efficiency_nanoseq_functions.R'))
+```
+
+```{r variables}
+genome_max <- 4528118
+cores <- 8
+```
+
+```{r paths}
+genomeFile <- here('data/ref/Escherichia_coli_strain_BL21_TaKaRa.fasta')
+rinfo_dir <- here('data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/read_info')
+markdup_dir <- here('data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/mark_duplicates')
+qualimap_dir <- here('data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/qualimap')
+qualimap_cons_dir <- here('data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/consensus/qualimap')
+variant_dir <- here('data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/variants')
+```
+
+```{r calculate_metrics}
+sample_names <- list.files(rinfo_dir) %>%
+                str_split('\\.txt.gz') %>%
+                lapply(., dplyr::first) %>%
+                unlist() %>%
+                str_split('_') %>%
+                lapply(., head, 2) %>%
+                lapply(., paste, collapse='-') %>%
+                unlist()
+
+# load variant data
+var_df <- load_variants(variant_dir, sample_names)
+
+# load and fetch duplicate rate from MarkDuplicates output
+mdup <- load_markdup_data(markdup_dir, sample_names)
+
+# get mean coverage for pre and post-consensus reads
+# filter out 1-10-K12Rep1 for now
+qmap_cov <- list.files(
+        qualimap_dir,
+        full.names = TRUE,
+        recursive = TRUE,
+        pattern = 'genome_results.txt') %>%
+        lapply(., function(x){if(!x %like% '1-10-K12Rep1'){x}}) %>% unlist() %>%
+        lapply(., read.delim)
+for (i in seq(length(sample_names))) {
+        qmap_cov[[i]]$Sample <- sample_names[i]
+}
+qmap_cov <- rbindlist(qmap_cov)
+qmap_cov <- qmap_cov[qmap_cov$BamQC.report %like% 'mean cov',]
+qmap_cov$coverage <-
+        str_split(qmap_cov$BamQC.report, ' = ') %>%
+        lapply(., last) %>%
+        unlist() %>%
+        gsub('X|,', '', .) %>%
+        lapply(., as.numeric) %>%
+        unlist()
+qmap_cov <- qmap_cov[,c('Sample', 'coverage')]
+
+
+qmap_cov_cons <- list.files(
+        qualimap_cons_dir,
+        full.names = TRUE,
+        recursive = TRUE,
+        pattern = 'genome_results.txt') %>%
+        lapply(., function(x){if(!x %like% '1-10-K12Rep1'){x}}) %>% unlist() %>%
+        lapply(., read.delim)
+for (i in seq(length(sample_names))) {
+        qmap_cov_cons[[i]]$Sample <- sample_names[i]
+}
+qmap_cov_cons <- rbindlist(qmap_cov_cons)
+qmap_cov_cons <- qmap_cov_cons[qmap_cov_cons$BamQC.report %like% 'mean cov',]
+qmap_cov_cons$coverage <-
+        str_split(qmap_cov_cons$BamQC.report, ' = ') %>%
+        lapply(., last) %>%
+        unlist() %>%
+        gsub('X|,', '', .) %>%
+        lapply(., as.numeric) %>%
+        unlist()
+qmap_cov_cons <- qmap_cov_cons[,c('Sample', 'coverage')]
+
+# uncomment below to calculate metrics
+# calculate metrics for nanoseq
+rlen <- 151; skips <- 5
+metrics <- calc_metrics_new_rbs(rinfo_dir, cores = cores) %>% bind_rows()
+
+metrics$duplicate_rate <- as.numeric(mdup)
+metrics$duplex_coverage_ratio <- qmap_cov$coverage / qmap_cov_cons$coverage
+metrics$duplex_coverage_ratio[qmap_cov_cons$coverage < 1] <- 0 # fix when < 1 duplex cov
+metrics$sample <- gsub('-HFVGHDSX3', '', sample_names)
+
+# cache metrics object
+# saveRDS(metrics, file = here('data/metrics.rds'))
+
+# prepare for plotting
+mm <- data.frame(melt(metrics))
+colnames(mm)[2] <- 'metric'
+```
+
+```{r plot_by_sample, fig.width=16, fig.height=10}
+ggplot(mm, aes(sample, value)) + 
+    geom_point() +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 90)) +
+    facet_wrap(~metric, scales = 'free') +
+    scale_colour_brewer(palette = 'Dark2')
+```
+
+## Metric comparison plots
+
+### Duplicate rate
+
+Fraction of duplicate reads calculated by [Picard's MarkDuplicates](https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-MarkDuplicates-Picard-). This is based on barcode-aware aligned duplicates mapping to the same 5' positions for both read pairs. The [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq) states the optimal empirical duplicate rate is 75-76% (marked in the plot).
+
+```{r duplicate_rate}
+metric <- 'duplicate_rate'
+ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+        geom_histogram(stat = 'identity', position = 'dodge') +
+        theme_bw() +
+        coord_flip() +
+        geom_hline(yintercept = c(0.75, 0.76), alpha = 0.4)  +
+        ggtitle(metric)
+```
+
+### Fraction of singleton reads
+
+Shows the number of single-read families divided by the total number of reads. As suggested by [Stoler et al. 2016](https://doi.org/10.1186/s13059-016-1039-4), this metric can server as a proxy for error rate, as (uncorrected) barcode mismatches will manifest as single-read families. The lower the fraction of singletons, the better.
+
+```{r singletons}
+metric <- 'frac_singletons'
+ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+        geom_histogram(stat = 'identity', position = 'dodge') +
+        theme_bw() +
+        coord_flip() +
+        ggtitle(metric)
+```
+
+### Drop-out rate
+
+This is the same calculation as F-EFF in the [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq):
+
+"This shows the fraction of read bundles missing one of the two original strands beyond what would be expected under random sampling (assuming a binomial process). Good values are between 0.10-0.30, and larger values are likely due to DNA damage such as modified bases or internal nicks that prevent amplification of one of the two strands. Larger values do not impact the quality of the results, just reduce the efficiency of the protocol."
+
+This is similar to the singleton fraction, but taking into account loss of pairs due to sampling. The optimal range is shown by the lines.
+
+```{r drop_out_rate}
+metric <- 'drop_out_rate'
+ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+        geom_histogram(stat = 'identity', position = 'dodge') +
+        theme_bw() +
+        coord_flip() +
+        geom_hline(yintercept = c(0.1, 0.3), alpha = 0.4)  +
+        ggtitle(metric)
+```
+
+### Efficiency
+
+Efficiency is the number of duplex bases divided by the number of sequenced bases. According the [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq), this value is maximised at \~0.07 when duplicate rates and strand drop-outs are optimal.
+
+```{r efficiency}
+metric <- 'efficiency'
+ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+        geom_histogram(stat = 'identity', position = 'dodge') +
+        theme_bw() +
+        coord_flip() +
+        geom_hline(yintercept = c(0.07), alpha = 0.4)  +
+        ggtitle(metric)
+```
+
+### GC deviation
+
+GC deviation is the absolute difference between `GC_BOTH` and `GC_SINGLE` calculated by the [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq). The lower this deviation, the better.
+
+"GC_BOTH and GC_SINGLE: the GC content of RBs with both strands and with just one strand. The two values should be similar between them and similar to the genome average. If there are large deviations that is possibly due to biases during PCR amplification. If GC_BOTH is substantially larger than GC_SINGLE, DNA denaturation before dilution may have taken place."
+
+```{r gc_deviation}
+metric <- 'gc_deviation'
+ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+        geom_histogram(stat = 'identity', position = 'dodge') +
+        theme_bw() +
+        coord_flip() +
+        ggtitle(metric)
+```
+
+### Duplex Coverage ratio
+
+The mean sequence (pre-duplex) coverage divided by mean duplex coverage. Indicates the yield of how much duplex coverage we get at each sample's sequence coverage. [Abascal et al.](https://doi.org/10.1038/s41586-021-03477-4) report that their yield was approximately 30x (marked on the plot).
+
+```{r duplex_coverage_ratio}
+metric <- 'duplex_coverage_ratio'
+ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+        geom_histogram(stat = 'identity', position = 'dodge') +
+        theme_bw() +
+        coord_flip() +
+        geom_hline(yintercept = 30, alpha = 0.4)  +
+        ggtitle(metric)
+```
+
+## Family statistics
+
+Comparison of family pair sizes between samples (these are calculated from total reads of paired AB and BA families).
+
+```{r family_sizes, fig.width = 8, fig.height = 5}
+ggplot(mm[mm$metric %like% 'family', ], aes(value, sample, colour = metric)) +
+        geom_point() +
+        coord_trans(x='log2') +
+        scale_x_continuous(breaks=seq(0, 94, 8)) +
+        theme(axis.text.x = element_text(size=5)) +
+        theme_bw() +
+        ggtitle('Family pair sizes')
+```
+
+The following plot shows:
+
+-   families_gt1: number of family pairs where at least one family (AB or BA) has \> 1 reads.
+-   paired_families: number of family pairs where both families (AB and BA) have \> 0 reads.
+-   paired_and_gt1: number of family pairs where both families (AB and BA) have \> 1 reads.
+
+```{r family_stats, fig.width = 8, fig.height = 5}
+ggplot(mm[mm$metric %like% 'pair|gt1', ], aes(value, sample, fill = metric)) +
+        geom_bar(stat='identity', position='dodge') +
+        theme_bw() +
+        ggtitle('Family statistics')
+```
