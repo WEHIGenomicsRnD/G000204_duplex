@@ -404,7 +404,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-07-12
+<strong>Last updated:</strong> 2022-07-13
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -535,15 +535,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree2ec3680ce8599168a5afeca9dae2cb60e4bb2d62targetblank2ec3680a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree847a8c2b1e22c3199e60b5f4ef68d6bd85110362targetblank847a8c2a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/2ec3680ce8599168a5afeca9dae2cb60e4bb2d62" target="_blank">2ec3680</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/847a8c2b1e22c3199e60b5f4ef68d6bd85110362" target="_blank">847a8c2</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree2ec3680ce8599168a5afeca9dae2cb60e4bb2d62targetblank2ec3680a"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree847a8c2b1e22c3199e60b5f4ef68d6bd85110362targetblank847a8c2a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -553,7 +553,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/2ec3680ce8599168a5afeca9dae2cb60e4bb2d62" target="_blank">2ec3680</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/847a8c2b1e22c3199e60b5f4ef68d6bd85110362" target="_blank">847a8c2</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -591,6 +591,7 @@ Untracked files:
 
 Unstaged changes:
     Modified:   analysis/ecoli_K12.Rmd
+    Modified:   analysis/insilico_mixtures.Rmd
 
 </code></pre>
 <p>
@@ -636,6 +637,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/847a8c2b1e22c3199e60b5f4ef68d6bd85110362/analysis/ecoli_spikeins.Rmd" target="_blank">847a8c2</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-07-13
+</td>
+<td>
+Added variant analysis for E coli spike ins
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/ecoli_spikeins.html" target="_blank">9a639c3</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-07-12
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -747,7 +782,8 @@ library(readxl)
 library(patchwork)
 library(RColorBrewer)
 library(UpSetR)
-library(vcfR)</code></pre>
+library(vcfR)
+library(tidyr)</code></pre>
 <pre class="r"><code>source(here(&#39;code/load_data.R&#39;))
 source(here(&#39;code/plot.R&#39;))
 source(here(&#39;code/efficiency_nanoseq_functions.R&#39;))</code></pre>
@@ -769,7 +805,12 @@ variant_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/variants&#3
                 unlist()
 
 # load variant data
-var_df &lt;- load_variants(variant_dir, sample_names)
+var_sample_names &lt;- list.files(variant_dir) %&gt;%
+                str_split(&#39;_HFVGHDSX3&#39;) %&gt;%
+                lapply(., dplyr::first) %&gt;%
+                unlist()
+
+var_df &lt;- load_variants(variant_dir, var_sample_names) %&gt;% calculate_vafs()
 
 # load and fetch duplicate rate from MarkDuplicates output
 mdup &lt;- load_markdup_data(markdup_dir, sample_names)
@@ -842,6 +883,43 @@ colnames(mm)[2] &lt;- &#39;metric&#39;</code></pre>
     facet_wrap(~metric, scales = &#39;free&#39;) +
     scale_colour_brewer(palette = &#39;Dark2&#39;)</code></pre>
 <p><img src="figure/ecoli_spikeins.Rmd/plot_by_sample-1.png" width="1536" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot_by_sample-1">
+Past versions of plot_by_sample-1.png
+</button>
+</p>
+<div id="fig-plot_by_sample-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/figure/ecoli_spikeins.Rmd/plot_by_sample-1.png" target="_blank">9a639c3</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-07-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="metric-comparison-plots" class="section level2">
 <h2>Metric comparison plots</h2>
@@ -862,6 +940,43 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         geom_hline(yintercept = c(0.75, 0.76), alpha = 0.4)  +
         ggtitle(metric)</code></pre>
 <p><img src="figure/ecoli_spikeins.Rmd/duplicate_rate-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-duplicate_rate-1">
+Past versions of duplicate_rate-1.png
+</button>
+</p>
+<div id="fig-duplicate_rate-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/figure/ecoli_spikeins.Rmd/duplicate_rate-1.png" target="_blank">9a639c3</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-07-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="fraction-of-singleton-reads" class="section level3">
 <h3>Fraction of singleton reads</h3>
@@ -878,6 +993,43 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         coord_flip() +
         ggtitle(metric)</code></pre>
 <p><img src="figure/ecoli_spikeins.Rmd/singletons-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-singletons-1">
+Past versions of singletons-1.png
+</button>
+</p>
+<div id="fig-singletons-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/figure/ecoli_spikeins.Rmd/singletons-1.png" target="_blank">9a639c3</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-07-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="drop-out-rate" class="section level3">
 <h3>Drop-out rate</h3>
@@ -902,6 +1054,43 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         geom_hline(yintercept = c(0.1, 0.3), alpha = 0.4)  +
         ggtitle(metric)</code></pre>
 <p><img src="figure/ecoli_spikeins.Rmd/drop_out_rate-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-drop_out_rate-1">
+Past versions of drop_out_rate-1.png
+</button>
+</p>
+<div id="fig-drop_out_rate-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/figure/ecoli_spikeins.Rmd/drop_out_rate-1.png" target="_blank">9a639c3</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-07-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="efficiency" class="section level3">
 <h3>Efficiency</h3>
@@ -918,6 +1107,43 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         geom_hline(yintercept = c(0.07), alpha = 0.4)  +
         ggtitle(metric)</code></pre>
 <p><img src="figure/ecoli_spikeins.Rmd/efficiency-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-efficiency-1">
+Past versions of efficiency-1.png
+</button>
+</p>
+<div id="fig-efficiency-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/figure/ecoli_spikeins.Rmd/efficiency-1.png" target="_blank">9a639c3</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-07-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="gc-deviation" class="section level3">
 <h3>GC deviation</h3>
@@ -938,6 +1164,43 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         coord_flip() +
         ggtitle(metric)</code></pre>
 <p><img src="figure/ecoli_spikeins.Rmd/gc_deviation-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gc_deviation-1">
+Past versions of gc_deviation-1.png
+</button>
+</p>
+<div id="fig-gc_deviation-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/figure/ecoli_spikeins.Rmd/gc_deviation-1.png" target="_blank">9a639c3</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-07-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="duplex-coverage-ratio" class="section level3">
 <h3>Duplex Coverage ratio</h3>
@@ -954,6 +1217,43 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         geom_hline(yintercept = 30, alpha = 0.4)  +
         ggtitle(metric)</code></pre>
 <p><img src="figure/ecoli_spikeins.Rmd/duplex_coverage_ratio-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-duplex_coverage_ratio-1">
+Past versions of duplex_coverage_ratio-1.png
+</button>
+</p>
+<div id="fig-duplex_coverage_ratio-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/figure/ecoli_spikeins.Rmd/duplex_coverage_ratio-1.png" target="_blank">9a639c3</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-07-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="family-statistics" class="section level2">
@@ -968,6 +1268,43 @@ from total reads of paired AB and BA families).</p>
         theme_bw() +
         ggtitle(&#39;Family pair sizes&#39;)</code></pre>
 <p><img src="figure/ecoli_spikeins.Rmd/family_sizes-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-family_sizes-1">
+Past versions of family_sizes-1.png
+</button>
+</p>
+<div id="fig-family_sizes-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/figure/ecoli_spikeins.Rmd/family_sizes-1.png" target="_blank">9a639c3</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-07-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The following plot shows:</p>
 <ul>
 <li>families_gt1: number of family pairs where at least one family (AB
@@ -982,6 +1319,126 @@ BA) have &gt; 1 reads.</li>
         theme_bw() +
         ggtitle(&#39;Family statistics&#39;)</code></pre>
 <p><img src="figure/ecoli_spikeins.Rmd/family_stats-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-family_stats-1">
+Past versions of family_stats-1.png
+</button>
+</p>
+<div id="fig-family_stats-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/figure/ecoli_spikeins.Rmd/family_stats-1.png" target="_blank">9a639c3</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-07-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="variant-calling-analysis" class="section level2">
+<h2>Variant calling analysis</h2>
+<p>Here we show the VAF mean, number of variants called, as well as a
+number of other metrics used in estimating number of variants
+called.</p>
+<pre class="r"><code># number of differing variant sites between the E coli genomes
+N_TOTAL_VARS &lt;- 33655
+
+vaf_sm &lt;- data.table(var_df)[, list(VAF_mean = mean(VAF), nvars = length(POS)), by=sample] %&gt;%
+            mutate(VAF_mix = as.character(sample) %&gt;% strsplit(&#39;-K12Rep&#39;) %&gt;% lapply(dplyr::first) %&gt;% unlist()) %&gt;%
+            left_join(., select(metrics, c(sample, efficiency)), by=&#39;sample&#39;) %&gt;%
+            separate(col = sample, sep = &#39;Rep&#39;, into = c(&#39;sample&#39;, &#39;replicate&#39;)) %&gt;%
+            filter(sample != &#39;1-10-K12&#39;)
+            
+# vaf_sm$VAF_mix[vaf_sm$VAF_mix == &#39;1-10&#39;] &lt;- 0.1
+# vaf_sm$efficiency[vaf_sm$sample == ] &lt;- 0.002 # a guess
+# vaf_sm$cells &lt;- c(318, 202, 11139, 601, 585, 86, 74, 188, 228)
+vaf_sm$VAF_mix &lt;- as.numeric(vaf_sm$VAF_mix) / 100
+vaf_sm$cells &lt;- c(318, 202, 601, 585, 86, 74, 188, 228)
+vaf_sm$coverage &lt;- qmap_cov_cons$coverage
+vaf_sm$expected_coverage &lt;- vaf_sm$cells * 10 * vaf_sm$efficiency
+
+print(vaf_sm)</code></pre>
+<pre><code>   sample replicate   VAF_mean nvars VAF_mix  efficiency cells coverage
+1:  0-K12         1 0.14458551   192    0.00 0.003411398   318  16.4145
+2:  0-K12         2 0.15959780   122    0.00 0.002459236   202   8.5023
+3:  1-K12         1 0.07093420  8096    0.01 0.002135843   601  20.4558
+4:  1-K12         2 0.08772532  6204    0.01 0.001740567   585  16.3451
+5: 10-K12         1 0.22274726  1796    0.10 0.001806526    86   2.3988
+6: 10-K12         2 0.23024600   723    0.10 0.001463852    74   1.8268
+7:  5-K12         1 0.18600991  5788    0.05 0.001680279   188   5.1634
+8:  5-K12         2 0.18533268  6394    0.05 0.001364435   228   5.3801
+   expected_coverage
+1:         10.848247
+2:          4.967657
+3:         12.836414
+4:         10.182318
+5:          1.553612
+6:          1.083251
+7:          3.158924
+8:          3.110913</code></pre>
+<div id="expected-coverage" class="section level3">
+<h3>Expected coverage</h3>
+<p>Here we plot the observed mean coverage versus the expected coverage,
+the latter is calculated as <span class="math inline">\(n * c *
+d\)</span> where $n = $ number of input cells, <span
+class="math inline">\(c =\)</span> target coverage per genome equivalent
+(10) and <span class="math inline">\(d =\)</span> duplex efficiency.</p>
+<p>We can see that the real coverage is higher than expected, this is
+likely due to the efficiency calculation being based on 2 minimum reads
+per strand, whereas we ran duplex consensus calling without SSC.</p>
+<pre class="r"><code>ggplot(vaf_sm, aes(coverage, expected_coverage, shape=sample)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1)</code></pre>
+<p><img src="figure/ecoli_spikeins.Rmd/expected_coverage-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="expected-variants" class="section level3">
+<h3>Expected variants</h3>
+<p>Here we use the revised model to estimate the number of variants we
+expected to call with 95% confidence, using the formula above.</p>
+<pre class="r"><code>vaf_sm$expected_variants &lt;- (1 - (1 - vaf_sm$VAF_mix) ^ round(vaf_sm$expected_coverage)) * N_TOTAL_VARS
+vaf_sm$expected_variants_cov &lt;- (1 - (1 - vaf_sm$VAF_mix) ^ round(vaf_sm$coverage)) * N_TOTAL_VARS
+
+p1 &lt;- ggplot(vaf_sm, aes(nvars, expected_variants, shape=sample)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    scale_x_continuous(limits = c(0,10000)) +
+    scale_y_continuous(limits = c(0,10000)) +
+    ggtitle(&#39;Expected vs. actual variants, based on expected coverage&#39;)
+
+p2 &lt;- ggplot(vaf_sm, aes(nvars, expected_variants_cov, shape=sample)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    scale_x_continuous(limits = c(0,10000)) +
+    scale_y_continuous(limits = c(0,10000)) +
+    ggtitle(&#39;Expected vs. actual variants, based on actual coverage&#39;)
+
+p1 + p2</code></pre>
+<p><img src="figure/ecoli_spikeins.Rmd/expected_variants-1.png" width="1152" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1012,13 +1469,14 @@ attached base packages:
 [8] methods   base     
 
 other attached packages:
- [1] vcfR_1.12.0          UpSetR_1.4.0         RColorBrewer_1.1-3  
- [4] patchwork_1.1.1      readxl_1.3.1         seqinr_4.2-8        
- [7] Rsamtools_2.6.0      Biostrings_2.58.0    XVector_0.30.0      
-[10] GenomicRanges_1.42.0 GenomeInfoDb_1.26.7  IRanges_2.24.1      
-[13] S4Vectors_0.28.1     BiocGenerics_0.36.1  stringr_1.4.0       
-[16] tibble_3.1.7         here_1.0.1           dplyr_1.0.7         
-[19] data.table_1.14.0    ggplot2_3.3.6        workflowr_1.6.2     
+ [1] tidyr_1.1.3          vcfR_1.12.0          UpSetR_1.4.0        
+ [4] RColorBrewer_1.1-3   patchwork_1.1.1      readxl_1.3.1        
+ [7] seqinr_4.2-8         Rsamtools_2.6.0      Biostrings_2.58.0   
+[10] XVector_0.30.0       GenomicRanges_1.42.0 GenomeInfoDb_1.26.7 
+[13] IRanges_2.24.1       S4Vectors_0.28.1     BiocGenerics_0.36.1 
+[16] stringr_1.4.0        tibble_3.1.7         here_1.0.1          
+[19] dplyr_1.0.7          data.table_1.14.0    ggplot2_3.3.6       
+[22] workflowr_1.6.2     
 
 loaded via a namespace (and not attached):
  [1] nlme_3.1-152           bitops_1.0-7           fs_1.5.0              
@@ -1031,8 +1489,8 @@ loaded via a namespace (and not attached):
 [22] sass_0.4.0             scales_1.2.0           digest_0.6.29         
 [25] rmarkdown_2.11         pkgconfig_2.0.3        htmltools_0.5.2       
 [28] highr_0.9              fastmap_1.1.0          rlang_1.0.2           
-[31] rstudioapi_0.13        jquerylib_0.1.4        generics_0.1.1        
-[34] farver_2.1.0           jsonlite_1.7.2         BiocParallel_1.24.1   
+[31] rstudioapi_0.13        farver_2.1.0           jquerylib_0.1.4       
+[34] generics_0.1.1         jsonlite_1.7.2         BiocParallel_1.24.1   
 [37] RCurl_1.98-1.3         magrittr_2.0.3         GenomeInfoDbData_1.2.4
 [40] Matrix_1.3-2           Rcpp_1.0.7             munsell_0.5.0         
 [43] fansi_1.0.3            ape_5.5                lifecycle_1.0.1       
@@ -1046,6 +1504,7 @@ loaded via a namespace (and not attached):
 [67] gtable_0.3.0           purrr_0.3.4            assertthat_0.2.1      
 [70] xfun_0.22              later_1.3.0            viridisLite_0.4.0     
 [73] cluster_2.1.2          ellipsis_0.3.2        </code></pre>
+</div>
 </div>
 </div>
 </div>
