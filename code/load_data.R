@@ -44,6 +44,17 @@ load_variants <- function(fdir, sample_names) {
     return(var_df)
 }
 
+calculate_vafs <- function(var_df, freq_filter = 0.3) {
+    tmp <- var_df$Sample1 %>% str_split(':') %>% lapply(., function(x){as.numeric(x[5:6])})
+    var_df$RD <- lapply(tmp, head, 1) %>% unlist()
+    var_df$AD <- lapply(tmp, tail, 1) %>% unlist()
+
+    var_df$VAF <- var_df$AD / (var_df$AD + var_df$RD)
+    var_df <- var_df[var_df$VAF < freq_filter,]
+
+    return(var_df)
+}
+
 extract_std <- function(genome_results) {
     std <- genome_results[grep('std', genome_results$BamQC.report),] %>%
         strsplit(., split='=') %>%

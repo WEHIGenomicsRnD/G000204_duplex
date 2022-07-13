@@ -64,6 +64,7 @@ library(patchwork)
 library(RColorBrewer)
 library(UpSetR)
 library(vcfR)
+library(tidyr)
 ```
 
 ```{r source}
@@ -97,7 +98,12 @@ sample_names <- list.files(rinfo_dir) %>%
                 unlist()
 
 # load variant data
-var_df <- load_variants(variant_dir, sample_names)
+var_sample_names <- list.files(variant_dir) %>%
+                str_split('_HFVGHDSX3') %>%
+                lapply(., dplyr::first) %>%
+                unlist()
+
+var_df <- load_variants(variant_dir, var_sample_names) %>% calculate_vafs()
 
 # load and fetch duplicate rate from MarkDuplicates output
 mdup <- load_markdup_data(markdup_dir, sample_names)
@@ -290,3 +296,69 @@ ggplot(mm[mm$metric %like% 'pair|gt1', ], aes(value, sample, fill = metric)) +
         theme_bw() +
         ggtitle('Family statistics')
 ```
+## Variant calling analysis
+
+Here we show the VAF mean, number of variants called, as well as a number of other metrics used in estimating number of variants called.
+
+```{r variant_calling}
+# number of differing variant sites between the E coli genomes
+N_TOTAL_VARS <- 33655
+
+vaf_sm <- data.table(var_df)[, list(VAF_mean = mean(VAF), nvars = length(POS)), by=sample] %>%
+            mutate(VAF_mix = as.character(sample) %>% strsplit('-K12Rep') %>% lapply(dplyr::first) %>% unlist()) %>%
+            left_join(., select(metrics, c(sample, efficiency)), by='sample') %>%
+            separate(col = sample, sep = 'Rep', into = c('sample', 'replicate')) %>%
+            filter(sample != '1-10-K12')
+            
+# vaf_sm$VAF_mix[vaf_sm$VAF_mix == '1-10'] <- 0.1
+# vaf_sm$efficiency[vaf_sm$sample == ] <- 0.002 # a guess
+# vaf_sm$cells <- c(318, 202, 11139, 601, 585, 86, 74, 188, 228)
+vaf_sm$VAF_mix <- as.numeric(vaf_sm$VAF_mix) / 100
+vaf_sm$cells <- c(318, 202, 601, 585, 86, 74, 188, 228)
+vaf_sm$coverage <- qmap_cov_cons$coverage
+vaf_sm$expected_coverage <- vaf_sm$cells * 10 * vaf_sm$efficiency
+
+print(vaf_sm)
+```
+
+### Expected coverage
+
+Here we plot the observed mean coverage versus the expected coverage, the latter is calculated as $n * c * d$ where $n = $ number of input cells, $c =$ target coverage per genome equivalent (10) and $d =$ duplex efficiency.
+
+We can see that the real coverage is higher than expected, this is likely due to the efficiency calculation being based on 2 minimum reads per strand, whereas we ran duplex consensus calling without SSC.
+
+```{r expected_coverage}
+ggplot(vaf_sm, aes(coverage, expected_coverage, shape=sample)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1)
+```
+
+### Expected variants
+
+Here we use the revised model to estimate the number of variants we expected to call with 95\% confidence, using the formula above.
+
+```{r expected_variants, fig.width=12, fig.height=5}
+vaf_sm$expected_variants <- (1 - (1 - vaf_sm$VAF_mix) ^ round(vaf_sm$expected_coverage)) * N_TOTAL_VARS
+vaf_sm$expected_variants_cov <- (1 - (1 - vaf_sm$VAF_mix) ^ round(vaf_sm$coverage)) * N_TOTAL_VARS
+
+p1 <- ggplot(vaf_sm, aes(nvars, expected_variants, shape=sample)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    scale_x_continuous(limits = c(0,10000)) +
+    scale_y_continuous(limits = c(0,10000)) +
+    ggtitle('Expected vs. actual variants, based on expected coverage')
+
+p2 <- ggplot(vaf_sm, aes(nvars, expected_variants_cov, shape=sample)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    scale_x_continuous(limits = c(0,10000)) +
+    scale_y_continuous(limits = c(0,10000)) +
+    ggtitle('Expected vs. actual variants, based on actual coverage')
+
+p1 + p2
+```
+
+
