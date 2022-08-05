@@ -106,61 +106,20 @@ var_sample_names <- list.files(variant_dir) %>%
 var_df <- load_variants(variant_dir, var_sample_names) %>% calculate_vafs()
 
 # load and fetch duplicate rate from MarkDuplicates output
-mdup <- load_markdup_data(markdup_dir, sample_names)
+mdup <- load_markdup_data(markdup_dir, sample_names[sample_names !="10-K12Rep1-HFVGHDSX3"])
 
 # get mean coverage for pre and post-consensus reads
-# filter out 1-10-K12Rep1 for now
-qmap_cov <- list.files(
-        qualimap_dir,
-        full.names = TRUE,
-        recursive = TRUE,
-        pattern = 'genome_results.txt') %>%
-        lapply(., function(x){if(!x %like% '1-10-K12Rep1'){x}}) %>% unlist() %>%
-        lapply(., read.delim)
-for (i in seq(length(sample_names))) {
-        qmap_cov[[i]]$Sample <- sample_names[i]
-}
-qmap_cov <- rbindlist(qmap_cov)
-qmap_cov <- qmap_cov[qmap_cov$BamQC.report %like% 'mean cov',]
-qmap_cov$coverage <-
-        str_split(qmap_cov$BamQC.report, ' = ') %>%
-        lapply(., last) %>%
-        unlist() %>%
-        gsub('X|,', '', .) %>%
-        lapply(., as.numeric) %>%
-        unlist()
-qmap_cov <- qmap_cov[,c('Sample', 'coverage')]
-
-
-qmap_cov_cons <- list.files(
-        qualimap_cons_dir,
-        full.names = TRUE,
-        recursive = TRUE,
-        pattern = 'genome_results.txt') %>%
-        lapply(., function(x){if(!x %like% '1-10-K12Rep1'){x}}) %>% unlist() %>%
-        lapply(., read.delim)
-for (i in seq(length(sample_names))) {
-        qmap_cov_cons[[i]]$Sample <- sample_names[i]
-}
-qmap_cov_cons <- rbindlist(qmap_cov_cons)
-qmap_cov_cons <- qmap_cov_cons[qmap_cov_cons$BamQC.report %like% 'mean cov',]
-qmap_cov_cons$coverage <-
-        str_split(qmap_cov_cons$BamQC.report, ' = ') %>%
-        lapply(., last) %>%
-        unlist() %>%
-        gsub('X|,', '', .) %>%
-        lapply(., as.numeric) %>%
-        unlist()
-qmap_cov_cons <- qmap_cov_cons[,c('Sample', 'coverage')]
+qmap_cov <- get_qmap_coverage(qualimap_dir, sample_names)
+qmap_cons_cov <- get_qmap_coverage(qualimap_cons_dir, sample_names)
 
 # uncomment below to calculate metrics
 # calculate metrics for nanoseq
 rlen <- 151; skips <- 5
 metrics <- calc_metrics_new_rbs(rinfo_dir, cores = cores) %>% bind_rows()
 
-metrics$duplicate_rate <- as.numeric(mdup)
-metrics$duplex_coverage_ratio <- qmap_cov$coverage / qmap_cov_cons$coverage
-metrics$duplex_coverage_ratio[qmap_cov_cons$coverage < 1] <- 0 # fix when < 1 duplex cov
+metrics$duplicate_rate <- c(as.numeric(mdup)[1:2], NA, as.numeric(mdup)[3:8])
+metrics$duplex_coverage_ratio <- qmap_cov$coverage / qmap_cons_cov$coverage
+metrics$duplex_coverage_ratio[qmap_cons_cov$coverage < 1] <- 0 # fix when < 1 duplex cov
 metrics$sample <- gsub('-HFVGHDSX3', '', sample_names)
 
 # cache metrics object
@@ -185,6 +144,8 @@ ggplot(mm, aes(sample, value)) +
 ### Duplicate rate
 
 Fraction of duplicate reads calculated by [Picard's MarkDuplicates](https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-MarkDuplicates-Picard-). This is based on barcode-aware aligned duplicates mapping to the same 5' positions for both read pairs. The [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq) states the optimal empirical duplicate rate is 75-76% (marked in the plot).
+
+**The 0.1% spike-in sample fails when running picard MarkDuplicates, so those results are not shown**
 
 ```{r duplicate_rate}
 metric <- 'duplicate_rate'
@@ -290,11 +251,16 @@ The following plot shows:
 -   paired_families: number of family pairs where both families (AB and BA) have \> 0 reads.
 -   paired_and_gt1: number of family pairs where both families (AB and BA) have \> 1 reads.
 
-```{r family_stats, fig.width = 8, fig.height = 5}
-ggplot(mm[mm$metric %like% 'pair|gt1', ], aes(value, sample, fill = metric)) +
+```{r family_stats, fig.width = 14, fig.height = 5}
+p1 <- ggplot(mm[mm$metric %like% 'pair|gt1', ], aes(value, sample, fill = metric)) +
         geom_bar(stat='identity', position='dodge') +
         theme_bw() +
         ggtitle('Family statistics')
+p2 <- ggplot(mm[mm$metric %like% 'pair|gt1' & !mm$sample %like% '1-10', ], aes(value, sample, fill = metric)) +
+        geom_bar(stat='identity', position='dodge') +
+        theme_bw() +
+        ggtitle('Family statistics without 0.1% spike-in sample')
+p1 + p2
 ```
 ## Variant calling analysis
 
@@ -303,32 +269,32 @@ Here we show the VAF mean, number of variants called, as well as a number of oth
 ```{r variant_calling}
 # number of differing variant sites between the E coli genomes
 N_TOTAL_VARS <- 33655
+COVERAGE_PER_GENOME <- 10
 
 vaf_sm <- data.table(var_df)[, list(VAF_mean = mean(VAF), nvars = length(POS)), by=sample] %>%
             mutate(VAF_mix = as.character(sample) %>% strsplit('-K12Rep') %>% lapply(dplyr::first) %>% unlist()) %>%
             left_join(., select(metrics, c(sample, efficiency)), by='sample') %>%
-            separate(col = sample, sep = 'Rep', into = c('sample', 'replicate')) %>%
-            filter(sample != '1-10-K12')
+            separate(col = sample, sep = 'Rep', into = c('sample', 'replicate'))
             
-# vaf_sm$VAF_mix[vaf_sm$VAF_mix == '1-10'] <- 0.1
+vaf_sm$VAF_mix[vaf_sm$VAF_mix == '1-10'] <- 0.1
 # vaf_sm$efficiency[vaf_sm$sample == ] <- 0.002 # a guess
 # vaf_sm$cells <- c(318, 202, 11139, 601, 585, 86, 74, 188, 228)
 vaf_sm$VAF_mix <- as.numeric(vaf_sm$VAF_mix) / 100
-vaf_sm$cells <- c(318, 202, 601, 585, 86, 74, 188, 228)
-vaf_sm$coverage <- qmap_cov_cons$coverage
-vaf_sm$expected_coverage <- vaf_sm$cells * 10 * vaf_sm$efficiency
+vaf_sm$cells <- c(318, 202, 11139, 601, 585, 86, 74, 188, 228)
+vaf_sm$coverage <- qmap_cons_cov$coverage
+vaf_sm$expected_coverage <- vaf_sm$cells * COVERAGE_PER_GENOME * vaf_sm$efficiency
 
 print(vaf_sm)
 ```
 
 ### Expected coverage
 
-Here we plot the observed mean coverage versus the expected coverage, the latter is calculated as $n * c * d$ where $n = $ number of input cells, $c =$ target coverage per genome equivalent (10) and $d =$ duplex efficiency.
+Here we plot the observed mean coverage versus the expected coverage, the latter is calculated as $n * c * d$ where $n =$ number of input cells, $c =$ target coverage per genome equivalent (10) and $d =$ duplex efficiency.
 
 We can see that the real coverage is higher than expected, this is likely due to the efficiency calculation being based on 2 minimum reads per strand, whereas we ran duplex consensus calling without SSC.
 
 ```{r expected_coverage}
-ggplot(vaf_sm, aes(coverage, expected_coverage, shape=sample)) +
+ggplot(vaf_sm, aes(expected_coverage, coverage, shape=sample)) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1)
@@ -342,20 +308,20 @@ Here we use the revised model to estimate the number of variants we expected to 
 vaf_sm$expected_variants <- (1 - (1 - vaf_sm$VAF_mix) ^ round(vaf_sm$expected_coverage)) * N_TOTAL_VARS
 vaf_sm$expected_variants_cov <- (1 - (1 - vaf_sm$VAF_mix) ^ round(vaf_sm$coverage)) * N_TOTAL_VARS
 
-p1 <- ggplot(vaf_sm, aes(nvars, expected_variants, shape=sample)) +
+p1 <- ggplot(vaf_sm, aes(expected_variants, nvars, shape=sample)) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
-    scale_x_continuous(limits = c(0,10000)) +
-    scale_y_continuous(limits = c(0,10000)) +
+    scale_x_continuous(limits = c(0,15000)) +
+    scale_y_continuous(limits = c(0,15000)) +
     ggtitle('Expected vs. actual variants, based on expected coverage')
 
-p2 <- ggplot(vaf_sm, aes(nvars, expected_variants_cov, shape=sample)) +
+p2 <- ggplot(vaf_sm, aes(expected_variants_cov, nvars, shape=sample)) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
-    scale_x_continuous(limits = c(0,10000)) +
-    scale_y_continuous(limits = c(0,10000)) +
+    scale_x_continuous(limits = c(0,15000)) +
+    scale_y_continuous(limits = c(0,15000)) +
     ggtitle('Expected vs. actual variants, based on actual coverage')
 
 p1 + p2
