@@ -23,6 +23,7 @@ knitr::opts_chunk$set(autodep        = TRUE,
 
 ```{r libraries, cache = FALSE}
 library(ggplot2)
+library(dplyr)
 ```
 
 # Model
@@ -200,7 +201,7 @@ We also need to check whether the number of genome equivalents we take forward f
 
 $b = g * c * n$ where $g$ = genome size. 
 
-```{r}
+```{r revised_model}
 lane_cap <- 6e11
 g <- 5e6
 pmiss <- 0.05
@@ -239,5 +240,33 @@ ggplot(probs, aes(ncells, p, colour = factor(vaf))) +
     theme_minimal() +
     geom_hline(yintercept = pmiss, alpha=0.4) +
     scale_color_brewer(palette = 'Dark2')
+```
+
+## Downsampling experiment model
+
+How does the duplicate rate behave when we downsample reads? We can use the rough stats of the 1\% ecoli spike-in to check for sensible downsampling fractions. This sample has roughly 340m duplex reads and an average family size of 14 (each read is sequenced on average 14x). We use a poisson distribution to generate fake reads, and then down sample from 5% to 95%. We then calculate the duplicate rate.
+
+```{r downsampling_duplicates}
+N_READS <- 340
+COV_RATIO <- 14
+
+toy_reads <- lapply(LETTERS, paste0, LETTERS) %>% unlist() %>% head(N_READS)
+all_reads <- rep(toy_reads, rpois(N_READS, COV_RATIO))
+dup_rate <- 1 - (N_READS / length(all_reads))
+print(paste('Max duplicate rate:', round(dup_rate, 2)))
+
+sample_frac <- seq(0.05, 1, 0.05)
+n_sample <- round(sample_frac * length(all_reads))
+
+all_samples <- lapply(n_sample, function(n){sample(all_reads, n)})
+dup_rates <- lapply(all_samples, function(s){1 - (length(unique(s)) / length(s))}) %>% unlist()
+
+df <- data.frame(sample_frac, dup_rates)
+ggplot(df, aes(sample_frac, dup_rates)) +
+    geom_point() +
+    geom_line() +
+    theme_minimal() +
+    scale_x_continuous(breaks = seq(0.1, 1, 0.1)) +
+    scale_y_continuous(breaks = seq(0.1, 1, 0.1))
 ```
 
