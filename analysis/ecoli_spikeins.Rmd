@@ -106,7 +106,7 @@ var_sample_names <- list.files(variant_dir) %>%
 var_df <- load_variants(variant_dir, var_sample_names) %>% calculate_vafs()
 
 # load and fetch duplicate rate from MarkDuplicates output
-mdup <- load_markdup_data(markdup_dir, sample_names[sample_names !="10-K12Rep1-HFVGHDSX3"])
+mdup <- load_markdup_data(markdup_dir, sample_names)
 
 # get mean coverage for pre and post-consensus reads
 qmap_cov <- get_qmap_coverage(qualimap_dir, sample_names)
@@ -117,7 +117,7 @@ qmap_cons_cov <- get_qmap_coverage(qualimap_cons_dir, sample_names)
 rlen <- 151; skips <- 5
 metrics <- calc_metrics_new_rbs(rinfo_dir, cores = cores) %>% bind_rows()
 
-metrics$duplicate_rate <- c(as.numeric(mdup)[1:2], NA, as.numeric(mdup)[3:8])
+metrics$duplicate_rate <- mdup
 metrics$duplex_coverage_ratio <- qmap_cov$coverage / qmap_cons_cov$coverage
 metrics$duplex_coverage_ratio[qmap_cons_cov$coverage < 1] <- 0 # fix when < 1 duplex cov
 metrics$sample <- gsub('-HFVGHDSX3', '', sample_names)
@@ -126,7 +126,7 @@ metrics$sample <- gsub('-HFVGHDSX3', '', sample_names)
 # saveRDS(metrics, file = here('data/metrics.rds'))
 
 # prepare for plotting
-mm <- data.frame(melt(metrics))
+mm <- data.frame(reshape2::melt(metrics))
 colnames(mm)[2] <- 'metric'
 ```
 
@@ -144,8 +144,6 @@ ggplot(mm, aes(sample, value)) +
 ### Duplicate rate
 
 Fraction of duplicate reads calculated by [Picard's MarkDuplicates](https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-MarkDuplicates-Picard-). This is based on barcode-aware aligned duplicates mapping to the same 5' positions for both read pairs. The [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq) states the optimal empirical duplicate rate is 75-76% (marked in the plot).
-
-**The 0.1% spike-in sample fails when running picard MarkDuplicates, so those results are not shown**
 
 ```{r duplicate_rate}
 metric <- 'duplicate_rate'

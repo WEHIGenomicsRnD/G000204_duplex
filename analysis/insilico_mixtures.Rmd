@@ -45,17 +45,6 @@ library(vcfR)
 
 ```{r source}
 source(here('code/load_data.R'))
-
-calculate_vafs <- function(var_df, freq_filter = 0.3) {
-    tmp <- var_df$Sample1 %>% str_split(':') %>% lapply(., function(x){as.numeric(x[5:6])}) 
-    var_df$RD <- lapply(tmp, head, 1) %>% unlist()
-    var_df$AD <- lapply(tmp, tail, 1) %>% unlist()
-    
-    var_df$VAF <- var_df$AD / (var_df$AD + var_df$RD)
-    var_df <- var_df[var_df$VAF < freq_filter,]
-    
-    return(var_df)
-}
 ```
 
 
