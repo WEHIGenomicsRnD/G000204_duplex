@@ -404,7 +404,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-08-05
+<strong>Last updated:</strong> 2022-08-16
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -535,15 +535,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreea0a39ad5fe8e9edb7d7875d5cc6bca9aacf4814ctargetblanka0a39ada">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreee6092ec69a3e4c9af125edf3c61e47689135f57dtargetblanke6092eca">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/a0a39ad5fe8e9edb7d7875d5cc6bca9aacf4814c" target="_blank">a0a39ad</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/e6092ec69a3e4c9af125edf3c61e47689135f57d" target="_blank">e6092ec</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreea0a39ad5fe8e9edb7d7875d5cc6bca9aacf4814ctargetblanka0a39ada"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreee6092ec69a3e4c9af125edf3c61e47689135f57dtargetblanke6092eca"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -553,7 +553,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/a0a39ad5fe8e9edb7d7875d5cc6bca9aacf4814c" target="_blank">a0a39ad</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/e6092ec69a3e4c9af125edf3c61e47689135f57d" target="_blank">e6092ec</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -591,7 +591,6 @@ Untracked files:
 
 Unstaged changes:
     Modified:   analysis/ecoli_K12.Rmd
-    Modified:   analysis/insilico_mixtures.Rmd
 
 </code></pre>
 <p>
@@ -637,6 +636,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/e6092ec69a3e4c9af125edf3c61e47689135f57d/analysis/ecoli_spikeins.Rmd" target="_blank">e6092ec</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-16
+</td>
+<td>
+Added duplicate rate stat to 0.1% spike-in sample
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/a099d381d50521a5372a885e2b017f8853df26e2/docs/ecoli_spikeins.html" target="_blank">a099d38</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-05
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -847,7 +880,7 @@ var_sample_names &lt;- list.files(variant_dir) %&gt;%
 var_df &lt;- load_variants(variant_dir, var_sample_names) %&gt;% calculate_vafs()
 
 # load and fetch duplicate rate from MarkDuplicates output
-mdup &lt;- load_markdup_data(markdup_dir, sample_names[sample_names !=&quot;10-K12Rep1-HFVGHDSX3&quot;])
+mdup &lt;- load_markdup_data(markdup_dir, sample_names)
 
 # get mean coverage for pre and post-consensus reads
 qmap_cov &lt;- get_qmap_coverage(qualimap_dir, sample_names)
@@ -858,7 +891,7 @@ qmap_cons_cov &lt;- get_qmap_coverage(qualimap_cons_dir, sample_names)
 rlen &lt;- 151; skips &lt;- 5
 metrics &lt;- calc_metrics_new_rbs(rinfo_dir, cores = cores) %&gt;% bind_rows()
 
-metrics$duplicate_rate &lt;- c(as.numeric(mdup)[1:2], NA, as.numeric(mdup)[3:8])
+metrics$duplicate_rate &lt;- mdup
 metrics$duplex_coverage_ratio &lt;- qmap_cov$coverage / qmap_cons_cov$coverage
 metrics$duplex_coverage_ratio[qmap_cons_cov$coverage &lt; 1] &lt;- 0 # fix when &lt; 1 duplex cov
 metrics$sample &lt;- gsub(&#39;-HFVGHDSX3&#39;, &#39;&#39;, sample_names)
@@ -867,7 +900,7 @@ metrics$sample &lt;- gsub(&#39;-HFVGHDSX3&#39;, &#39;&#39;, sample_names)
 # saveRDS(metrics, file = here(&#39;data/metrics.rds&#39;))
 
 # prepare for plotting
-mm &lt;- data.frame(melt(metrics))
+mm &lt;- data.frame(reshape2::melt(metrics))
 colnames(mm)[2] &lt;- &#39;metric&#39;</code></pre>
 <pre class="r"><code>ggplot(mm, aes(sample, value)) + 
     geom_point() +
@@ -898,6 +931,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a099d381d50521a5372a885e2b017f8853df26e2/docs/figure/ecoli_spikeins.Rmd/plot_by_sample-1.png" target="_blank">a099d38</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-05
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/565d602db91c4453fd0a863c52b4e5603d28c113/docs/figure/ecoli_spikeins.Rmd/plot_by_sample-1.png" target="_blank">565d602</a>
@@ -936,8 +980,6 @@ mapping to the same 5’ positions for both read pairs. The <a
 href="https://github.com/cancerit/NanoSeq">NanoSeq Analysis pipeline</a>
 states the optimal empirical duplicate rate is 75-76% (marked in the
 plot).</p>
-<p><strong>The 0.1% spike-in sample fails when running picard
-MarkDuplicates, so those results are not shown</strong></p>
 <pre class="r"><code>metric &lt;- &#39;duplicate_rate&#39;
 ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         geom_histogram(stat = &#39;identity&#39;, position = &#39;dodge&#39;) +
@@ -968,6 +1010,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a099d381d50521a5372a885e2b017f8853df26e2/docs/figure/ecoli_spikeins.Rmd/duplicate_rate-1.png" target="_blank">a099d38</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-05
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/figure/ecoli_spikeins.Rmd/duplicate_rate-1.png" target="_blank">9a639c3</a>
@@ -1021,6 +1074,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a099d381d50521a5372a885e2b017f8853df26e2/docs/figure/ecoli_spikeins.Rmd/singletons-1.png" target="_blank">a099d38</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-05
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/figure/ecoli_spikeins.Rmd/singletons-1.png" target="_blank">9a639c3</a>
@@ -1084,6 +1148,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a099d381d50521a5372a885e2b017f8853df26e2/docs/figure/ecoli_spikeins.Rmd/drop_out_rate-1.png" target="_blank">a099d38</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-05
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/figure/ecoli_spikeins.Rmd/drop_out_rate-1.png" target="_blank">9a639c3</a>
 </td>
 <td>
@@ -1135,6 +1210,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a099d381d50521a5372a885e2b017f8853df26e2/docs/figure/ecoli_spikeins.Rmd/efficiency-1.png" target="_blank">a099d38</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-05
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/figure/ecoli_spikeins.Rmd/efficiency-1.png" target="_blank">9a639c3</a>
@@ -1192,6 +1278,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a099d381d50521a5372a885e2b017f8853df26e2/docs/figure/ecoli_spikeins.Rmd/gc_deviation-1.png" target="_blank">a099d38</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-05
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/565d602db91c4453fd0a863c52b4e5603d28c113/docs/figure/ecoli_spikeins.Rmd/gc_deviation-1.png" target="_blank">565d602</a>
@@ -1258,6 +1355,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a099d381d50521a5372a885e2b017f8853df26e2/docs/figure/ecoli_spikeins.Rmd/duplex_coverage_ratio-1.png" target="_blank">a099d38</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-05
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/figure/ecoli_spikeins.Rmd/duplex_coverage_ratio-1.png" target="_blank">9a639c3</a>
 </td>
 <td>
@@ -1307,6 +1415,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a099d381d50521a5372a885e2b017f8853df26e2/docs/figure/ecoli_spikeins.Rmd/family_sizes-1.png" target="_blank">a099d38</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-05
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/figure/ecoli_spikeins.Rmd/family_sizes-1.png" target="_blank">9a639c3</a>
@@ -1363,6 +1482,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a099d381d50521a5372a885e2b017f8853df26e2/docs/figure/ecoli_spikeins.Rmd/family_stats-1.png" target="_blank">a099d38</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-05
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/9a639c3c49ccae8c491e7edc2987f2acf63f7515/docs/figure/ecoli_spikeins.Rmd/family_stats-1.png" target="_blank">9a639c3</a>
@@ -1462,6 +1592,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a099d381d50521a5372a885e2b017f8853df26e2/docs/figure/ecoli_spikeins.Rmd/expected_coverage-1.png" target="_blank">a099d38</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-05
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/565d602db91c4453fd0a863c52b4e5603d28c113/docs/figure/ecoli_spikeins.Rmd/expected_coverage-1.png" target="_blank">565d602</a>
 </td>
 <td>
@@ -1523,6 +1664,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a099d381d50521a5372a885e2b017f8853df26e2/docs/figure/ecoli_spikeins.Rmd/expected_variants-1.png" target="_blank">a099d38</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-05
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/565d602db91c4453fd0a863c52b4e5603d28c113/docs/figure/ecoli_spikeins.Rmd/expected_variants-1.png" target="_blank">565d602</a>
