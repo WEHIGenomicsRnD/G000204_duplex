@@ -17,6 +17,8 @@ navbar:
     href: insilico_mixtures.html
   - text: "E coli spike-ins"
     href: ecoli_spikeins.html
+  - text: "Downsampling"
+    href: downsampling.html
   - text: License
     href: license.html
 output:
