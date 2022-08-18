@@ -250,7 +250,21 @@ How does the duplicate rate behave when we downsample reads? We can use the roug
 N_READS <- 340
 COV_RATIO <- 14
 
-toy_reads <- lapply(LETTERS, paste0, LETTERS) %>% unlist() %>% head(N_READS)
+# recursive function, times = number of letters in toy reads
+make_toy_reads <- function(times, toy_reads=NULL) {
+    if (times < 1) {
+        return(toy_reads)
+    } else if (is.null(toy_reads)) {
+        toy_reads <- LETTERS
+        times <- times - 1
+    } else {
+        toy_reads <- lapply(toy_reads, paste0, LETTERS) %>% unlist()
+        times <- times - 1
+    }
+    make_toy_reads(times, toy_reads)
+}
+
+toy_reads <- make_toy_reads(2) %>% head(N_READS)
 all_reads <- rep(toy_reads, rpois(N_READS, COV_RATIO))
 dup_rate <- 1 - (N_READS / length(all_reads))
 print(paste('Max duplicate rate:', round(dup_rate, 2)))

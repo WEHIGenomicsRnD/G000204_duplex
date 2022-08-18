@@ -1,37 +1,16 @@
 ---
-title: "E coli spike-in experiments"
+title: "Downsampling experimnents"
 output:
   workflowr::wflow_html:
       code_folding: hide
 ---
 
-# E coli spike-in experiment results
+# Downsampling experiments
 
-E coli K12 strain was spiked into E coli BL21 with different proportions:
-
-| Lib Name     | Spike in %           | \~Cell equivalent\* |
-|--------------|----------------------|----------------------|
-| 0-K12Rep1    | 0%K12Rep1(BL2 only)  | 318                  |
-| 0-K12Rep2    | 0%K12Rep2 (BL2 only) | 202                  |
-| 1-K12Rep1    | 1%K12Rep1            | 601                  |
-| 1-K12Rep2    | 1%K12Rep2            | 585                  |
-| 10-K12Rep1   | 10%K12Rep1           | 86                   |
-| 10-K12Rep2   | 10%K12Rep2           | 74                   |
-| 1_10-K12Rep1 | 0.1%K12Rep1          | 11,139               |
-| 5-K12Rep1    | 5%K12Rep1            | 188                  |
-| 5-K12Rep2    | 5%K12Rep2            | 228                  |
-
-\*based on R1 unique read number.
-
-The 1_10-K12Rep1 sample is currently omitted in this analysis as it is too large to process with the existing script.
-
-## MultiQC reports:
-
--   [AGRF_CAGRF220410419_HFVGHDSX3 MultiQC pre-duplex](AGRF_CAGRF220410419_HFVGHDSX3_multiqc/multiqc_report.html)
--   [AGRF_CAGRF220410419_HFVGHDSX3 MultiQC duplex](AGRF_CAGRF220410419_HFVGHDSX3_multiqc/multiqc_report_consensus.html)
+The E. Coli sample 1-K12Rep1 (1% spike-in) was selected as a representative sample. We downsampled to 1%, 5% and 10-50% in 10% increments to determine the optimal duplicate rate (highest efficiency).
 
 ```{r setup, include=FALSE}
-DOCNAME = "Analyse E. coli spike-ins"
+DOCNAME = "Downsampling experiments"
 knitr::opts_chunk$set(autodep        = TRUE,
                       cache          = FALSE,
                       cache.path     = paste0("cache/", DOCNAME, "/"),
@@ -67,29 +46,33 @@ library(vcfR)
 library(tidyr)
 ```
 
+
 ```{r source}
 source(here('code/load_data.R'))
 source(here('code/plot.R'))
 source(here('code/efficiency_nanoseq_functions.R'))
 ```
 
+
 ```{r variables}
 genome_max <- 4528118
 cores <- 8
 ```
 
+
 ```{r paths}
 genomeFile <- here('data/ref/Escherichia_coli_strain_BL21_TaKaRa.fasta')
-rinfo_dir <- here('data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/read_info')
-markdup_dir <- here('data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/mark_duplicates')
-qualimap_dir <- here('data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/qualimap')
-qualimap_cons_dir <- here('data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/consensus/qualimap')
-variant_dir <- here('data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/variants')
+rinfo_dir <- here('data/ecoli/downsampling/QC/read_info')
+markdup_dir <- here('data/ecoli/downsampling/QC/mark_duplicates')
+qualimap_dir <- here('data/ecoli/downsampling/QC/qualimap')
+qualimap_cons_dir <- here('data/ecoli/downsampling/QC/consensus/qualimap')
+variant_dir <- here('data/ecoli/downsampling/variants')
 ```
 
+
 ```{r calculate_metrics}
-sample_names <- list.files(rinfo_dir) %>%
-                str_split('\\.txt.gz') %>%
+sample_names <- list.files(rinfo_dir, pattern = '\\.txt\\.gz') %>%
+                str_split('\\.txt\\.gz') %>%
                 lapply(., dplyr::first) %>%
                 unlist() %>%
                 str_split('_') %>%
@@ -130,6 +113,10 @@ mm <- data.frame(reshape2::melt(metrics))
 colnames(mm)[2] <- 'metric'
 ```
 
+## Metric comparison plots
+
+### Overview
+
 ```{r plot_by_sample, fig.width=16, fig.height=10}
 ggplot(mm, aes(sample, value)) + 
     geom_point() +
@@ -138,8 +125,6 @@ ggplot(mm, aes(sample, value)) +
     facet_wrap(~metric, scales = 'free') +
     scale_colour_brewer(palette = 'Dark2')
 ```
-
-## Metric comparison plots
 
 ### Duplicate rate
 
@@ -151,7 +136,7 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         geom_histogram(stat = 'identity', position = 'dodge') +
         theme_bw() +
         coord_flip() +
-        geom_hline(yintercept = c(0.75, 0.76), alpha = 0.4)  +
+        geom_hline(yintercept = 0.81, alpha = 0.4)  +
         ggtitle(metric)
 ```
 
@@ -259,99 +244,6 @@ p2 <- ggplot(mm[mm$metric %like% 'pair|gt1' & !mm$sample %like% '1-10', ], aes(v
         theme_bw() +
         ggtitle('Family statistics without 0.1% spike-in sample')
 p1 + p2
-```
-## Variant calling analysis
-
-Here we show the VAF mean, number of variants called, as well as a number of other metrics used in estimating number of variants called.
-
-```{r variant_calling}
-# number of differing variant sites between the E coli genomes
-N_TOTAL_VARS <- 33655
-COVERAGE_PER_GENOME <- 10
-
-vaf_sm <- data.table(var_df)[, list(VAF_mean = mean(VAF), nvars = length(POS)), by=sample] %>%
-            mutate(VAF_mix = as.character(sample) %>% strsplit('-K12Rep') %>% lapply(dplyr::first) %>% unlist()) %>%
-            left_join(., select(metrics, c(sample, efficiency)), by='sample') %>%
-            separate(col = sample, sep = 'Rep', into = c('sample', 'replicate'))
-            
-vaf_sm$VAF_mix[vaf_sm$VAF_mix == '1-10'] <- 0.1
-# vaf_sm$efficiency[vaf_sm$sample == ] <- 0.002 # a guess
-# vaf_sm$cells <- c(318, 202, 11139, 601, 585, 86, 74, 188, 228)
-vaf_sm$VAF_mix <- as.numeric(vaf_sm$VAF_mix) / 100
-vaf_sm$cells <- c(318, 202, 11139, 601, 585, 86, 74, 188, 228)
-vaf_sm$coverage <- qmap_cons_cov$coverage
-vaf_sm$expected_coverage <- vaf_sm$cells * COVERAGE_PER_GENOME * vaf_sm$efficiency
-
-print(vaf_sm)
-```
-
-### Expected coverage
-
-Here we plot the observed mean coverage versus the expected coverage, the latter is calculated as $n * c * d$ where $n =$ number of input cells, $c =$ target coverage per genome equivalent (10) and $d =$ duplex efficiency.
-
-We can see that the real coverage is higher than expected, this is likely due to the efficiency calculation being based on 2 minimum reads per strand, whereas we ran duplex consensus calling without SSC.
-
-```{r expected_coverage}
-ggplot(vaf_sm, aes(expected_coverage, coverage, shape=sample)) +
-    geom_point() +
-    theme_minimal() +
-    geom_abline(slope = 1)
-```
-
-### Expected variants
-
-Here we use the revised model to estimate the number of variants we expected to call with 95\% confidence, using the formula above.
-
-```{r expected_variants, fig.width=12, fig.height=5}
-vaf_sm$expected_variants <- (1 - (1 - vaf_sm$VAF_mix) ^ round(vaf_sm$expected_coverage)) * N_TOTAL_VARS
-vaf_sm$expected_variants_cov <- (1 - (1 - vaf_sm$VAF_mix) ^ round(vaf_sm$coverage)) * N_TOTAL_VARS
-
-p1 <- ggplot(vaf_sm, aes(expected_variants, nvars, shape=sample)) +
-    geom_point() +
-    theme_minimal() +
-    geom_abline(slope = 1) +
-    scale_x_continuous(limits = c(0,15000)) +
-    scale_y_continuous(limits = c(0,15000)) +
-    ggtitle('Expected vs. actual variants, based on expected coverage')
-
-p2 <- ggplot(vaf_sm, aes(expected_variants_cov, nvars, shape=sample)) +
-    geom_point() +
-    theme_minimal() +
-    geom_abline(slope = 1) +
-    scale_x_continuous(limits = c(0,15000)) +
-    scale_y_continuous(limits = c(0,15000)) +
-    ggtitle('Expected vs. actual variants, based on actual coverage')
-
-p1 + p2
-```
-
-```{r presentation_expected_variants, fig.width=15, fig.height=5, eval=FALSE}
-p1 <- ggplot(vaf_sm, aes(expected_coverage, coverage, shape=sample)) +
-    geom_point() +
-    theme_minimal() +
-    geom_abline(slope = 1) +
-    theme(legend.position = 'none') +
-    ggtitle('Expected vs. actual coverage')
-
-p2 <- ggplot(vaf_sm, aes(expected_variants, nvars, shape=sample)) +
-    geom_point() +
-    theme_minimal() +
-    geom_abline(slope = 1) +
-    theme(legend.position = 'none') +
-    scale_x_continuous(limits = c(0,15000)) +
-    scale_y_continuous(limits = c(0,15000)) +
-    ggtitle('Expected vs. actual variants\nbased on expected coverage')
-
-p3 <- ggplot(vaf_sm, aes(expected_variants_cov, nvars, shape=sample)) +
-    geom_point() +
-    theme_minimal() +
-    geom_abline(slope = 1) +
-    theme(legend.position = 'none') +
-    scale_x_continuous(limits = c(0,15000)) +
-    scale_y_continuous(limits = c(0,15000)) +
-    ggtitle('Expected vs. actual variants\nbased on actual coverage')
-
-p1 + p2 + p3
 ```
 
 
