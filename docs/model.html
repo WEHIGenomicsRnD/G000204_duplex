@@ -353,6 +353,9 @@ div.tocify {
   <a href="ecoli_spikeins.html">E coli spike-ins</a>
 </li>
 <li>
+  <a href="downsampling.html">Downsampling</a>
+</li>
+<li>
   <a href="license.html">License</a>
 </li>
       </ul>
@@ -404,7 +407,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-08-11
+<strong>Last updated:</strong> 2022-08-18
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -535,15 +538,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreee169b95769906967929e1ecd167cd3191d42e8d0targetblanke169b95a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree7ff227e4a40694dc43372ce54750ac5cac568040targetblank7ff227ea">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/e169b95769906967929e1ecd167cd3191d42e8d0" target="_blank">e169b95</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/7ff227e4a40694dc43372ce54750ac5cac568040" target="_blank">7ff227e</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreee169b95769906967929e1ecd167cd3191d42e8d0targetblanke169b95a"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree7ff227e4a40694dc43372ce54750ac5cac568040targetblank7ff227ea"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -553,7 +556,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/e169b95769906967929e1ecd167cd3191d42e8d0" target="_blank">e169b95</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/7ff227e4a40694dc43372ce54750ac5cac568040" target="_blank">7ff227e</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -573,6 +576,7 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
+    Ignored:    analysis/downsampling.nb.html
     Ignored:    scripts/
 
 Untracked files:
@@ -590,8 +594,7 @@ Untracked files:
     Untracked:  prototype_code/
 
 Unstaged changes:
-    Modified:   analysis/ecoli_K12.Rmd
-    Modified:   analysis/insilico_mixtures.Rmd
+    Modified:   analysis/_site.yml
 
 </code></pre>
 <p>
@@ -636,6 +639,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/7ff227e4a40694dc43372ce54750ac5cac568040/analysis/model.Rmd" target="_blank">7ff227e</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-18
+</td>
+<td>
+Added downsampling experiments and some presentation-only plots.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/ede1103ecc1bb6adb1ed6000da212b27c651df05/docs/model.html" target="_blank">ede1103</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-11
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1571,6 +1608,43 @@ print(min_cells)</code></pre>
     geom_hline(yintercept = pmiss, alpha=0.4) +
     scale_color_brewer(palette = &#39;Dark2&#39;)</code></pre>
 <p><img src="figure/model.Rmd/revised_model-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-revised_model-1">
+Past versions of revised_model-1.png
+</button>
+</p>
+<div id="fig-revised_model-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ede1103ecc1bb6adb1ed6000da212b27c651df05/docs/figure/model.Rmd/revised_model-1.png" target="_blank">ede1103</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-11
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="downsampling-experiment-model" class="section level2">
 <h2>Downsampling experiment model</h2>
@@ -1583,7 +1657,21 @@ from 5% to 95%. We then calculate the duplicate rate.</p>
 <pre class="r"><code>N_READS &lt;- 340
 COV_RATIO &lt;- 14
 
-toy_reads &lt;- lapply(LETTERS, paste0, LETTERS) %&gt;% unlist() %&gt;% head(N_READS)
+# recursive function, times = number of letters in toy reads
+make_toy_reads &lt;- function(times, toy_reads=NULL) {
+    if (times &lt; 1) {
+        return(toy_reads)
+    } else if (is.null(toy_reads)) {
+        toy_reads &lt;- LETTERS
+        times &lt;- times - 1
+    } else {
+        toy_reads &lt;- lapply(toy_reads, paste0, LETTERS) %&gt;% unlist()
+        times &lt;- times - 1
+    }
+    make_toy_reads(times, toy_reads)
+}
+
+toy_reads &lt;- make_toy_reads(2) %&gt;% head(N_READS)
 all_reads &lt;- rep(toy_reads, rpois(N_READS, COV_RATIO))
 dup_rate &lt;- 1 - (N_READS / length(all_reads))
 print(paste(&#39;Max duplicate rate:&#39;, round(dup_rate, 2)))</code></pre>
@@ -1602,6 +1690,43 @@ ggplot(df, aes(sample_frac, dup_rates)) +
     scale_x_continuous(breaks = seq(0.1, 1, 0.1)) +
     scale_y_continuous(breaks = seq(0.1, 1, 0.1))</code></pre>
 <p><img src="figure/model.Rmd/downsampling_duplicates-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-downsampling_duplicates-1">
+Past versions of downsampling_duplicates-1.png
+</button>
+</p>
+<div id="fig-downsampling_duplicates-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/ede1103ecc1bb6adb1ed6000da212b27c651df05/docs/figure/model.Rmd/downsampling_duplicates-1.png" target="_blank">ede1103</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-11
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
