@@ -407,7 +407,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-08-18
+<strong>Last updated:</strong> 2022-08-19
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -538,15 +538,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree7ff227e4a40694dc43372ce54750ac5cac568040targetblank7ff227ea">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreea06f97c92abe2ef1c382b1933dd6a53dff90c019targetblanka06f97ca">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/7ff227e4a40694dc43372ce54750ac5cac568040" target="_blank">7ff227e</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/a06f97c92abe2ef1c382b1933dd6a53dff90c019" target="_blank">a06f97c</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree7ff227e4a40694dc43372ce54750ac5cac568040targetblank7ff227ea"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreea06f97c92abe2ef1c382b1933dd6a53dff90c019targetblanka06f97ca"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -556,7 +556,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/7ff227e4a40694dc43372ce54750ac5cac568040" target="_blank">7ff227e</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/a06f97c92abe2ef1c382b1933dd6a53dff90c019" target="_blank">a06f97c</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -576,7 +576,6 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
-    Ignored:    analysis/downsampling.nb.html
     Ignored:    scripts/
 
 Untracked files:
@@ -592,9 +591,6 @@ Untracked files:
     Untracked:  data/mixtures
     Untracked:  data/ref/
     Untracked:  prototype_code/
-
-Unstaged changes:
-    Modified:   analysis/_site.yml
 
 </code></pre>
 <p>
@@ -645,6 +641,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a06f97c92abe2ef1c382b1933dd6a53dff90c019/analysis/downsampling.Rmd" target="_blank">a06f97c</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-19
+</td>
+<td>
+Added extra 1-6% samples
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/f90d40a970c2cbbe7fa2446f91d73ee654258046/docs/downsampling.html" target="_blank">f90d40a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-18
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/7ff227e4a40694dc43372ce54750ac5cac568040/analysis/downsampling.Rmd" target="_blank">7ff227e</a>
 </td>
 <td>
@@ -667,9 +697,9 @@ Added downsampling experiments and some presentation-only plots.
 <div id="downsampling-experiments" class="section level1">
 <h1>Downsampling experiments</h1>
 <p>The E. Coli sample 1-K12Rep1 (1% spike-in) was selected as a
-representative sample. We downsampled to 1%, 5% and 10-50% in 10%
-increments to determine the optimal duplicate rate (highest
-efficiency).</p>
+representative sample. We down-sampled to 1-6% in 1% increments and
+10-50% in 10% increments to determine the optimal duplicate rate
+(highest efficiency).</p>
 <pre class="r"><code>library(ggplot2)
 library(data.table)
 library(dplyr)
@@ -748,6 +778,43 @@ colnames(mm)[2] &lt;- &#39;metric&#39;</code></pre>
     facet_wrap(~metric, scales = &#39;free&#39;) +
     scale_colour_brewer(palette = &#39;Dark2&#39;)</code></pre>
 <p><img src="figure/downsampling.Rmd/plot_by_sample-1.png" width="1536" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot_by_sample-1">
+Past versions of plot_by_sample-1.png
+</button>
+</p>
+<div id="fig-plot_by_sample-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f90d40a970c2cbbe7fa2446f91d73ee654258046/docs/figure/downsampling.Rmd/plot_by_sample-1.png" target="_blank">f90d40a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-18
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="duplicate-rate" class="section level3">
 <h3>Duplicate rate</h3>
@@ -766,6 +833,43 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         geom_hline(yintercept = 0.81, alpha = 0.4)  +
         ggtitle(metric)</code></pre>
 <p><img src="figure/downsampling.Rmd/duplicate_rate-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-duplicate_rate-1">
+Past versions of duplicate_rate-1.png
+</button>
+</p>
+<div id="fig-duplicate_rate-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f90d40a970c2cbbe7fa2446f91d73ee654258046/docs/figure/downsampling.Rmd/duplicate_rate-1.png" target="_blank">f90d40a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-18
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="fraction-of-singleton-reads" class="section level3">
 <h3>Fraction of singleton reads</h3>
@@ -782,6 +886,43 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         coord_flip() +
         ggtitle(metric)</code></pre>
 <p><img src="figure/downsampling.Rmd/singletons-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-singletons-1">
+Past versions of singletons-1.png
+</button>
+</p>
+<div id="fig-singletons-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f90d40a970c2cbbe7fa2446f91d73ee654258046/docs/figure/downsampling.Rmd/singletons-1.png" target="_blank">f90d40a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-18
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="drop-out-rate" class="section level3">
 <h3>Drop-out rate</h3>
@@ -806,6 +947,43 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         geom_hline(yintercept = c(0.1, 0.3), alpha = 0.4)  +
         ggtitle(metric)</code></pre>
 <p><img src="figure/downsampling.Rmd/drop_out_rate-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-drop_out_rate-1">
+Past versions of drop_out_rate-1.png
+</button>
+</p>
+<div id="fig-drop_out_rate-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f90d40a970c2cbbe7fa2446f91d73ee654258046/docs/figure/downsampling.Rmd/drop_out_rate-1.png" target="_blank">f90d40a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-18
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="efficiency" class="section level3">
 <h3>Efficiency</h3>
@@ -822,6 +1000,43 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         geom_hline(yintercept = c(0.07), alpha = 0.4)  +
         ggtitle(metric)</code></pre>
 <p><img src="figure/downsampling.Rmd/efficiency-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-efficiency-1">
+Past versions of efficiency-1.png
+</button>
+</p>
+<div id="fig-efficiency-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f90d40a970c2cbbe7fa2446f91d73ee654258046/docs/figure/downsampling.Rmd/efficiency-1.png" target="_blank">f90d40a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-18
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="gc-deviation" class="section level3">
 <h3>GC deviation</h3>
@@ -842,6 +1057,43 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         coord_flip() +
         ggtitle(metric)</code></pre>
 <p><img src="figure/downsampling.Rmd/gc_deviation-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-gc_deviation-1">
+Past versions of gc_deviation-1.png
+</button>
+</p>
+<div id="fig-gc_deviation-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f90d40a970c2cbbe7fa2446f91d73ee654258046/docs/figure/downsampling.Rmd/gc_deviation-1.png" target="_blank">f90d40a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-18
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="duplex-coverage-ratio" class="section level3">
 <h3>Duplex Coverage ratio</h3>
@@ -858,6 +1110,43 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         geom_hline(yintercept = 30, alpha = 0.4)  +
         ggtitle(metric)</code></pre>
 <p><img src="figure/downsampling.Rmd/duplex_coverage_ratio-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-duplex_coverage_ratio-1">
+Past versions of duplex_coverage_ratio-1.png
+</button>
+</p>
+<div id="fig-duplex_coverage_ratio-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f90d40a970c2cbbe7fa2446f91d73ee654258046/docs/figure/downsampling.Rmd/duplex_coverage_ratio-1.png" target="_blank">f90d40a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-18
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="family-statistics" class="section level2">
@@ -872,6 +1161,43 @@ from total reads of paired AB and BA families).</p>
         theme_bw() +
         ggtitle(&#39;Family pair sizes&#39;)</code></pre>
 <p><img src="figure/downsampling.Rmd/family_sizes-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-family_sizes-1">
+Past versions of family_sizes-1.png
+</button>
+</p>
+<div id="fig-family_sizes-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f90d40a970c2cbbe7fa2446f91d73ee654258046/docs/figure/downsampling.Rmd/family_sizes-1.png" target="_blank">f90d40a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-18
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The following plot shows:</p>
 <ul>
 <li>families_gt1: number of family pairs where at least one family (AB
@@ -881,16 +1207,60 @@ BA) have &gt; 0 reads.</li>
 <li>paired_and_gt1: number of family pairs where both families (AB and
 BA) have &gt; 1 reads.</li>
 </ul>
-<pre class="r"><code>p1 &lt;- ggplot(mm[mm$metric %like% &#39;pair|gt1&#39;, ], aes(value, sample, fill = metric)) +
+<pre class="r"><code>ggplot(mm[mm$metric %like% &#39;pair|gt1&#39;, ], aes(value, sample, fill = metric)) +
         geom_bar(stat=&#39;identity&#39;, position=&#39;dodge&#39;) +
         theme_bw() +
-        ggtitle(&#39;Family statistics&#39;)
-p2 &lt;- ggplot(mm[mm$metric %like% &#39;pair|gt1&#39; &amp; !mm$sample %like% &#39;1-10&#39;, ], aes(value, sample, fill = metric)) +
-        geom_bar(stat=&#39;identity&#39;, position=&#39;dodge&#39;) +
-        theme_bw() +
-        ggtitle(&#39;Family statistics without 0.1% spike-in sample&#39;)
-p1 + p2</code></pre>
-<p><img src="figure/downsampling.Rmd/family_stats-1.png" width="1344" style="display: block; margin: auto;" /></p>
+        ggtitle(&#39;Family statistics&#39;)</code></pre>
+<p><img src="figure/downsampling.Rmd/family_stats-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-family_stats-1">
+Past versions of family_stats-1.png
+</button>
+</p>
+<div id="fig-family_stats-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f90d40a970c2cbbe7fa2446f91d73ee654258046/docs/figure/downsampling.Rmd/family_stats-1.png" target="_blank">f90d40a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-18
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="efficiency-vs.-duplicate-rate" class="section level2">
+<h2>Efficiency vs. duplicate rate</h2>
+<pre class="r"><code>dvf &lt;- mm[mm$metric %in% c(&#39;duplicate_rate&#39;, &#39;efficiency&#39;),] %&gt;%
+        reshape2::dcast(., sample ~ metric) %&gt;%
+        mutate(sample = gsub(&#39;p1|-|mix&#39;, &#39;&#39;, sample))
+
+ggplot(dvf, aes(duplicate_rate, efficiency, label = sample)) +
+    geom_text() +
+    theme_bw() +
+    scale_x_continuous(breaks = seq(0.3, 0.9, 0.1))</code></pre>
+<p><img src="figure/downsampling.Rmd/dup_vs_eff-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
