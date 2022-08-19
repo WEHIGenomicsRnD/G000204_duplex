@@ -7,7 +7,7 @@ output:
 
 # Downsampling experiments
 
-The E. Coli sample 1-K12Rep1 (1% spike-in) was selected as a representative sample. We downsampled to 1%, 5% and 10-50% in 10% increments to determine the optimal duplicate rate (highest efficiency).
+The E. Coli sample 1-K12Rep1 (1% spike-in) was selected as a representative sample. We down-sampled to 1-6% in 1% increments and 10-50% in 10% increments to determine the optimal duplicate rate (highest efficiency).
 
 ```{r setup, include=FALSE}
 DOCNAME = "Downsampling experiments"
@@ -234,16 +234,23 @@ The following plot shows:
 -   paired_families: number of family pairs where both families (AB and BA) have \> 0 reads.
 -   paired_and_gt1: number of family pairs where both families (AB and BA) have \> 1 reads.
 
-```{r family_stats, fig.width = 14, fig.height = 5}
-p1 <- ggplot(mm[mm$metric %like% 'pair|gt1', ], aes(value, sample, fill = metric)) +
+```{r family_stats}
+ggplot(mm[mm$metric %like% 'pair|gt1', ], aes(value, sample, fill = metric)) +
         geom_bar(stat='identity', position='dodge') +
         theme_bw() +
         ggtitle('Family statistics')
-p2 <- ggplot(mm[mm$metric %like% 'pair|gt1' & !mm$sample %like% '1-10', ], aes(value, sample, fill = metric)) +
-        geom_bar(stat='identity', position='dodge') +
-        theme_bw() +
-        ggtitle('Family statistics without 0.1% spike-in sample')
-p1 + p2
 ```
 
+## Efficiency vs. duplicate rate
+
+```{r dup_vs_eff}
+dvf <- mm[mm$metric %in% c('duplicate_rate', 'efficiency'),] %>%
+        reshape2::dcast(., sample ~ metric) %>%
+        mutate(sample = gsub('p1|-|mix', '', sample))
+
+ggplot(dvf, aes(duplicate_rate, efficiency, label = sample)) +
+    geom_text() +
+    theme_bw() +
+    scale_x_continuous(breaks = seq(0.3, 0.9, 0.1))
+```
 
