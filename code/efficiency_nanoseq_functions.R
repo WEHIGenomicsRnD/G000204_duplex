@@ -21,7 +21,9 @@ calculate_metrics <- function(rbs) {
     metrics$frac_singletons <- lapply(rbs, calculate_singletons) %>% unlist()
     metrics$efficiency <- lapply(rbs, calculate_efficiency) %>% unlist()
     metrics$drop_out_rate <- lapply(rbs, calculate_missed_fraction) %>% unlist()
-    metrics$gc_deviation <- lapply(rbs, calculate_gc) %>% unlist()
+    metrics <- lapply(rbs, calculate_gc) %>%
+                    data.frame %>% t() %>%
+                    cbind(metrics, .)
     metrics <- lapply(rbs, calculate_family_stats) %>%
                     data.frame %>% t() %>%
                     cbind(metrics, .)
@@ -33,9 +35,12 @@ calculate_metrics_single <- function(rbs) {
     metrics$frac_singletons <- calculate_singletons(rbs)
     metrics$efficiency <- calculate_efficiency(rbs)
     metrics$drop_out_rate <- calculate_missed_fraction(rbs)
-    metrics$gc_deviation <- calculate_gc(rbs)
+
+    gc_stats <- calculate_gc(rbs)
     family_stats <- calculate_family_stats(rbs)
+    metrics <- data.frame(metrics, t(gc_stats))
     metrics <- data.frame(metrics, t(family_stats))
+
     return(metrics)
 }
 
@@ -145,5 +150,5 @@ calculate_gc <- function(rbs, sample_n = 10000, max_gap = 100000) {
     gc_both <- s2c(seqs_both_collapsed) %>% GC()
     gc_single <- s2c(seqs_single_collapsed) %>% GC()
 
-    return(abs(gc_both - gc_single))
+    return(c(gc_single=gc_single, gc_both=gc_both, gc_deviation=abs(gc_single - gc_both)))
 }

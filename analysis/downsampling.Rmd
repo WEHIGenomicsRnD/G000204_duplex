@@ -111,6 +111,8 @@ metrics$sample <- gsub('-HFVGHDSX3', '', sample_names)
 # prepare for plotting
 mm <- data.frame(reshape2::melt(metrics))
 colnames(mm)[2] <- 'metric'
+
+mm$group <- gsub('-0\\.[0-9]+-mix', '', mm$sample)
 ```
 
 ## Metric comparison plots
@@ -118,7 +120,7 @@ colnames(mm)[2] <- 'metric'
 ### Overview
 
 ```{r plot_by_sample, fig.width=16, fig.height=10}
-ggplot(mm, aes(sample, value)) + 
+ggplot(mm, aes(sample, value, shape = group)) + 
     geom_point() +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 90)) +
@@ -132,11 +134,12 @@ Fraction of duplicate reads calculated by [Picard's MarkDuplicates](https://gatk
 
 ```{r duplicate_rate}
 metric <- 'duplicate_rate'
-ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+ggplot(mm[mm$metric == metric,], aes(sample, value, fill = group)) +
         geom_histogram(stat = 'identity', position = 'dodge') +
         theme_bw() +
         coord_flip() +
         geom_hline(yintercept = 0.81, alpha = 0.4)  +
+        scale_fill_brewer(palette = 'Set2') +
         ggtitle(metric)
 ```
 
@@ -146,10 +149,11 @@ Shows the number of single-read families divided by the total number of reads. A
 
 ```{r singletons}
 metric <- 'frac_singletons'
-ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+ggplot(mm[mm$metric == metric,], aes(sample, value, fill = group)) +
         geom_histogram(stat = 'identity', position = 'dodge') +
         theme_bw() +
         coord_flip() +
+         scale_fill_brewer(palette = 'Set2') +
         ggtitle(metric)
 ```
 
@@ -163,10 +167,11 @@ This is similar to the singleton fraction, but taking into account loss of pairs
 
 ```{r drop_out_rate}
 metric <- 'drop_out_rate'
-ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+ggplot(mm[mm$metric == metric,], aes(sample, value, fill = group)) +
         geom_histogram(stat = 'identity', position = 'dodge') +
         theme_bw() +
         coord_flip() +
+        scale_fill_brewer(palette = 'Set2') +
         geom_hline(yintercept = c(0.1, 0.3), alpha = 0.4)  +
         ggtitle(metric)
 ```
@@ -177,10 +182,11 @@ Efficiency is the number of duplex bases divided by the number of sequenced base
 
 ```{r efficiency}
 metric <- 'efficiency'
-ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+ggplot(mm[mm$metric == metric,], aes(sample, value, fill = group)) +
         geom_histogram(stat = 'identity', position = 'dodge') +
         theme_bw() +
         coord_flip() +
+        scale_fill_brewer(palette = 'Set2') +
         geom_hline(yintercept = c(0.07), alpha = 0.4)  +
         ggtitle(metric)
 ```
@@ -193,10 +199,11 @@ GC deviation is the absolute difference between `GC_BOTH` and `GC_SINGLE` calcul
 
 ```{r gc_deviation}
 metric <- 'gc_deviation'
-ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+ggplot(mm[mm$metric == metric,], aes(sample, value, fill = group)) +
         geom_histogram(stat = 'identity', position = 'dodge') +
         theme_bw() +
         coord_flip() +
+        scale_fill_brewer(palette = 'Set2') +
         ggtitle(metric)
 ```
 
@@ -206,10 +213,11 @@ The mean sequence (pre-duplex) coverage divided by mean duplex coverage. Indicat
 
 ```{r duplex_coverage_ratio}
 metric <- 'duplex_coverage_ratio'
-ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+ggplot(mm[mm$metric == metric,], aes(sample, value, fill = group)) +
         geom_histogram(stat = 'identity', position = 'dodge') +
         theme_bw() +
         coord_flip() +
+        scale_fill_brewer(palette = 'Set2') +
         geom_hline(yintercept = 30, alpha = 0.4)  +
         ggtitle(metric)
 ```
@@ -243,14 +251,19 @@ ggplot(mm[mm$metric %like% 'pair|gt1', ], aes(value, sample, fill = metric)) +
 
 ## Efficiency vs. duplicate rate
 
-```{r dup_vs_eff}
+```{r dup_vs_eff, fig.width=9, fig.height=6}
 dvf <- mm[mm$metric %in% c('duplicate_rate', 'efficiency'),] %>%
         reshape2::dcast(., sample ~ metric) %>%
-        mutate(sample = gsub('p1|-|mix', '', sample))
+        mutate(group = gsub('-0\\.[0-9]+-mix', '', sample),
+               sample = gsub('p1|p2|-|mix', '', sample))
 
-ggplot(dvf, aes(duplicate_rate, efficiency, label = sample)) +
-    geom_text() +
+ggplot(dvf, aes(duplicate_rate, efficiency, label = sample, colour = group)) +
+    geom_text(vjust = -0.5) +
+    geom_point() +
     theme_bw() +
+    geom_smooth(method = 'lm', formula = y ~ x + I(x^2), alpha = 0.2) +
     scale_x_continuous(breaks = seq(0.3, 0.9, 0.1))
+
+print(dvf)
 ```
 
