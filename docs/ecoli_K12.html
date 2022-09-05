@@ -407,7 +407,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-08-18
+<strong>Last updated:</strong> 2022-09-06
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -538,15 +538,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree7ff227e4a40694dc43372ce54750ac5cac568040targetblank7ff227ea">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree5cbe59d234bd0a16444c89dbe08a0373a3fbac28targetblank5cbe59da">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/7ff227e4a40694dc43372ce54750ac5cac568040" target="_blank">7ff227e</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/5cbe59d234bd0a16444c89dbe08a0373a3fbac28" target="_blank">5cbe59d</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree7ff227e4a40694dc43372ce54750ac5cac568040targetblank7ff227ea"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree5cbe59d234bd0a16444c89dbe08a0373a3fbac28targetblank5cbe59da"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -556,7 +556,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/7ff227e4a40694dc43372ce54750ac5cac568040" target="_blank">7ff227e</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/5cbe59d234bd0a16444c89dbe08a0373a3fbac28" target="_blank">5cbe59d</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -576,7 +576,7 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
-    Ignored:    analysis/downsampling.nb.html
+    Ignored:    analysis/figure/
     Ignored:    scripts/
 
 Untracked files:
@@ -587,6 +587,7 @@ Untracked files:
     Untracked:  analysis/calc_nanoseq_metrics.Rmd
     Untracked:  data/._metrics.rds
     Untracked:  data/ecoli/
+    Untracked:  data/ecoli_k12_metrics.rds
     Untracked:  data/metadata/
     Untracked:  data/metrics_efficiency_nossc.rds
     Untracked:  data/mixtures
@@ -594,7 +595,7 @@ Untracked files:
     Untracked:  prototype_code/
 
 Unstaged changes:
-    Modified:   analysis/_site.yml
+    Modified:   code/efficiency_nanoseq_functions.R
 
 </code></pre>
 <p>
@@ -640,6 +641,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/5cbe59d234bd0a16444c89dbe08a0373a3fbac28/analysis/ecoli_K12.Rmd" target="_blank">5cbe59d</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-09-06
+</td>
+<td>
+Plot fixes; added more family metrics
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/f90d40a970c2cbbe7fa2446f91d73ee654258046/docs/ecoli_K12.html" target="_blank">f90d40a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-18
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1362,7 +1397,7 @@ qmap_cov &lt;- get_qmap_coverage(qualimap_dir, sample_names)
 qmap_cons_cov &lt;- get_qmap_coverage(qualimap_cons_dir, sample_names)
 qmap_cons_cov_nossc &lt;- get_qmap_coverage(qualimap_cons_nossc_dir, sample_names[-9])
 
-# uncomment below to calculate metrics
+# # uncomment below to calculate metrics
 # # calculate metrics for nanoseq
 # rlen &lt;- 151; skips &lt;- 5
 # metrics_nano &lt;- calc_metrics_new_rbs(rinfo_dir, pattern = &#39;Nano&#39;, cores = cores)
@@ -1378,8 +1413,9 @@ qmap_cons_cov_nossc &lt;- get_qmap_coverage(qualimap_cons_nossc_dir, sample_name
 # metrics$sample &lt;- gsub(&#39;-HJK2GDSX3&#39;, &#39;&#39;, sample_names)
 
 # cache metrics object
-# saveRDS(metrics, file = here(&#39;data/metrics.rds&#39;))
-metrics &lt;- readRDS(here(&#39;data/metrics.rds&#39;))
+# saveRDS(metrics, file = here(&#39;data/ecoli_k12_metrics.rds&#39;))
+metrics &lt;- readRDS(here(&#39;data/ecoli_k12_metrics.rds&#39;))
+metrics$single_family_fraction &lt;- metrics$single_families / metrics$total_families
 
 # load metadata
 metadata &lt;- read_excel(metadata_file)
@@ -1435,6 +1471,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f90d40a970c2cbbe7fa2446f91d73ee654258046/docs/figure/ecoli_K12.Rmd/duplicate_rate-1.png" target="_blank">f90d40a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-18
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/81272b2356f01b49a7d0c32f4e62d9d5d8d17f9e/docs/figure/ecoli_K12.Rmd/duplicate_rate-1.png" target="_blank">81272b2</a>
@@ -1552,6 +1599,187 @@ Marek Cmero
 </td>
 <td>
 2022-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="single-family-fraction" class="section level3">
+<h3>Single family fraction</h3>
+<p>Similar to traction of singletons, this is the number of single read
+families, divided by the total families.</p>
+<pre class="r"><code>metric &lt;- &#39;single_family_fraction&#39;
+ggplot(mm[mm$metric == metric,], aes(sample, value)) +
+        geom_histogram(stat = &#39;identity&#39;, position = &#39;dodge&#39;) +
+        theme_bw() +
+        coord_flip() +
+        ggtitle(metric)</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-1-1">
+Past versions of unnamed-chunk-1-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-1-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/22d32ef8c01ece3dfd2343d5cdca81fc347224a4/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">22d32ef</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-31
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/b5242382e07051bba0914bd6e3906623d0644a64/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">b524238</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-26
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/cc380cc389100b3ecdc5c9cdf5616276fb4d1fd0/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">cc380cc</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-05-11
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/7c4f40362875160205ac501db16a9417a27dece7/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">7c4f403</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-04-25
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/fcb6578c014536c59339c72554c3a9f7844e0dde/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">fcb6578</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-04-11
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a2f0a4a07b138167d30f1fb7c80004ee4f59937a/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">a2f0a4a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-04-08
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/c246dc2fe2999e98e6daf86e38b31414df507d7e/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">c246dc2</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-04-07
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a8601010ee4d8b48191aeedf7be6bb95ae0b1234/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">a860101</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-04-06
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/81272b2356f01b49a7d0c32f4e62d9d5d8d17f9e/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">81272b2</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-04-05
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f13e13a048f85249dd4b1e77fc34ba066446ea6e/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">f13e13a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-04-05
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/def213010fd1a838e8e423b2662c6d5cd49b7ac7/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">def2130</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-04-05
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/953b83ede1e12bcd5c1708f773f0afc6c1e4de40/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">953b83e</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-31
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/05412f6103fbf7b3291006856596fcff0f1ae6ea/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">05412f6</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-03-28
 </td>
 </tr>
 </tbody>
@@ -2246,15 +2474,15 @@ Marek Cmero
 </table>
 </div>
 </div>
-<pre class="r"><code># drop-out rate
-metric &lt;- &#39;drop_out_rate&#39;
+<pre class="r"><code># single family frac
+metric &lt;- &#39;single_family_fraction&#39;
 p1 &lt;- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
-        gg_prot + geom_hline(yintercept = c(0.1, 0.3)) + ylim(c(0,1)) +
-        ggtitle(&#39;Drop-out fraction\n(lines = optimal range)&#39;)
+        gg_prot +
+        ggtitle(&#39;Fraction of singleton families&#39;)
 
 p2 &lt;- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
-        gg_nuc + geom_hline(yintercept = c(0.1, 0.3)) + ylim(c(0,1)) +
-        ggtitle(&#39;Drop-out fraction\n(lines = optimal range)&#39;)
+        gg_nuc + 
+        ggtitle(&#39;Fraction of singleton families&#39;)
 show(p1 + p2)</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/metrics_comp-3.png" width="960" style="display: block; margin: auto;" /></p>
 <p>
@@ -2327,15 +2555,15 @@ Marek Cmero
 </table>
 </div>
 </div>
-<pre class="r"><code># efficiency
-metric &lt;- &#39;efficiency&#39;
+<pre class="r"><code># drop-out rate
+metric &lt;- &#39;drop_out_rate&#39;
 p1 &lt;- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
-        gg_prot + geom_hline(yintercept = 0.07) +
-        ggtitle(&#39;Efficiency\n(line = optimal)&#39;)
+        gg_prot + geom_hline(yintercept = c(0.1, 0.3)) + ylim(c(0,1)) +
+        ggtitle(&#39;Drop-out fraction\n(lines = optimal range)&#39;)
 
 p2 &lt;- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
-        gg_nuc + geom_hline(yintercept = 0.07) +
-        ggtitle(&#39;Efficiency\n(line = optomal)&#39;)
+        gg_nuc + geom_hline(yintercept = c(0.1, 0.3)) + ylim(c(0,1)) +
+        ggtitle(&#39;Drop-out fraction\n(lines = optimal range)&#39;)
 show(p1 + p2)</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/metrics_comp-4.png" width="960" style="display: block; margin: auto;" /></p>
 <p>
@@ -2419,15 +2647,15 @@ Marek Cmero
 </table>
 </div>
 </div>
-<pre class="r"><code># GC deviation
-metric &lt;- &#39;gc_deviation&#39;
+<pre class="r"><code># efficiency
+metric &lt;- &#39;efficiency&#39;
 p1 &lt;- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
-        gg_prot +
-        ggtitle(&#39;GC deviation\n(both strands vs. one)&#39;)
+        gg_prot + geom_hline(yintercept = 0.07) +
+        ggtitle(&#39;Efficiency\n(line = optimal)&#39;)
 
 p2 &lt;- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
-        gg_nuc + 
-        ggtitle(&#39;GC deviation\n(both strands vs. one)&#39;)
+        gg_nuc + geom_hline(yintercept = 0.07) +
+        ggtitle(&#39;Efficiency\n(line = optomal)&#39;)
 show(p1 + p2)</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/metrics_comp-5.png" width="960" style="display: block; margin: auto;" /></p>
 <p>
@@ -2577,15 +2805,15 @@ Marek Cmero
 </table>
 </div>
 </div>
-<pre class="r"><code># duplex coverage ratio
-metric &lt;- &#39;duplex_coverage_ratio&#39;
+<pre class="r"><code># GC deviation
+metric &lt;- &#39;gc_deviation&#39;
 p1 &lt;- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
-        gg_prot + geom_hline(yintercept = 30) +
-        ggtitle(&#39;Duplex coverage ratio\n(total cov / duplex cov)&#39;)
+        gg_prot +
+        ggtitle(&#39;GC deviation\n(both strands vs. one)&#39;)
 
 p2 &lt;- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
-        gg_nuc + geom_hline(yintercept = 30) +
-        ggtitle(&#39;Duplex coverage ratio\n(total cov / duplex cov)&#39;)
+        gg_nuc + 
+        ggtitle(&#39;GC deviation\n(both strands vs. one)&#39;)
 show(p1 + p2)</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/metrics_comp-6.png" width="960" style="display: block; margin: auto;" /></p>
 <p>
@@ -2658,12 +2886,23 @@ Marek Cmero
 </table>
 </div>
 </div>
+<pre class="r"><code># duplex coverage ratio
+metric &lt;- &#39;duplex_coverage_ratio&#39;
+p1 &lt;- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
+        gg_prot + geom_hline(yintercept = 30) +
+        ggtitle(&#39;Duplex coverage ratio\n(total cov / duplex cov)&#39;)
+
+p2 &lt;- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
+        gg_nuc + geom_hline(yintercept = 30) +
+        ggtitle(&#39;Duplex coverage ratio\n(total cov / duplex cov)&#39;)
+show(p1 + p2)</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/metrics_comp-7.png" width="960" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>metric_optimals &lt;- list(&#39;duplicate_rate&#39; = 0.81,
-                          &#39;frac_singletons&#39; = 0,
-                          &#39;drop_out_rate&#39; = c(0.1, 0.3),
-                          &#39;efficiency&#39; = 0.07,
-                          &#39;gc_deviation&#39; = 0,
-                          &#39;duplex_coverage_ratio&#39; = 30)
+                        &#39;frac_singletons&#39; = 0,
+                        &#39;drop_out_rate&#39; = c(0.1, 0.3),
+                        &#39;efficiency&#39; = 0.07,
+                        &#39;gc_deviation&#39; = 0,
+                        &#39;duplex_coverage_ratio&#39; = 30)
                        
 gg_prot &lt;- list(geom_boxplot(outlier.shape = NA),
                 geom_jitter(width = 0.1, size = 2, aes(colour = nuclease, shape = nuclease)),
@@ -2674,9 +2913,13 @@ gg_nuc &lt;- list(geom_boxplot(outlier.shape = NA),
                theme_bw(),
                theme(legend.position = &#39;bottom&#39;))
 
+mmt &lt;- mm
+mmt$replicate &lt;- str_split(mmt$sample, &#39;Rep&#39;) %&gt;% lapply(., dplyr::last) %&gt;% unlist() %&gt;% as.numeric()
+mmt$sample &lt;- str_split(mmt$sample, &#39;Rep&#39;) %&gt;% lapply(., dplyr::first) %&gt;% unlist()
+
 for(metric in names(metric_optimals)) {
     threshold &lt;- metric_optimals[metric][[1]]
-    tmp &lt;- mm[mm$metric == metric &amp; !(mm$sample == &#39;xGEN-xGEN&#39; &amp; mm$replicate == 1),]
+    tmp &lt;- mmt[mmt$metric == metric &amp; !(mmt$sample == &#39;xGEN-xGEN&#39; &amp; mmt$replicate == 1),]
     p1 &lt;- ggplot(tmp, aes(sample, value)) +
         geom_point() +
         theme_bw() +
@@ -2691,11 +2934,16 @@ for(metric in names(metric_optimals)) {
     
     show(p1 + p2 + p3)
 }</code></pre>
-<pre class="r"><code>ggplot(mm[mm$metric %like% &#39;pair|gt1&#39;, ], aes(value, sample, fill = metric)) +
+<pre class="r"><code>tmp &lt;- data.table(mm)[,list(meanval = mean(value), minval = min(value), maxval= max(value)), by=c(&#39;sample&#39;, &#39;metric&#39;)] %&gt;% data.frame()
+tmp &lt;- left_join(mm, tmp, by = c(&#39;sample&#39;, &#39;metric&#39;))
+
+ggplot(tmp[tmp$metric %like% &#39;pair|gt1|single_families&#39;, ], aes(sample, meanval, fill = metric)) +
         geom_bar(stat=&#39;identity&#39;, position=&#39;dodge&#39;) +
+        geom_errorbar( aes(x = sample, ymin = minval, ymax = maxval), position = &#39;dodge&#39;, colour = &#39;grey&#39;) +
         theme_bw() +
+        coord_flip() +
         scale_fill_brewer(palette = &#39;Dark2&#39;) +
-        theme(legend.position = &#39;bottom&#39;)</code></pre>
+        theme(legend.position = &#39;right&#39;)</code></pre>
 <pre class="r"><code>mt &lt;- mm
 mt$replicate &lt;- str_split(mt$sample, &#39;Rep&#39;) %&gt;% lapply(., dplyr::last) %&gt;% unlist() %&gt;% as.numeric()
 mt$sample &lt;- str_split(mt$sample, &#39;Rep&#39;) %&gt;% lapply(., dplyr::first) %&gt;% unlist()
@@ -2703,20 +2951,16 @@ mt$sample &lt;- str_split(mt$sample, &#39;Rep&#39;) %&gt;% lapply(., dplyr::firs
 mt &lt;- mt[,c(&#39;sample&#39;, &#39;metric&#39;, &#39;value&#39;, &#39;protocol&#39;, &#39;nuclease&#39;, &#39;replicate&#39;)]
 dm &lt;- reshape2::dcast(mt, sample + protocol + nuclease + replicate ~ metric)
 
-cols &lt;- c(brewer.pal(5, &#39;Greens&#39;)[2:5],
-          brewer.pal(6, &#39;Blues&#39;)[2:6])
-names(cols) &lt;- as.factor(dm$sample) %&gt;% levels()
-
-p1 &lt;- ggplot(dm, aes(efficiency, duplicate_rate, colour=sample)) +
-    geom_point() +
+p1 &lt;- ggplot(dm, aes(duplicate_rate, efficiency, colour=protocol, shape=nuclease)) +
+    geom_point(size = 3) +
     theme_bw() +
-    scale_colour_manual(values = cols) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;) +
     ggtitle(&#39;Efficiency vs. duplicate rate&#39;)
 
-p2 &lt;- ggplot(dm, aes(efficiency, drop_out_rate, colour=sample)) +
-    geom_point() +
+p2 &lt;- ggplot(dm, aes(drop_out_rate, efficiency, colour=protocol, shape=nuclease)) +
+    geom_point(size = 3) +
     theme_bw() +
-    scale_colour_manual(values = cols) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;) +
     ggtitle(&#39;Efficiency vs. drop-out rate&#39;)
 show(p1 + p2)</code></pre>
 </div>
@@ -3051,10 +3295,10 @@ Marek Cmero
 <p>For each metric, take the average of each replicate and perform a
 two-sided, unpaired T-test between protocols.</p>
 <pre class="r"><code>stats &lt;- NULL
-metric_names &lt;- unique(mm$metric) %&gt;% as.character()
+metric_names &lt;- unique(mmo$metric) %&gt;% as.character()
 for(metric_name in metric_names) {
-    nano &lt;- mm[mm$metric == metric_name &amp; mm$protocol == &#39;NanoSeq&#39;,]
-    xgen &lt;- mm[mm$metric == metric_name &amp; mm$protocol == &#39;xGen&#39;,]
+    nano &lt;- mmo[mmo$metric == metric_name &amp; mmo$protocol == &#39;NanoSeq&#39;,]
+    xgen &lt;- mmo[mmo$metric == metric_name &amp; mmo$protocol == &#39;xGen&#39;,]
     nano_vals &lt;- data.table(nano)[, mean(value), by = nuclease]$V1
     xgen_vals &lt;- data.table(xgen)[, mean(value), by = nuclease]$V1
     wtest &lt;- t.test(nano_vals, xgen_vals)
@@ -3063,19 +3307,24 @@ for(metric_name in metric_names) {
 }
 stats$significant &lt;- stats$pvalue &lt; 0.05
 print(stats)</code></pre>
-<pre><code>                  metric       pvalue significant
-1        frac_singletons 0.3509205995       FALSE
-2             efficiency 0.0016455448        TRUE
-3          drop_out_rate 0.0016563300        TRUE
-4           gc_deviation 0.0195493871        TRUE
-5            family_mean 0.2739786956       FALSE
-6          family_median 0.3816330944       FALSE
-7             family_max 0.4142481163       FALSE
-8           families_gt1 0.6326687504       FALSE
-9        paired_families 0.0006261990        TRUE
-10        paired_and_gt1 0.0003304955        TRUE
-11        duplicate_rate 0.9225366816       FALSE
-12 duplex_coverage_ratio 0.3166974439       FALSE</code></pre>
+<pre><code>                   metric       pvalue significant
+1         frac_singletons 8.856688e-01       FALSE
+2              efficiency 1.762439e-02        TRUE
+3           drop_out_rate 1.080330e-02        TRUE
+4               gc_single 2.282058e-04        TRUE
+5                 gc_both 6.467558e-05        TRUE
+6            gc_deviation 3.656097e-04        TRUE
+7          total_families 7.121985e-01       FALSE
+8             family_mean 4.081459e-01       FALSE
+9           family_median 6.178040e-01       FALSE
+10             family_max 5.178585e-01       FALSE
+11           families_gt1 9.146511e-01       FALSE
+12        single_families 6.628176e-01       FALSE
+13        paired_families 1.878931e-03        TRUE
+14         paired_and_gt1 2.903205e-03        TRUE
+15         duplicate_rate 4.691898e-01       FALSE
+16  duplex_coverage_ratio 2.145076e-01       FALSE
+17 single_family_fraction 7.668823e-01       FALSE</code></pre>
 <p>Rerun tests removing outlier (xGEN rep1). The results are
 similar.</p>
 <pre class="r"><code>stats &lt;- NULL
@@ -3090,19 +3339,24 @@ for(metric_name in metric_names) {
 }
 stats$significant &lt;- stats$pvalue &lt; 0.05
 print(stats)</code></pre>
-<pre><code>                  metric      pvalue significant
-1        frac_singletons 0.885668764       FALSE
-2             efficiency 0.017624387        TRUE
-3          drop_out_rate 0.010803300        TRUE
-4           gc_deviation 0.002863331        TRUE
-5            family_mean 0.408145893       FALSE
-6          family_median 0.617803978       FALSE
-7             family_max 0.517858472       FALSE
-8           families_gt1 0.914651102       FALSE
-9        paired_families 0.001878931        TRUE
-10        paired_and_gt1 0.002903205        TRUE
-11        duplicate_rate 0.469189762       FALSE
-12 duplex_coverage_ratio 0.214507629       FALSE</code></pre>
+<pre><code>                   metric       pvalue significant
+1         frac_singletons 8.856688e-01       FALSE
+2              efficiency 1.762439e-02        TRUE
+3           drop_out_rate 1.080330e-02        TRUE
+4               gc_single 2.282058e-04        TRUE
+5                 gc_both 6.467558e-05        TRUE
+6            gc_deviation 3.656097e-04        TRUE
+7          total_families 7.121985e-01       FALSE
+8             family_mean 4.081459e-01       FALSE
+9           family_median 6.178040e-01       FALSE
+10             family_max 5.178585e-01       FALSE
+11           families_gt1 9.146511e-01       FALSE
+12        single_families 6.628176e-01       FALSE
+13        paired_families 1.878931e-03        TRUE
+14         paired_and_gt1 2.903205e-03        TRUE
+15         duplicate_rate 4.691898e-01       FALSE
+16  duplex_coverage_ratio 2.145076e-01       FALSE
+17 single_family_fraction 7.668823e-01       FALSE</code></pre>
 </div>
 <div id="two-way-anova-analysis" class="section level2">
 <h2>Two-way ANOVA analysis</h2>
@@ -3124,67 +3378,92 @@ for(metric_name in metric_names) {
 }
 stats$significant &lt;- stats$pvalue &lt; 0.05
 print(stats)</code></pre>
-<pre><code>                  metric              variable       pvalue significant
-1        frac_singletons MungBeanUnit          0.3179447536       FALSE
-2        frac_singletons protocol              0.9702278541       FALSE
-3        frac_singletons S1Unit                0.8553539457       FALSE
-4        frac_singletons MungBeanUnit:protocol 0.9858376372       FALSE
-5        frac_singletons protocol:S1Unit       0.8540792709       FALSE
-6             efficiency MungBeanUnit          0.6743588660       FALSE
-7             efficiency protocol              0.0033776091        TRUE
-8             efficiency S1Unit                0.4674622674       FALSE
-9             efficiency MungBeanUnit:protocol 0.8509682597       FALSE
-10            efficiency protocol:S1Unit       0.2278366157       FALSE
-11         drop_out_rate MungBeanUnit          0.4118682293       FALSE
-12         drop_out_rate protocol              0.0002566346        TRUE
-13         drop_out_rate S1Unit                0.0904262242       FALSE
-14         drop_out_rate MungBeanUnit:protocol 0.8387881526       FALSE
-15         drop_out_rate protocol:S1Unit       0.3182162279       FALSE
-16          gc_deviation MungBeanUnit          0.5321833114       FALSE
-17          gc_deviation protocol              0.0087584727        TRUE
-18          gc_deviation S1Unit                0.7094314628       FALSE
-19          gc_deviation MungBeanUnit:protocol 0.4019325303       FALSE
-20          gc_deviation protocol:S1Unit       0.9145680596       FALSE
-21           family_mean MungBeanUnit          0.3721341384       FALSE
-22           family_mean protocol              0.2541550650       FALSE
-23           family_mean S1Unit                0.2914711924       FALSE
-24           family_mean MungBeanUnit:protocol 0.2723545197       FALSE
-25           family_mean protocol:S1Unit       0.1501250836       FALSE
-26         family_median MungBeanUnit          0.6347857947       FALSE
-27         family_median protocol              0.4810155294       FALSE
-28         family_median S1Unit                0.3250056081       FALSE
-29         family_median MungBeanUnit:protocol 0.4997581250       FALSE
-30         family_median protocol:S1Unit       0.3250056081       FALSE
-31            family_max MungBeanUnit          0.3849414781       FALSE
-32            family_max protocol              0.5270991535       FALSE
-33            family_max S1Unit                0.1424841525       FALSE
-34            family_max MungBeanUnit:protocol 0.9819905871       FALSE
-35            family_max protocol:S1Unit       0.0605658200       FALSE
-36          families_gt1 MungBeanUnit          0.1793349230       FALSE
-37          families_gt1 protocol              0.9876271265       FALSE
-38          families_gt1 S1Unit                0.6881757434       FALSE
-39          families_gt1 MungBeanUnit:protocol 0.6170001142       FALSE
-40          families_gt1 protocol:S1Unit       0.0301632029        TRUE
-41       paired_families MungBeanUnit          0.3217761699       FALSE
-42       paired_families protocol              0.0002319573        TRUE
-43       paired_families S1Unit                0.1990511038       FALSE
-44       paired_families MungBeanUnit:protocol 0.9226482412       FALSE
-45       paired_families protocol:S1Unit       0.8092463937       FALSE
-46        paired_and_gt1 MungBeanUnit          0.6527042939       FALSE
-47        paired_and_gt1 protocol              0.0007082361        TRUE
-48        paired_and_gt1 S1Unit                0.8872835419       FALSE
-49        paired_and_gt1 MungBeanUnit:protocol 0.5304733713       FALSE
-50        paired_and_gt1 protocol:S1Unit       0.2688705912       FALSE
-51        duplicate_rate MungBeanUnit          0.3209743574       FALSE
-52        duplicate_rate protocol              0.6617113407       FALSE
-53        duplicate_rate S1Unit                0.4855983121       FALSE
-54        duplicate_rate MungBeanUnit:protocol 0.8160371321       FALSE
-55        duplicate_rate protocol:S1Unit       0.5516726318       FALSE
-56 duplex_coverage_ratio MungBeanUnit          0.0515969116       FALSE
-57 duplex_coverage_ratio protocol              0.0059993368        TRUE
-58 duplex_coverage_ratio S1Unit                0.4875101164       FALSE
-59 duplex_coverage_ratio MungBeanUnit:protocol 0.0621558351       FALSE
-60 duplex_coverage_ratio protocol:S1Unit       0.0041291841        TRUE</code></pre>
+<pre><code>                   metric              variable       pvalue significant
+1         frac_singletons MungBeanUnit          3.179448e-01       FALSE
+2         frac_singletons protocol              9.702279e-01       FALSE
+3         frac_singletons S1Unit                8.553539e-01       FALSE
+4         frac_singletons MungBeanUnit:protocol 9.858376e-01       FALSE
+5         frac_singletons protocol:S1Unit       8.540793e-01       FALSE
+6              efficiency MungBeanUnit          6.743589e-01       FALSE
+7              efficiency protocol              3.377609e-03        TRUE
+8              efficiency S1Unit                4.674623e-01       FALSE
+9              efficiency MungBeanUnit:protocol 8.509683e-01       FALSE
+10             efficiency protocol:S1Unit       2.278366e-01       FALSE
+11          drop_out_rate MungBeanUnit          4.118682e-01       FALSE
+12          drop_out_rate protocol              2.566346e-04        TRUE
+13          drop_out_rate S1Unit                9.042622e-02       FALSE
+14          drop_out_rate MungBeanUnit:protocol 8.387882e-01       FALSE
+15          drop_out_rate protocol:S1Unit       3.182162e-01       FALSE
+16              gc_single MungBeanUnit          2.845364e-03        TRUE
+17              gc_single protocol              4.201084e-07        TRUE
+18              gc_single S1Unit                2.691266e-02        TRUE
+19              gc_single MungBeanUnit:protocol 9.742888e-01       FALSE
+20              gc_single protocol:S1Unit       7.452944e-01       FALSE
+21                gc_both MungBeanUnit          3.374303e-04        TRUE
+22                gc_both protocol              3.194918e-09        TRUE
+23                gc_both S1Unit                9.138191e-03        TRUE
+24                gc_both MungBeanUnit:protocol 8.678217e-01       FALSE
+25                gc_both protocol:S1Unit       5.614184e-01       FALSE
+26           gc_deviation MungBeanUnit          6.443318e-01       FALSE
+27           gc_deviation protocol              9.738905e-03        TRUE
+28           gc_deviation S1Unit                5.442060e-01       FALSE
+29           gc_deviation MungBeanUnit:protocol 9.592822e-01       FALSE
+30           gc_deviation protocol:S1Unit       8.839586e-01       FALSE
+31         total_families MungBeanUnit          4.304880e-01       FALSE
+32         total_families protocol              8.735318e-01       FALSE
+33         total_families S1Unit                8.883185e-01       FALSE
+34         total_families MungBeanUnit:protocol 8.394811e-01       FALSE
+35         total_families protocol:S1Unit       2.211659e-01       FALSE
+36            family_mean MungBeanUnit          3.721341e-01       FALSE
+37            family_mean protocol              2.541551e-01       FALSE
+38            family_mean S1Unit                2.914712e-01       FALSE
+39            family_mean MungBeanUnit:protocol 2.723545e-01       FALSE
+40            family_mean protocol:S1Unit       1.501251e-01       FALSE
+41          family_median MungBeanUnit          6.347858e-01       FALSE
+42          family_median protocol              4.810155e-01       FALSE
+43          family_median S1Unit                3.250056e-01       FALSE
+44          family_median MungBeanUnit:protocol 4.997581e-01       FALSE
+45          family_median protocol:S1Unit       3.250056e-01       FALSE
+46             family_max MungBeanUnit          3.849415e-01       FALSE
+47             family_max protocol              5.270992e-01       FALSE
+48             family_max S1Unit                1.424842e-01       FALSE
+49             family_max MungBeanUnit:protocol 9.819906e-01       FALSE
+50             family_max protocol:S1Unit       6.056582e-02       FALSE
+51           families_gt1 MungBeanUnit          1.793349e-01       FALSE
+52           families_gt1 protocol              9.876271e-01       FALSE
+53           families_gt1 S1Unit                6.881757e-01       FALSE
+54           families_gt1 MungBeanUnit:protocol 6.170001e-01       FALSE
+55           families_gt1 protocol:S1Unit       3.016320e-02        TRUE
+56        single_families MungBeanUnit          3.440723e-01       FALSE
+57        single_families protocol              9.487606e-01       FALSE
+58        single_families S1Unit                8.838445e-01       FALSE
+59        single_families MungBeanUnit:protocol 9.818450e-01       FALSE
+60        single_families protocol:S1Unit       7.210495e-01       FALSE
+61        paired_families MungBeanUnit          3.217762e-01       FALSE
+62        paired_families protocol              2.319573e-04        TRUE
+63        paired_families S1Unit                1.990511e-01       FALSE
+64        paired_families MungBeanUnit:protocol 9.226482e-01       FALSE
+65        paired_families protocol:S1Unit       8.092464e-01       FALSE
+66         paired_and_gt1 MungBeanUnit          6.527043e-01       FALSE
+67         paired_and_gt1 protocol              7.082361e-04        TRUE
+68         paired_and_gt1 S1Unit                8.872835e-01       FALSE
+69         paired_and_gt1 MungBeanUnit:protocol 5.304734e-01       FALSE
+70         paired_and_gt1 protocol:S1Unit       2.688706e-01       FALSE
+71         duplicate_rate MungBeanUnit          3.209744e-01       FALSE
+72         duplicate_rate protocol              6.617113e-01       FALSE
+73         duplicate_rate S1Unit                4.855983e-01       FALSE
+74         duplicate_rate MungBeanUnit:protocol 8.160371e-01       FALSE
+75         duplicate_rate protocol:S1Unit       5.516726e-01       FALSE
+76  duplex_coverage_ratio MungBeanUnit          5.159691e-02       FALSE
+77  duplex_coverage_ratio protocol              5.999337e-03        TRUE
+78  duplex_coverage_ratio S1Unit                4.875101e-01       FALSE
+79  duplex_coverage_ratio MungBeanUnit:protocol 6.215584e-02       FALSE
+80  duplex_coverage_ratio protocol:S1Unit       4.129184e-03        TRUE
+81 single_family_fraction MungBeanUnit          3.655666e-01       FALSE
+82 single_family_fraction protocol              9.875561e-01       FALSE
+83 single_family_fraction S1Unit                7.565118e-01       FALSE
+84 single_family_fraction MungBeanUnit:protocol 9.917902e-01       FALSE
+85 single_family_fraction protocol:S1Unit       8.631941e-01       FALSE</code></pre>
 <p>We remove the outlier xGEN rep 1 and test again.</p>
 <pre class="r"><code>stats &lt;- NULL
 metric_names &lt;- unique(mmo$metric) %&gt;% as.character()
@@ -3201,67 +3480,92 @@ for(metric_name in metric_names) {
 }
 stats$significant &lt;- stats$pvalue &lt; 0.05
 print(stats)</code></pre>
-<pre><code>                  metric              variable       pvalue significant
-1        frac_singletons MungBeanUnit          3.747242e-01       FALSE
-2        frac_singletons protocol              6.061218e-01       FALSE
-3        frac_singletons S1Unit                2.820185e-02        TRUE
-4        frac_singletons MungBeanUnit:protocol 1.145001e-01       FALSE
-5        frac_singletons protocol:S1Unit       2.714409e-02        TRUE
-6             efficiency MungBeanUnit          2.943575e-02        TRUE
-7             efficiency protocol              8.567087e-07        TRUE
-8             efficiency S1Unit                4.375525e-02        TRUE
-9             efficiency MungBeanUnit:protocol 2.583454e-01       FALSE
-10            efficiency protocol:S1Unit       3.175014e-03        TRUE
-11         drop_out_rate MungBeanUnit          4.996962e-04        TRUE
-12         drop_out_rate protocol              2.459532e-09        TRUE
-13         drop_out_rate S1Unit                2.501322e-05        TRUE
-14         drop_out_rate MungBeanUnit:protocol 9.115253e-02       FALSE
-15         drop_out_rate protocol:S1Unit       1.679681e-03        TRUE
-16          gc_deviation MungBeanUnit          5.973605e-02       FALSE
-17          gc_deviation protocol              1.140481e-04        TRUE
-18          gc_deviation S1Unit                4.637927e-01       FALSE
-19          gc_deviation MungBeanUnit:protocol 5.772604e-02       FALSE
-20          gc_deviation protocol:S1Unit       8.311211e-01       FALSE
-21           family_mean MungBeanUnit          4.646379e-01       FALSE
-22           family_mean protocol              8.429941e-02       FALSE
-23           family_mean S1Unit                1.077790e-01       FALSE
-24           family_mean MungBeanUnit:protocol 6.294463e-02       FALSE
-25           family_mean protocol:S1Unit       3.389191e-02        TRUE
-26         family_median MungBeanUnit          4.629868e-01       FALSE
-27         family_median protocol              3.164774e-01       FALSE
-28         family_median S1Unit                1.678507e-01       FALSE
-29         family_median MungBeanUnit:protocol 2.615312e-01       FALSE
-30         family_median protocol:S1Unit       1.678507e-01       FALSE
-31            family_max MungBeanUnit          8.985047e-01       FALSE
-32            family_max protocol              4.901973e-01       FALSE
-33            family_max S1Unit                1.144701e-01       FALSE
-34            family_max MungBeanUnit:protocol 9.783491e-01       FALSE
-35            family_max protocol:S1Unit       4.537604e-02        TRUE
-36          families_gt1 MungBeanUnit          4.921202e-01       FALSE
-37          families_gt1 protocol              9.709211e-01       FALSE
-38          families_gt1 S1Unit                3.554965e-01       FALSE
-39          families_gt1 MungBeanUnit:protocol 1.121914e-01       FALSE
-40          families_gt1 protocol:S1Unit       2.152397e-04        TRUE
-41       paired_families MungBeanUnit          1.158679e-02        TRUE
-42       paired_families protocol              2.650844e-08        TRUE
-43       paired_families S1Unit                1.825979e-03        TRUE
-44       paired_families MungBeanUnit:protocol 4.727076e-01       FALSE
-45       paired_families protocol:S1Unit       4.522724e-01       FALSE
-46        paired_and_gt1 MungBeanUnit          3.715875e-01       FALSE
-47        paired_and_gt1 protocol              4.877137e-07        TRUE
-48        paired_and_gt1 S1Unit                7.110938e-01       FALSE
-49        paired_and_gt1 MungBeanUnit:protocol 4.055773e-02        TRUE
-50        paired_and_gt1 protocol:S1Unit       1.317773e-02        TRUE
-51        duplicate_rate MungBeanUnit          2.028567e-01       FALSE
-52        duplicate_rate protocol              9.553308e-02       FALSE
-53        duplicate_rate S1Unit                1.519542e-02        TRUE
-54        duplicate_rate MungBeanUnit:protocol 7.348826e-02       FALSE
-55        duplicate_rate protocol:S1Unit       3.151836e-02        TRUE
-56 duplex_coverage_ratio MungBeanUnit          2.480884e-01       FALSE
-57 duplex_coverage_ratio protocol              6.668694e-04        TRUE
-58 duplex_coverage_ratio S1Unit                3.194763e-01       FALSE
-59 duplex_coverage_ratio MungBeanUnit:protocol 1.030421e-02        TRUE
-60 duplex_coverage_ratio protocol:S1Unit       4.306854e-04        TRUE</code></pre>
+<pre><code>                   metric              variable       pvalue significant
+1         frac_singletons MungBeanUnit          3.747242e-01       FALSE
+2         frac_singletons protocol              6.061218e-01       FALSE
+3         frac_singletons S1Unit                2.820185e-02        TRUE
+4         frac_singletons MungBeanUnit:protocol 1.145001e-01       FALSE
+5         frac_singletons protocol:S1Unit       2.714409e-02        TRUE
+6              efficiency MungBeanUnit          2.943575e-02        TRUE
+7              efficiency protocol              8.567087e-07        TRUE
+8              efficiency S1Unit                4.375525e-02        TRUE
+9              efficiency MungBeanUnit:protocol 2.583454e-01       FALSE
+10             efficiency protocol:S1Unit       3.175014e-03        TRUE
+11          drop_out_rate MungBeanUnit          4.996962e-04        TRUE
+12          drop_out_rate protocol              2.459532e-09        TRUE
+13          drop_out_rate S1Unit                2.501322e-05        TRUE
+14          drop_out_rate MungBeanUnit:protocol 9.115253e-02       FALSE
+15          drop_out_rate protocol:S1Unit       1.679681e-03        TRUE
+16              gc_single MungBeanUnit          1.711519e-03        TRUE
+17              gc_single protocol              9.159550e-09        TRUE
+18              gc_single S1Unit                1.523577e-03        TRUE
+19              gc_single MungBeanUnit:protocol 9.253752e-01       FALSE
+20              gc_single protocol:S1Unit       5.774184e-01       FALSE
+21                gc_both MungBeanUnit          1.770799e-03        TRUE
+22                gc_both protocol              3.727562e-09        TRUE
+23                gc_both S1Unit                4.828938e-03        TRUE
+24                gc_both MungBeanUnit:protocol 8.295304e-01       FALSE
+25                gc_both protocol:S1Unit       5.064090e-01       FALSE
+26           gc_deviation MungBeanUnit          1.765974e-01       FALSE
+27           gc_deviation protocol              7.986248e-04        TRUE
+28           gc_deviation S1Unit                3.553090e-01       FALSE
+29           gc_deviation MungBeanUnit:protocol 9.053297e-01       FALSE
+30           gc_deviation protocol:S1Unit       8.214325e-01       FALSE
+31         total_families MungBeanUnit          2.929023e-01       FALSE
+32         total_families protocol              5.053171e-01       FALSE
+33         total_families S1Unit                5.556673e-01       FALSE
+34         total_families MungBeanUnit:protocol 8.844339e-02       FALSE
+35         total_families protocol:S1Unit       3.593070e-04        TRUE
+36            family_mean MungBeanUnit          4.646379e-01       FALSE
+37            family_mean protocol              8.429941e-02       FALSE
+38            family_mean S1Unit                1.077790e-01       FALSE
+39            family_mean MungBeanUnit:protocol 6.294463e-02       FALSE
+40            family_mean protocol:S1Unit       3.389191e-02        TRUE
+41          family_median MungBeanUnit          4.629868e-01       FALSE
+42          family_median protocol              3.164774e-01       FALSE
+43          family_median S1Unit                1.678507e-01       FALSE
+44          family_median MungBeanUnit:protocol 2.615312e-01       FALSE
+45          family_median protocol:S1Unit       1.678507e-01       FALSE
+46             family_max MungBeanUnit          8.985047e-01       FALSE
+47             family_max protocol              4.901973e-01       FALSE
+48             family_max S1Unit                1.144701e-01       FALSE
+49             family_max MungBeanUnit:protocol 9.783491e-01       FALSE
+50             family_max protocol:S1Unit       4.537604e-02        TRUE
+51           families_gt1 MungBeanUnit          4.921202e-01       FALSE
+52           families_gt1 protocol              9.709211e-01       FALSE
+53           families_gt1 S1Unit                3.554965e-01       FALSE
+54           families_gt1 MungBeanUnit:protocol 1.121914e-01       FALSE
+55           families_gt1 protocol:S1Unit       2.152397e-04        TRUE
+56        single_families MungBeanUnit          3.561851e-01       FALSE
+57        single_families protocol              5.002377e-01       FALSE
+58        single_families S1Unit                1.446431e-01       FALSE
+59        single_families MungBeanUnit:protocol 1.802640e-01       FALSE
+60        single_families protocol:S1Unit       3.538918e-03        TRUE
+61        paired_families MungBeanUnit          1.158679e-02        TRUE
+62        paired_families protocol              2.650844e-08        TRUE
+63        paired_families S1Unit                1.825979e-03        TRUE
+64        paired_families MungBeanUnit:protocol 4.727076e-01       FALSE
+65        paired_families protocol:S1Unit       4.522724e-01       FALSE
+66         paired_and_gt1 MungBeanUnit          3.715875e-01       FALSE
+67         paired_and_gt1 protocol              4.877137e-07        TRUE
+68         paired_and_gt1 S1Unit                7.110938e-01       FALSE
+69         paired_and_gt1 MungBeanUnit:protocol 4.055773e-02        TRUE
+70         paired_and_gt1 protocol:S1Unit       1.317773e-02        TRUE
+71         duplicate_rate MungBeanUnit          2.028567e-01       FALSE
+72         duplicate_rate protocol              9.553308e-02       FALSE
+73         duplicate_rate S1Unit                1.519542e-02        TRUE
+74         duplicate_rate MungBeanUnit:protocol 7.348826e-02       FALSE
+75         duplicate_rate protocol:S1Unit       3.151836e-02        TRUE
+76  duplex_coverage_ratio MungBeanUnit          2.480884e-01       FALSE
+77  duplex_coverage_ratio protocol              6.668694e-04        TRUE
+78  duplex_coverage_ratio S1Unit                3.194763e-01       FALSE
+79  duplex_coverage_ratio MungBeanUnit:protocol 1.030421e-02        TRUE
+80  duplex_coverage_ratio protocol:S1Unit       4.306854e-04        TRUE
+81 single_family_fraction MungBeanUnit          5.636520e-01       FALSE
+82 single_family_fraction protocol              9.106823e-01       FALSE
+83 single_family_fraction S1Unit                4.704794e-02        TRUE
+84 single_family_fraction MungBeanUnit:protocol 6.635184e-01       FALSE
+85 single_family_fraction protocol:S1Unit       2.340365e-01       FALSE</code></pre>
 </div>
 <div id="relationships-between-variables" class="section level2">
 <h2>Relationships between variables</h2>
@@ -3530,6 +3834,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f90d40a970c2cbbe7fa2446f91d73ee654258046/docs/figure/ecoli_K12.Rmd/variants-1.png" target="_blank">f90d40a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-18
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/7c4f40362875160205ac501db16a9417a27dece7/docs/figure/ecoli_K12.Rmd/variants-1.png" target="_blank">7c4f403</a>
 </td>
 <td>
@@ -3581,8 +3896,9 @@ increases duplex coverage significantly more.</p>
 ccov$sample &lt;- str_split(ccov$Sample, &#39;Rep&#39;) %&gt;% lapply(., dplyr::first) %&gt;% unlist()
 ccov$duplex_cov_ratio &lt;- ccov$coverage / ccov$coverage_ssc
 ccov$duplex_cov_ratio_noscc &lt;- ccov$coverage / ccov$coverage_nossc
+ccov &lt;- left_join(ccov, distinct(mmo[,c(&#39;sample&#39;, &#39;protocol&#39;, &#39;nuclease&#39;)]), by = &#39;sample&#39;)
 
-p1 &lt;- ggplot(ccov, aes(coverage_ssc, coverage_nossc, colour = sample)) +
+p1 &lt;- ggplot(ccov, aes(coverage_ssc, coverage_nossc, colour = protocol, shape = nuclease)) +
   geom_point() +
   theme_bw() +
   xlim(0, 550) +
@@ -3594,7 +3910,7 @@ p1 &lt;- ggplot(ccov, aes(coverage_ssc, coverage_nossc, colour = sample)) +
   scale_colour_brewer(palette = &#39;Dark2&#39;) +
   ggtitle(&#39;Mean duplex coverage&#39;)
 
-p2 &lt;- ggplot(ccov, aes(duplex_cov_ratio, duplex_cov_ratio_noscc, colour = sample)) +
+p2 &lt;- ggplot(ccov, aes(duplex_cov_ratio, duplex_cov_ratio_noscc, colour = protocol, shape = nuclease)) +
   geom_point() +
   theme_bw() +
   xlim(0, 100) +
@@ -3683,6 +3999,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f90d40a970c2cbbe7fa2446f91d73ee654258046/docs/figure/ecoli_K12.Rmd/variants_nossc-1.png" target="_blank">f90d40a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-18
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/faf9130e9a2175627a5e566185d9557a491a8a5e/docs/figure/ecoli_K12.Rmd/variants_nossc-1.png" target="_blank">faf9130</a>
 </td>
 <td>
@@ -3712,176 +4039,7 @@ ggplot(metrics[!metrics$sample %in% &#39;xGEN-xGENRep1&#39;,], aes(sample, estim
     geom_bar(stat = &#39;identity&#39;) + 
     theme_minimal() +
     coord_flip()</code></pre>
-<p><img src="figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-1-1">
-Past versions of unnamed-chunk-1-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-1-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/mcmero/rare-mutation-detection/blob/22d32ef8c01ece3dfd2343d5cdca81fc347224a4/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">22d32ef</a>
-</td>
-<td>
-Marek Cmero
-</td>
-<td>
-2022-05-31
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/mcmero/rare-mutation-detection/blob/b5242382e07051bba0914bd6e3906623d0644a64/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">b524238</a>
-</td>
-<td>
-Marek Cmero
-</td>
-<td>
-2022-05-26
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/mcmero/rare-mutation-detection/blob/cc380cc389100b3ecdc5c9cdf5616276fb4d1fd0/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">cc380cc</a>
-</td>
-<td>
-Marek Cmero
-</td>
-<td>
-2022-05-11
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/mcmero/rare-mutation-detection/blob/7c4f40362875160205ac501db16a9417a27dece7/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">7c4f403</a>
-</td>
-<td>
-Marek Cmero
-</td>
-<td>
-2022-04-25
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/mcmero/rare-mutation-detection/blob/fcb6578c014536c59339c72554c3a9f7844e0dde/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">fcb6578</a>
-</td>
-<td>
-Marek Cmero
-</td>
-<td>
-2022-04-11
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/mcmero/rare-mutation-detection/blob/a2f0a4a07b138167d30f1fb7c80004ee4f59937a/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">a2f0a4a</a>
-</td>
-<td>
-Marek Cmero
-</td>
-<td>
-2022-04-08
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/mcmero/rare-mutation-detection/blob/c246dc2fe2999e98e6daf86e38b31414df507d7e/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">c246dc2</a>
-</td>
-<td>
-Marek Cmero
-</td>
-<td>
-2022-04-07
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/mcmero/rare-mutation-detection/blob/a8601010ee4d8b48191aeedf7be6bb95ae0b1234/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">a860101</a>
-</td>
-<td>
-Marek Cmero
-</td>
-<td>
-2022-04-06
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/mcmero/rare-mutation-detection/blob/81272b2356f01b49a7d0c32f4e62d9d5d8d17f9e/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">81272b2</a>
-</td>
-<td>
-Marek Cmero
-</td>
-<td>
-2022-04-05
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/mcmero/rare-mutation-detection/blob/f13e13a048f85249dd4b1e77fc34ba066446ea6e/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">f13e13a</a>
-</td>
-<td>
-Marek Cmero
-</td>
-<td>
-2022-04-05
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/mcmero/rare-mutation-detection/blob/def213010fd1a838e8e423b2662c6d5cd49b7ac7/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">def2130</a>
-</td>
-<td>
-Marek Cmero
-</td>
-<td>
-2022-04-05
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/mcmero/rare-mutation-detection/blob/953b83ede1e12bcd5c1708f773f0afc6c1e4de40/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">953b83e</a>
-</td>
-<td>
-Marek Cmero
-</td>
-<td>
-2022-03-31
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/mcmero/rare-mutation-detection/blob/05412f6103fbf7b3291006856596fcff0f1ae6ea/docs/figure/ecoli_K12.Rmd/unnamed-chunk-1-1.png" target="_blank">05412f6</a>
-</td>
-<td>
-Marek Cmero
-</td>
-<td>
-2022-03-28
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/ecoli_K12.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
