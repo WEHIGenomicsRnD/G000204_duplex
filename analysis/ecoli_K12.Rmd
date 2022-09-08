@@ -282,7 +282,7 @@ ggplot(tmp[tmp$metric %like% 'pair|gt1|single_families', ], aes(sample, meanval,
 
 Compare protocols and nucleases directly, the first plot includes the outlier sample and the second removes it.
 
-```{r metrics_comp, fig.width=12, fig.height=4.5}
+```{r metrics_comp, fig.width=14.5, fig.height=5.5}
 metric_optimals <- list('duplicate_rate' = 0.81,
                         'frac_singletons' = 0,
                         'drop_out_rate' = c(0.1, 0.3),
