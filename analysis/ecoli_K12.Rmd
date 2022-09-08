@@ -261,109 +261,28 @@ ggplot(mm[mm$metric %like% 'family', ], aes(value, sample, colour = metric)) +
 The following plot shows:
 
 - families_gt1: number of family pairs where at least one family (AB or BA) has > 1 reads.
+- single_families: number of single-read families.
 - paired_families: number of family pairs where both families (AB and BA) have > 0 reads.
 - paired_and_gt1: number of family pairs where both families (AB and BA) have > 1 reads.
 
-```{r family_stats, fig.width = 8, fig.height = 5}
-ggplot(mm[mm$metric %like% 'pair|gt1', ], aes(value, sample, fill = metric)) +
+```{r family_stats, fig.width = 9, fig.height = 6}
+tmp <- data.table(mm)[,list(meanval = mean(value), minval = min(value), maxval= max(value)), by=c('sample', 'metric')] %>% data.frame()
+tmp <- left_join(mm, tmp, by = c('sample', 'metric'))
+
+ggplot(tmp[tmp$metric %like% 'pair|gt1|single_families', ], aes(sample, meanval, fill = metric)) +
         geom_bar(stat='identity', position='dodge') +
+        geom_errorbar( aes(x = sample, ymin = minval, ymax = maxval), position = 'dodge', colour = 'grey') +
         theme_bw() +
-        ggtitle('Family statistics')
+        coord_flip() +
+        scale_fill_brewer(palette = 'Dark2') +
+        theme(legend.position = 'right')
 ```
 
 ## Compare metrics side-by-side
 
-Compare protocols and nucleases directly.
+Compare protocols and nucleases directly, the first plot includes the outlier sample and the second removes it.
 
-```{r metrics_comp, fig.width=10, fig.height=4}
-gg_prot <- list(geom_boxplot(outlier.shape = NA),
-               geom_jitter(width = 0.1, size = 2, aes(colour = nuclease, shape = nuclease)),
-               theme_bw(),
-               theme(legend.position = 'left'))
-gg_nuc <- list(geom_boxplot(outlier.shape = NA),
-               geom_jitter(width = 0.1, size = 2, aes(colour = protocol, shape = protocol)),
-               theme_bw(),
-               theme(legend.position = 'right'))
-
-# duplicate rate
-metric <- 'duplicate_rate'
-p1 <- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
-        gg_prot + geom_hline(yintercept = 0.81) +
-        ggtitle('Duplicate rate (line = optimal)')
-
-p2 <- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
-        gg_nuc + geom_hline(yintercept = 0.81) +
-        ggtitle('Duplicate rate (line = optimal)')
-show(p1 + p2)
-
-# singletons
-metric <- 'frac_singletons'
-p1 <- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
-        gg_prot +
-        ggtitle('Fraction of singleton reads')
-
-p2 <- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
-        gg_nuc + 
-        ggtitle('Fraction of singleton reads')
-show(p1 + p2)
-
-# single family frac
-metric <- 'single_family_fraction'
-p1 <- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
-        gg_prot +
-        ggtitle('Fraction of singleton families')
-
-p2 <- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
-        gg_nuc + 
-        ggtitle('Fraction of singleton families')
-show(p1 + p2)
-
-# drop-out rate
-metric <- 'drop_out_rate'
-p1 <- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
-        gg_prot + geom_hline(yintercept = c(0.1, 0.3)) + ylim(c(0,1)) +
-        ggtitle('Drop-out fraction\n(lines = optimal range)')
-
-p2 <- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
-        gg_nuc + geom_hline(yintercept = c(0.1, 0.3)) + ylim(c(0,1)) +
-        ggtitle('Drop-out fraction\n(lines = optimal range)')
-show(p1 + p2)
-
-# efficiency
-metric <- 'efficiency'
-p1 <- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
-        gg_prot + geom_hline(yintercept = 0.07) +
-        ggtitle('Efficiency\n(line = optimal)')
-
-p2 <- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
-        gg_nuc + geom_hline(yintercept = 0.07) +
-        ggtitle('Efficiency\n(line = optomal)')
-show(p1 + p2)
-
-# GC deviation
-metric <- 'gc_deviation'
-p1 <- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
-        gg_prot +
-        ggtitle('GC deviation\n(both strands vs. one)')
-
-p2 <- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
-        gg_nuc + 
-        ggtitle('GC deviation\n(both strands vs. one)')
-show(p1 + p2)
-
-# duplex coverage ratio
-metric <- 'duplex_coverage_ratio'
-p1 <- ggplot(mm[mm$metric == metric,], aes(protocol, value)) +
-        gg_prot + geom_hline(yintercept = 30) +
-        ggtitle('Duplex coverage ratio\n(total cov / duplex cov)')
-
-p2 <- ggplot(mm[mm$metric == metric,], aes(nuclease, value)) +
-        gg_nuc + geom_hline(yintercept = 30) +
-        ggtitle('Duplex coverage ratio\n(total cov / duplex cov)')
-show(p1 + p2)
-```
-
-```{r presentation_figures, fig.width=12, fig.height=4.5, eval=FALSE}
+```{r metrics_comp, fig.width=12, fig.height=4.5}
 metric_optimals <- list('duplicate_rate' = 0.81,
                         'frac_singletons' = 0,
                         'drop_out_rate' = c(0.1, 0.3),
@@ -385,13 +304,32 @@ mmt$replicate <- str_split(mmt$sample, 'Rep') %>% lapply(., dplyr::last) %>% unl
 mmt$sample <- str_split(mmt$sample, 'Rep') %>% lapply(., dplyr::first) %>% unlist()
 
 for(metric in names(metric_optimals)) {
+    # plot all samples
     threshold <- metric_optimals[metric][[1]]
-    tmp <- mmt[mmt$metric == metric & !(mmt$sample == 'xGEN-xGEN' & mmt$replicate == 1),]
+    tmp <- mmt[mmt$metric %in% metric,]
     p1 <- ggplot(tmp, aes(sample, value)) +
         geom_point() +
         theme_bw() +
         coord_flip() +
-        geom_hline(yintercept = threshold, alpha = 0.4) 
+        geom_hline(yintercept = threshold, alpha = 0.4) +
+        ggtitle(paste(metric, '(line = optimal)'))
+    
+    p2 <- ggplot(tmp, aes(protocol, value)) +
+        gg_prot + geom_hline(yintercept = threshold, alpha = 0.4) 
+    
+    p3 <- ggplot(tmp, aes(nuclease, value)) +
+        gg_nuc + geom_hline(yintercept = threshold, alpha = 0.4) 
+    
+    show(p1 + p2 + p3)
+    
+    # repeat with removed outlier
+    tmp <- mmt[mmt$metric %in% metric & !(mmt$sample %in% 'xGEN-xGEN' & mmt$replicate == 1),]
+    p1 <- ggplot(tmp, aes(sample, value)) +
+        geom_point() +
+        theme_bw() +
+        coord_flip() +
+        geom_hline(yintercept = threshold, alpha = 0.4) +
+        ggtitle(paste(metric, '(line = optimal)'))
     
     p2 <- ggplot(tmp, aes(protocol, value)) +
         gg_prot + geom_hline(yintercept = threshold, alpha = 0.4) 
@@ -402,43 +340,6 @@ for(metric in names(metric_optimals)) {
     show(p1 + p2 + p3)
 }
 ```
-
-
-```{r presentation_family_stats, fig.width = 9, fig.height = 6, eval=FALSE}
-tmp <- data.table(mm)[,list(meanval = mean(value), minval = min(value), maxval= max(value)), by=c('sample', 'metric')] %>% data.frame()
-tmp <- left_join(mm, tmp, by = c('sample', 'metric'))
-
-ggplot(tmp[tmp$metric %like% 'pair|gt1|single_families', ], aes(sample, meanval, fill = metric)) +
-        geom_bar(stat='identity', position='dodge') +
-        geom_errorbar( aes(x = sample, ymin = minval, ymax = maxval), position = 'dodge', colour = 'grey') +
-        theme_bw() +
-        coord_flip() +
-        scale_fill_brewer(palette = 'Dark2') +
-        theme(legend.position = 'right')
-```
-
-```{r presentation_comparison, fig.width=14, fig.height=5, eval=FALSE}
-mt <- mm
-mt$replicate <- str_split(mt$sample, 'Rep') %>% lapply(., dplyr::last) %>% unlist() %>% as.numeric()
-mt$sample <- str_split(mt$sample, 'Rep') %>% lapply(., dplyr::first) %>% unlist()
-
-mt <- mt[,c('sample', 'metric', 'value', 'protocol', 'nuclease', 'replicate')]
-dm <- reshape2::dcast(mt, sample + protocol + nuclease + replicate ~ metric)
-
-p1 <- ggplot(dm, aes(duplicate_rate, efficiency, colour=protocol, shape=nuclease)) +
-    geom_point(size = 3) +
-    theme_bw() +
-    scale_colour_brewer(palette = 'Dark2') +
-    ggtitle('Efficiency vs. duplicate rate')
-
-p2 <- ggplot(dm, aes(drop_out_rate, efficiency, colour=protocol, shape=nuclease)) +
-    geom_point(size = 3) +
-    theme_bw() +
-    scale_colour_brewer(palette = 'Dark2') +
-    ggtitle('Efficiency vs. drop-out rate')
-show(p1 + p2)
-```
-
 
 ## Facet summary plots
 
@@ -576,11 +477,8 @@ print(stats)
 ## Relationships between variables
 
 ```{r relationships, fig.width=10, fig.height=8}
-mm$replicate <- str_split(mm$sample, 'Rep') %>% lapply(., dplyr::last) %>% unlist() %>% as.numeric()
-mm$sample <- str_split(mm$sample, 'Rep') %>% lapply(., dplyr::first) %>% unlist()
-
-mm <- mm[,c('sample', 'metric', 'value', 'protocol', 'nuclease', 'replicate')]
-dm <- reshape2::dcast(mm, sample + protocol + nuclease + replicate ~ metric)
+tmp <- mmo[,c('sample', 'metric', 'value', 'protocol', 'nuclease', 'replicate')]
+dm <- reshape2::dcast(mmo, sample + protocol + nuclease + replicate ~ metric)
 
 cols <- c(brewer.pal(5, 'Greens')[2:5],
           brewer.pal(6, 'Blues')[2:6])
@@ -616,7 +514,29 @@ ggplot(dm, aes(duplicate_rate, duplex_coverage_ratio, colour=sample)) +
     scale_colour_manual(values = cols) +
     ggtitle('Duplicate rate vs. duplex coverage ratio')
 ```
+Focus on relationship between efficiency, duplicate rate and drop-out rate.
 
+```{r efficiency_comparison, fig.width=14, fig.height=5}
+mt <- mm
+mt$replicate <- str_split(mt$sample, 'Rep') %>% lapply(., dplyr::last) %>% unlist() %>% as.numeric()
+mt$sample <- str_split(mt$sample, 'Rep') %>% lapply(., dplyr::first) %>% unlist()
+
+mt <- mt[,c('sample', 'metric', 'value', 'protocol', 'nuclease', 'replicate')]
+dm <- reshape2::dcast(mt, sample + protocol + nuclease + replicate ~ metric)
+
+p1 <- ggplot(dm, aes(duplicate_rate, efficiency, colour=protocol, shape=nuclease)) +
+    geom_point(size = 3) +
+    theme_bw() +
+    scale_colour_brewer(palette = 'Dark2') +
+    ggtitle('Efficiency vs. duplicate rate')
+
+p2 <- ggplot(dm, aes(drop_out_rate, efficiency, colour=protocol, shape=nuclease)) +
+    geom_point(size = 3) +
+    theme_bw() +
+    scale_colour_brewer(palette = 'Dark2') +
+    ggtitle('Efficiency vs. drop-out rate')
+show(p1 + p2)
+```
 
 ## Variant calls
 

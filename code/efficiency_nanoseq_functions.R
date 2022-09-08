@@ -8,10 +8,12 @@ calculate_singletons <- function(rbs) {
 
 calculate_family_stats <- function(rbs) {
     rbs$size <- rbs$x + rbs$y
-    return(c(family_mean = mean(rbs$size),
+    return(c(total_families = nrow(rbs),
+             family_mean = mean(rbs$size),
              family_median = median(rbs$size),
              family_max = max(rbs$size),
              families_gt1 = sum(rbs$x > 1 | rbs$y > 1),
+             single_families = sum(rbs$x == 1 & rbs$y == 0 | rbs$x == 0 & rbs$y == 1),
              paired_families = sum(rbs$x > 0 & rbs$y > 0),
              paired_and_gt1 = sum(rbs$x > 1 & rbs$y > 1)))
 }
