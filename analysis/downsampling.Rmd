@@ -255,7 +255,7 @@ ggplot(mm[mm$metric %like% 'pair|gt1', ], aes(value, sample, fill = metric)) +
 dvf <- mm[mm$metric %in% c('duplicate_rate', 'efficiency'),] %>%
         reshape2::dcast(., sample ~ metric) %>%
         mutate(group = gsub('-0\\.[0-9]+-mix', '', sample),
-               sample = gsub('p1|p2|-|mix', '', sample))
+               sample = gsub('p[0-9]|-|mix', '', sample))
 
 ggplot(dvf, aes(duplicate_rate, efficiency, label = sample, colour = group)) +
     geom_text(vjust = -0.5) +
