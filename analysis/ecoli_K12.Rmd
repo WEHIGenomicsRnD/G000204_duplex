@@ -75,6 +75,7 @@ qualimap_cons_nossc_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/QC/cons
 metadata_file <- here('data/metadata/NovaSeq data E coli.xlsx')
 variant_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/variants')
 variant_nossc_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/variants_nossc')
+variant_raw_dir <- here('data/ecoli/variant_calling')
 ```
 
 
@@ -91,6 +92,7 @@ sample_names <- list.files(rinfo_dir) %>%
 # load variant data
 var_df <- load_variants(variant_dir, sample_names)
 var_df_nossc <- load_variants(variant_nossc_dir, sample_names[-9])
+var_df_raw <- tmp <- load_variants(variant_raw_dir, c('xGEN-xGENRep1_default_filter', 'xGEN-xGENRep1_minimal_filter'))
 
 # load and fetch duplicate rate from MarkDuplicates output
 mdup <- load_markdup_data(markdup_dir, sample_names)
@@ -546,6 +548,24 @@ Upset plot showing duplex variant calls. Variants were called in areas with at l
 ulist <- NULL
 for(sample in sample_names) {
     ids <- var_df[var_df$sample %in% sample,]$id
+    if (length(ids) > 0) {
+        ulist[[gsub(pattern = '-HJK2GDSX3', replacement = '', sample)]] <- ids
+    }
+}
+
+upset(fromList(ulist), order.by='freq', nsets=length(sample_names))
+```
+
+### Raw variant calls
+
+In the xGEN-xGEN samples, we compare the unrestricted PCR sample variants (most representative of a typical NGS experiment), called using raw reads (not duplex consensus), compared with the xGEN-xGEN samples with standard-end repair that were PCR restricted.
+
+```{r}
+tmp <- rbind(var_df, var_df_raw)
+
+ulist <- NULL
+for(sample in c('xGEN-xGENRep2-HJK2GDSX3', 'xGEN-xGENRep3-HJK2GDSX3', 'xGEN-xGENRep1_default_filter', 'xGEN-xGENRep1_minimal_filter')) {
+    ids <- tmp[tmp$sample %in% sample,]$id
     if (length(ids) > 0) {
         ulist[[gsub(pattern = '-HJK2GDSX3', replacement = '', sample)]] <- ids
     }
