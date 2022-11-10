@@ -407,7 +407,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-09-13
+<strong>Last updated:</strong> 2022-11-10
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -538,15 +538,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree22dbb2c2550b9ffbcea23416529cb2591c1e3788targetblank22dbb2ca">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreef2ecd7b9e3057d2a99cfb16ee017717ab4da0591targetblankf2ecd7ba">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/22dbb2c2550b9ffbcea23416529cb2591c1e3788" target="_blank">22dbb2c</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/f2ecd7b9e3057d2a99cfb16ee017717ab4da0591" target="_blank">f2ecd7b</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree22dbb2c2550b9ffbcea23416529cb2591c1e3788targetblank22dbb2ca"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreef2ecd7b9e3057d2a99cfb16ee017717ab4da0591targetblankf2ecd7ba"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -556,7 +556,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/22dbb2c2550b9ffbcea23416529cb2591c1e3788" target="_blank">22dbb2c</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/f2ecd7b9e3057d2a99cfb16ee017717ab4da0591" target="_blank">f2ecd7b</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -591,7 +591,12 @@ Untracked files:
     Untracked:  data/metrics_efficiency_nossc.rds
     Untracked:  data/mixtures
     Untracked:  data/ref/
+    Untracked:  drop_out_rate.pdf
+    Untracked:  efficiency.pdf
     Untracked:  prototype_code/
+
+Unstaged changes:
+    Modified:   analysis/model.Rmd
 
 </code></pre>
 <p>
@@ -637,6 +642,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f2ecd7b9e3057d2a99cfb16ee017717ab4da0591/analysis/ecoli_K12.Rmd" target="_blank">f2ecd7b</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-11-10
+</td>
+<td>
+Added experimental setup table, paired T-test, plots for poster.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/55d799039a5332e2c53c0cb3f75efbf96866e4b2/docs/ecoli_K12.html" target="_blank">55d7990</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-09-13
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1429,6 +1468,105 @@ added K12 ecoli metrics
 </div>
 <div id="metrics-for-e.-coli-k12-data" class="section level1">
 <h1>Metrics for E. coli K12 data</h1>
+<div id="experimental-setup" class="section level2">
+<h2>Experimental setup</h2>
+<table style="width:100%;">
+<colgroup>
+<col width="11%" />
+<col width="28%" />
+<col width="21%" />
+<col width="11%" />
+<col width="12%" />
+<col width="10%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>End-prep</th>
+<th align="center">Mung Bean nuclease units</th>
+<th align="center">S1 Nuclease units</th>
+<th>Protocol</th>
+<th>PCR</th>
+<th>Samples</th>
+<th>Key</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>MB1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td>Nanoseq</td>
+<td>limited</td>
+<td>2</td>
+<td>1+0</td>
+</tr>
+<tr class="even">
+<td>MB2</td>
+<td align="center">2</td>
+<td align="center">0</td>
+<td>Nanoseq</td>
+<td>limited</td>
+<td>2</td>
+<td>2+0</td>
+</tr>
+<tr class="odd">
+<td>MB3</td>
+<td align="center">3</td>
+<td align="center">0</td>
+<td>Nanoseq</td>
+<td>limited</td>
+<td>2</td>
+<td>3+0</td>
+</tr>
+<tr class="even">
+<td>MB-S1</td>
+<td align="center">2</td>
+<td align="center">1</td>
+<td>Nanoseq</td>
+<td>limited</td>
+<td>2</td>
+<td>2+1</td>
+</tr>
+<tr class="odd">
+<td>xGEN</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td>xGEN</td>
+<td>limited</td>
+<td>2</td>
+<td>0+0</td>
+</tr>
+<tr class="even">
+<td>xGEN</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td>xGEN</td>
+<td>unlimited</td>
+<td>1</td>
+<td>0+0</td>
+</tr>
+<tr class="odd">
+<td>xGEN</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td>xGEN</td>
+<td>limited</td>
+<td>2</td>
+<td>0+0</td>
+</tr>
+<tr class="even">
+<td>xGEN</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td>xGEN</td>
+<td>unlimited</td>
+<td>1</td>
+<td>0+0</td>
+</tr>
+</tbody>
+</table>
+</div>
 <div id="multiqc-reports" class="section level2">
 <h2>MultiQC reports:</h2>
 <ul>
@@ -3923,6 +4061,38 @@ print(stats)</code></pre>
 15         duplicate_rate 4.691898e-01       FALSE
 16  duplex_coverage_ratio 2.145076e-01       FALSE
 17 single_family_fraction 7.668823e-01       FALSE</code></pre>
+<p>Paired T-test (pairing nucleases, removing standard xGEN).</p>
+<pre class="r"><code>stats &lt;- NULL
+metric_names &lt;- unique(mmo$metric) %&gt;% as.character()
+for(metric_name in metric_names) {
+    nano &lt;- mmo[mmo$metric == metric_name &amp; mmo$protocol == &#39;NanoSeq&#39;,]
+    xgen &lt;- mmo[mmo$metric == metric_name &amp; mmo$protocol == &#39;xGen&#39; &amp; mmo$nuclease != &#39;0+0&#39;,]
+    nano_vals &lt;- data.table(nano)[, mean(value), by = nuclease]$V1
+    xgen_vals &lt;- data.table(xgen)[, mean(value), by = nuclease]$V1
+    wtest &lt;- t.test(nano_vals, xgen_vals, paired=TRUE)
+    stats &lt;- rbind(stats,
+                   data.frame(metric = metric_name, pvalue = wtest$p.value))
+}
+stats$significant &lt;- stats$pvalue &lt; 0.05
+print(stats)</code></pre>
+<pre><code>                   metric       pvalue significant
+1         frac_singletons 8.105516e-01       FALSE
+2              efficiency 1.819141e-02        TRUE
+3           drop_out_rate 4.226603e-03        TRUE
+4               gc_single 1.825631e-05        TRUE
+5                 gc_both 3.123511e-05        TRUE
+6            gc_deviation 4.471721e-04        TRUE
+7          total_families 8.563265e-01       FALSE
+8             family_mean 4.336622e-01       FALSE
+9           family_median 4.860036e-01       FALSE
+10             family_max 6.300620e-01       FALSE
+11           families_gt1 9.925513e-01       FALSE
+12        single_families 8.008165e-01       FALSE
+13        paired_families 2.554397e-04        TRUE
+14         paired_and_gt1 1.494647e-02        TRUE
+15         duplicate_rate 4.454420e-01       FALSE
+16  duplex_coverage_ratio 2.816812e-01       FALSE
+17 single_family_fraction 9.071651e-01       FALSE</code></pre>
 <p>Rerun tests removing outlier (xGEN rep1). The results are
 similar.</p>
 <pre class="r"><code>stats &lt;- NULL
@@ -4606,13 +4776,13 @@ for(sample in c(&#39;xGEN-xGENRep2-HJK2GDSX3&#39;, &#39;xGEN-xGENRep3-HJK2GDSX3&
 }
 
 upset(fromList(ulist), order.by=&#39;freq&#39;, nsets=length(sample_names))</code></pre>
-<p><img src="figure/ecoli_K12.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/ecoli_K12.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
-Past versions of unnamed-chunk-2-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div id="fig-unnamed-chunk-3-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -4631,13 +4801,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/mcmero/rare-mutation-detection/blob/e1c0c281147b5108a6eb4be43ec899f8cbc40793/docs/figure/ecoli_K12.Rmd/unnamed-chunk-2-1.png" target="_blank">e1c0c28</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/55d799039a5332e2c53c0cb3f75efbf96866e4b2/docs/figure/ecoli_K12.Rmd/unnamed-chunk-3-1.png" target="_blank">55d7990</a>
 </td>
 <td>
 Marek Cmero
 </td>
 <td>
-2022-09-06
+2022-09-13
 </td>
 </tr>
 </tbody>
@@ -4775,6 +4945,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/55d799039a5332e2c53c0cb3f75efbf96866e4b2/docs/figure/ecoli_K12.Rmd/variants_nossc-1.png" target="_blank">55d7990</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-09-13
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/f90d40a970c2cbbe7fa2446f91d73ee654258046/docs/figure/ecoli_K12.Rmd/variants_nossc-1.png" target="_blank">f90d40a</a>
 </td>
 <td>
@@ -4815,7 +4996,7 @@ ggplot(metrics[!metrics$sample %in% &#39;xGEN-xGENRep1&#39;,], aes(sample, estim
     geom_bar(stat = &#39;identity&#39;) + 
     theme_minimal() +
     coord_flip()</code></pre>
-<p><img src="figure/ecoli_K12.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/ecoli_K12.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
