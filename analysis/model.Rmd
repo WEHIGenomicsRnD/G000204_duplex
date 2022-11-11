@@ -242,6 +242,51 @@ ggplot(probs, aes(ncells, p, colour = factor(vaf))) +
     scale_color_brewer(palette = 'Dark2')
 ```
 
+## Sequencing depth and capture size
+
+Example statistics table for 1% and 0.1% VAF experiments for different capture sizes (2kb, 10kb, 5Mb and 36.8Mb (human exome size).
+
+```{r depth_and_size}
+lane_cap <- 6e11
+capture_sizes <- c(2000, 10000, 5e6, 3.68e7)
+chance_to_miss <- 0.05
+target_cov <- 8
+efficiency <- 1 / 30 # conservative estimate
+ploidy <- 2
+readlen <- 300
+ncells <- c(5, seq(200, 6000, 10))
+vafs <- c(0.01, 0.001)
+
+df_full <- NULL
+for (capture_size in capture_sizes) {
+    for (vaf in vafs) {
+        df <- NULL
+        for (ncell in ncells) {
+            dna_depth <- ncell * ploidy
+            dna_input <- capture_size * dna_depth
+            seq_bases <- dna_input * target_cov
+            tot_cov <- dna_depth * target_cov
+            dup_cov <- tot_cov * efficiency
+            tmp <- data.frame(ncell = ncell,
+                              vaf = vaf,
+                              tot_cov = tot_cov,
+                              dup_cov = dup_cov,
+                              seq_megabases = seq_bases / 1e6,
+                              million_reads = seq_bases / readlen / 1e6,
+                              capture_size_kb = capture_size / 1e3,
+                              chance_to_miss = pbinom(0, round(dup_cov), vaf),
+                              lane_fraction = seq_bases / lane_cap)
+            df <- rbind(df, tmp)
+        }
+        df <- df[df$chance_to_miss < chance_to_miss,]
+        df <- df[df$chance_to_miss == max(df$chance_to_miss),]
+        df_full <- rbind(df_full, df)
+    }
+}
+print(df_full[order(df_full$vaf, decreasing = TRUE),])
+```
+
+
 ## Downsampling experiment model
 
 How does the duplicate rate behave when we downsample reads? We can use the rough stats of the 1\% ecoli spike-in to check for sensible downsampling fractions. This sample has roughly 340m duplex reads and an average family size of 14 (each read is sequenced on average 14x). We use a poisson distribution to generate fake reads, and then down sample from 5% to 95%. We then calculate the duplicate rate.
