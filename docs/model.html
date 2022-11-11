@@ -407,7 +407,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-08-18
+<strong>Last updated:</strong> 2022-11-11
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -538,15 +538,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree7ff227e4a40694dc43372ce54750ac5cac568040targetblank7ff227ea">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreeeba33a5714c37cc7916f17092eb8a37e4a4d7e55targetblankeba33a5a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/7ff227e4a40694dc43372ce54750ac5cac568040" target="_blank">7ff227e</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/eba33a5714c37cc7916f17092eb8a37e4a4d7e55" target="_blank">eba33a5</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree7ff227e4a40694dc43372ce54750ac5cac568040targetblank7ff227ea"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreeeba33a5714c37cc7916f17092eb8a37e4a4d7e55targetblankeba33a5a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -556,7 +556,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/7ff227e4a40694dc43372ce54750ac5cac568040" target="_blank">7ff227e</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/eba33a5714c37cc7916f17092eb8a37e4a4d7e55" target="_blank">eba33a5</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -576,7 +576,6 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
-    Ignored:    analysis/downsampling.nb.html
     Ignored:    scripts/
 
 Untracked files:
@@ -587,14 +586,18 @@ Untracked files:
     Untracked:  analysis/calc_nanoseq_metrics.Rmd
     Untracked:  data/._metrics.rds
     Untracked:  data/ecoli/
+    Untracked:  data/ecoli_k12_metrics.rds
     Untracked:  data/metadata/
     Untracked:  data/metrics_efficiency_nossc.rds
     Untracked:  data/mixtures
     Untracked:  data/ref/
+    Untracked:  drop_out_rate.pdf
+    Untracked:  efficiency.pdf
     Untracked:  prototype_code/
 
 Unstaged changes:
-    Modified:   analysis/_site.yml
+    Modified:   analysis/ecoli_K12.Rmd
+    Modified:   analysis/ecoli_spikeins.Rmd
 
 </code></pre>
 <p>
@@ -639,6 +642,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/eba33a5714c37cc7916f17092eb8a37e4a4d7e55/analysis/model.Rmd" target="_blank">eba33a5</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-11-11
+</td>
+<td>
+Added sequencing depth and capture size example experiment table
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/f90d40a970c2cbbe7fa2446f91d73ee654258046/docs/model.html" target="_blank">f90d40a</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-08-18
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1645,6 +1682,67 @@ Marek Cmero
 </table>
 </div>
 </div>
+</div>
+<div id="sequencing-depth-and-capture-size" class="section level2">
+<h2>Sequencing depth and capture size</h2>
+<p>Example statistics table for 1% and 0.1% VAF experiments for
+different capture sizes (2kb, 10kb, 5Mb and 36.8Mb (human exome
+size).</p>
+<pre class="r"><code>lane_cap &lt;- 6e11
+capture_sizes &lt;- c(2000, 10000, 5e6, 3.68e7)
+chance_to_miss &lt;- 0.05
+target_cov &lt;- 8
+efficiency &lt;- 1 / 30 # conservative estimate
+ploidy &lt;- 2
+readlen &lt;- 300
+ncells &lt;- c(5, seq(200, 6000, 10))
+vafs &lt;- c(0.01, 0.001)
+
+df_full &lt;- NULL
+for (capture_size in capture_sizes) {
+    for (vaf in vafs) {
+        df &lt;- NULL
+        for (ncell in ncells) {
+            dna_depth &lt;- ncell * ploidy
+            dna_input &lt;- capture_size * dna_depth
+            seq_bases &lt;- dna_input * target_cov
+            tot_cov &lt;- dna_depth * target_cov
+            dup_cov &lt;- tot_cov * efficiency
+            tmp &lt;- data.frame(ncell = ncell,
+                              vaf = vaf,
+                              tot_cov = tot_cov,
+                              dup_cov = dup_cov,
+                              seq_megabases = seq_bases / 1e6,
+                              million_reads = seq_bases / readlen / 1e6,
+                              capture_size_kb = capture_size / 1e3,
+                              chance_to_miss = pbinom(0, round(dup_cov), vaf),
+                              lane_fraction = seq_bases / lane_cap)
+            df &lt;- rbind(df, tmp)
+        }
+        df &lt;- df[df$chance_to_miss &lt; chance_to_miss,]
+        df &lt;- df[df$chance_to_miss == max(df$chance_to_miss),]
+        df_full &lt;- rbind(df_full, df)
+    }
+}
+print(df_full[order(df_full$vaf, decreasing = TRUE),])</code></pre>
+<pre><code>     ncell   vaf tot_cov   dup_cov seq_megabases million_reads capture_size_kb
+38     560 0.010    8960  298.6667         17.92  5.973333e-02               2
+381    560 0.010    8960  298.6667         89.60  2.986667e-01              10
+382    560 0.010    8960  298.6667      44800.00  1.493333e+02            5000
+383    560 0.010    8960  298.6667     329728.00  1.099093e+03           36800
+544   5620 0.001   89920 2997.3333        179.84  5.994667e-01               2
+5441  5620 0.001   89920 2997.3333        899.20  2.997333e+00              10
+5442  5620 0.001   89920 2997.3333     449600.00  1.498667e+03            5000
+5443  5620 0.001   89920 2997.3333    3309056.00  1.103019e+04           36800
+     chance_to_miss lane_fraction
+38       0.04953626  2.986667e-05
+381      0.04953626  1.493333e-04
+382      0.04953626  7.466667e-02
+383      0.04953626  5.495467e-01
+544      0.04986183  2.997333e-04
+5441     0.04986183  1.498667e-03
+5442     0.04986183  7.493333e-01
+5443     0.04986183  5.515093e+00</code></pre>
 </div>
 <div id="downsampling-experiment-model" class="section level2">
 <h2>Downsampling experiment model</h2>
