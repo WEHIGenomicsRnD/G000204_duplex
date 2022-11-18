@@ -407,7 +407,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-11-10
+<strong>Last updated:</strong> 2022-11-18
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -416,8 +416,8 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
 aria-hidden="true"></span> 0
 </p>
 <p>
-<strong>Knit directory:</strong> <code>rare-mutation-detection/</code>
-<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+<strong>Knit directory:</strong> <code>G000204_duplex/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
 title="This is the local directory in which the code in this file was executed.">
 </span>
 </p>
@@ -538,15 +538,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreef2ecd7b9e3057d2a99cfb16ee017717ab4da0591targetblankf2ecd7ba">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree23f67a5c1225ca362ff0b68d2800bde06a9f4431targetblank23f67a5a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/f2ecd7b9e3057d2a99cfb16ee017717ab4da0591" target="_blank">f2ecd7b</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/23f67a5c1225ca362ff0b68d2800bde06a9f4431" target="_blank">23f67a5</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreef2ecd7b9e3057d2a99cfb16ee017717ab4da0591targetblankf2ecd7ba"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree23f67a5c1225ca362ff0b68d2800bde06a9f4431targetblank23f67a5a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -556,7 +556,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/f2ecd7b9e3057d2a99cfb16ee017717ab4da0591" target="_blank">f2ecd7b</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/23f67a5c1225ca362ff0b68d2800bde06a9f4431" target="_blank">23f67a5</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -594,9 +594,6 @@ Untracked files:
     Untracked:  drop_out_rate.pdf
     Untracked:  efficiency.pdf
     Untracked:  prototype_code/
-
-Unstaged changes:
-    Modified:   analysis/model.Rmd
 
 </code></pre>
 <p>
@@ -642,6 +639,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/23f67a5c1225ca362ff0b68d2800bde06a9f4431/analysis/ecoli_K12.Rmd" target="_blank">23f67a5</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-11-18
+</td>
+<td>
+Fixed experiment table
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/fb1a29c6523ac886f8aa671d42107a8d18a25d79/docs/ecoli_K12.html" target="_blank">fb1a29c</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-11-10
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1496,7 +1527,7 @@ added K12 ecoli metrics
 <td>MB1</td>
 <td align="center">1</td>
 <td align="center">0</td>
-<td>Nanoseq</td>
+<td>NanoSeq</td>
 <td>limited</td>
 <td>2</td>
 <td>1+0</td>
@@ -1505,7 +1536,7 @@ added K12 ecoli metrics
 <td>MB2</td>
 <td align="center">2</td>
 <td align="center">0</td>
-<td>Nanoseq</td>
+<td>NanoSeq</td>
 <td>limited</td>
 <td>2</td>
 <td>2+0</td>
@@ -1529,22 +1560,40 @@ added K12 ecoli metrics
 <td>2+1</td>
 </tr>
 <tr class="odd">
-<td>xGEN</td>
-<td align="center">0</td>
+<td>MB1</td>
+<td align="center">1</td>
 <td align="center">0</td>
 <td>xGEN</td>
 <td>limited</td>
 <td>2</td>
-<td>0+0</td>
+<td>1+0</td>
 </tr>
 <tr class="even">
-<td>xGEN</td>
+<td>MB2</td>
+<td align="center">2</td>
 <td align="center">0</td>
+<td>xGEN</td>
+<td>limited</td>
+<td>2</td>
+<td>2+0</td>
+</tr>
+<tr class="odd">
+<td>MB3</td>
+<td align="center">3</td>
 <td align="center">0</td>
 <td>xGEN</td>
-<td>unlimited</td>
-<td>1</td>
-<td>0+0</td>
+<td>limited</td>
+<td>2</td>
+<td>3+0</td>
+</tr>
+<tr class="even">
+<td>MB-S1</td>
+<td align="center">2</td>
+<td align="center">1</td>
+<td>xGEN</td>
+<td>limited</td>
+<td>2</td>
+<td>2+1</td>
 </tr>
 <tr class="odd">
 <td>xGEN</td>
@@ -4801,6 +4850,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/fb1a29c6523ac886f8aa671d42107a8d18a25d79/docs/figure/ecoli_K12.Rmd/unnamed-chunk-3-1.png" target="_blank">fb1a29c</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-11-10
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/55d799039a5332e2c53c0cb3f75efbf96866e4b2/docs/figure/ecoli_K12.Rmd/unnamed-chunk-3-1.png" target="_blank">55d7990</a>
 </td>
 <td>
@@ -4997,6 +5057,43 @@ ggplot(metrics[!metrics$sample %in% &#39;xGEN-xGENRep1&#39;,], aes(sample, estim
     theme_minimal() +
     coord_flip()</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/fb1a29c6523ac886f8aa671d42107a8d18a25d79/docs/figure/ecoli_K12.Rmd/unnamed-chunk-4-1.png" target="_blank">fb1a29c</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-11-10
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
