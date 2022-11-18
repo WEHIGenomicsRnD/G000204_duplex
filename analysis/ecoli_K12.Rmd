@@ -11,12 +11,14 @@ output:
 
 | End-prep | Mung Bean nuclease units | S1 Nuclease units | Protocol | PCR       | Samples | Key |
 |----------|:------------------------:|:-----------------:|----------|-----------|---------|-----|
-| MB1      |             1            |         0         | Nanoseq  | limited   | 2       | 1+0 |
-| MB2      |             2            |         0         | Nanoseq  | limited   | 2       | 2+0 |
+| MB1      |             1            |         0         | NanoSeq  | limited   | 2       | 1+0 |
+| MB2      |             2            |         0         | NanoSeq  | limited   | 2       | 2+0 |
 | MB3      |             3            |         0         | Nanoseq  | limited   | 2       | 3+0 |
 | MB-S1    |             2            |         1         | Nanoseq  | limited   | 2       | 2+1 |
-| xGEN     |             0            |         0         | xGEN     | limited   | 2       | 0+0 |
-| xGEN     |             0            |         0         | xGEN     | unlimited | 1       | 0+0 |
+| MB1      |             1            |         0         | xGEN     | limited   | 2       | 1+0 |
+| MB2      |             2            |         0         | xGEN     | limited   | 2       | 2+0 |
+| MB3      |             3            |         0         | xGEN     | limited   | 2       | 3+0 |
+| MB-S1    |             2            |         1         | xGEN     | limited   | 2       | 2+1 |
 | xGEN     |             0            |         0         | xGEN     | limited   | 2       | 0+0 |
 | xGEN     |             0            |         0         | xGEN     | unlimited | 1       | 0+0 |
 
@@ -356,7 +358,8 @@ for(metric in names(metric_optimals)) {
     show(p1 + p2 + p3)
 }
 ```
-```{r poster_plots, fig.width=8, fig.height=3, include=FALSE}
+
+```{r poster_plots, fig.width=8, fig.height=3, include=FALSE, eval=FALSE}
 for(metric in c('efficiency', 'drop_out_rate')) {
     threshold <- metric_optimals[metric][[1]]
     tmp <- mmt[mmt$metric %in% metric,]

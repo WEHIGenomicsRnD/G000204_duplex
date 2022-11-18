@@ -354,4 +354,20 @@ p3 <- ggplot(vaf_sm, aes(expected_variants_cov, nvars, shape=sample)) +
 p1 + p2 + p3
 ```
 
+```{r poster_plots, fig.width=8, fig.height=3, include=FALSE, eval=FALSE}
+pdf('coverage.pdf', width = 4, height = 3)
+vaf_sm$VAF_mix <- factor(vaf_sm$VAF_mix)
+ggplot(vaf_sm, aes(expected_variants_cov, nvars, shape=VAF_mix, colour=VAF_mix)) +
+    geom_point() +
+    theme_bw() +
+    geom_abline(slope = 1) +
+    theme(legend.position = 'right') +
+    scale_x_continuous(limits = c(0,15000)) +
+    scale_y_continuous(limits = c(0,15000)) +
+    ggtitle('Expected vs. actual variants') +
+    xlab('Expected variants') +
+    ylab('Actual variants') +
+    scale_color_brewer(palette = 'Dark2')
+dev.off()
+```
 
