@@ -407,7 +407,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-11-18
+<strong>Last updated:</strong> 2023-01-12
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -538,15 +538,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree23f67a5c1225ca362ff0b68d2800bde06a9f4431targetblank23f67a5a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree89ad7d82ab8968cf60873b3648d64e7e890824d3targetblank89ad7d8a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/23f67a5c1225ca362ff0b68d2800bde06a9f4431" target="_blank">23f67a5</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/89ad7d82ab8968cf60873b3648d64e7e890824d3" target="_blank">89ad7d8</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree23f67a5c1225ca362ff0b68d2800bde06a9f4431targetblank23f67a5a"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree89ad7d82ab8968cf60873b3648d64e7e890824d3targetblank89ad7d8a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -556,7 +556,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/23f67a5c1225ca362ff0b68d2800bde06a9f4431" target="_blank">23f67a5</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/89ad7d82ab8968cf60873b3648d64e7e890824d3" target="_blank">89ad7d8</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -576,24 +576,34 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
+    Ignored:    data/.DS_Store
     Ignored:    scripts/
 
 Untracked files:
     Untracked:  ._.DS_Store
+    Untracked:  ._rare-mutation-detection.Rproj
     Untracked:  DOCNAME
     Untracked:  analysis/._.DS_Store
+    Untracked:  analysis/._ecoli_spikeins.Rmd
     Untracked:  analysis/cache/
     Untracked:  analysis/calc_nanoseq_metrics.Rmd
+    Untracked:  data/._.DS_Store
     Untracked:  data/._metrics.rds
     Untracked:  data/ecoli/
     Untracked:  data/ecoli_k12_metrics.rds
     Untracked:  data/metadata/
     Untracked:  data/metrics_efficiency_nossc.rds
+    Untracked:  data/metrics_spikeins.rds
     Untracked:  data/mixtures
     Untracked:  data/ref/
     Untracked:  drop_out_rate.pdf
     Untracked:  efficiency.pdf
     Untracked:  prototype_code/
+    Untracked:  stats.csv
+
+Unstaged changes:
+    Modified:   analysis/ecoli_spikeins.Rmd
+    Modified:   analysis/model.Rmd
 
 </code></pre>
 <p>
@@ -639,6 +649,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/89ad7d82ab8968cf60873b3648d64e7e890824d3/analysis/ecoli_K12.Rmd" target="_blank">89ad7d8</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-01-12
+</td>
+<td>
+Added efficiency estimation experiments
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/bec537527d606a30117b3b15cec901762d82f323/docs/ecoli_K12.html" target="_blank">bec5375</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-11-18
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1503,13 +1547,13 @@ added K12 ecoli metrics
 <h2>Experimental setup</h2>
 <table style="width:100%;">
 <colgroup>
-<col width="11%" />
-<col width="28%" />
-<col width="21%" />
-<col width="11%" />
-<col width="12%" />
-<col width="10%" />
-<col width="5%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -4193,94 +4237,181 @@ for(metric_name in metric_names) {
                               variable = rownames(x_aov)[1:5],
                               pvalue = x_aov[[&#39;Pr(&gt;F)&#39;]][1:5]))
 }
-stats$significant &lt;- stats$pvalue &lt; 0.05
+stats$q &lt;- p.adjust(stats$pvalue, method = &#39;BH&#39;)
+stats$significant &lt;- stats$q &lt; 0.05
 print(stats)</code></pre>
-<pre><code>                   metric              variable       pvalue significant
-1         frac_singletons MungBeanUnit          3.179448e-01       FALSE
-2         frac_singletons protocol              9.702279e-01       FALSE
-3         frac_singletons S1Unit                8.553539e-01       FALSE
-4         frac_singletons MungBeanUnit:protocol 9.858376e-01       FALSE
-5         frac_singletons protocol:S1Unit       8.540793e-01       FALSE
-6              efficiency MungBeanUnit          6.743589e-01       FALSE
-7              efficiency protocol              3.377609e-03        TRUE
-8              efficiency S1Unit                4.674623e-01       FALSE
-9              efficiency MungBeanUnit:protocol 8.509683e-01       FALSE
-10             efficiency protocol:S1Unit       2.278366e-01       FALSE
-11          drop_out_rate MungBeanUnit          4.118682e-01       FALSE
-12          drop_out_rate protocol              2.566346e-04        TRUE
-13          drop_out_rate S1Unit                9.042622e-02       FALSE
-14          drop_out_rate MungBeanUnit:protocol 8.387882e-01       FALSE
-15          drop_out_rate protocol:S1Unit       3.182162e-01       FALSE
-16              gc_single MungBeanUnit          2.845364e-03        TRUE
-17              gc_single protocol              4.201084e-07        TRUE
-18              gc_single S1Unit                2.691266e-02        TRUE
-19              gc_single MungBeanUnit:protocol 9.742888e-01       FALSE
-20              gc_single protocol:S1Unit       7.452944e-01       FALSE
-21                gc_both MungBeanUnit          3.374303e-04        TRUE
-22                gc_both protocol              3.194918e-09        TRUE
-23                gc_both S1Unit                9.138191e-03        TRUE
-24                gc_both MungBeanUnit:protocol 8.678217e-01       FALSE
-25                gc_both protocol:S1Unit       5.614184e-01       FALSE
-26           gc_deviation MungBeanUnit          6.443318e-01       FALSE
-27           gc_deviation protocol              9.738905e-03        TRUE
-28           gc_deviation S1Unit                5.442060e-01       FALSE
-29           gc_deviation MungBeanUnit:protocol 9.592822e-01       FALSE
-30           gc_deviation protocol:S1Unit       8.839586e-01       FALSE
-31         total_families MungBeanUnit          4.304880e-01       FALSE
-32         total_families protocol              8.735318e-01       FALSE
-33         total_families S1Unit                8.883185e-01       FALSE
-34         total_families MungBeanUnit:protocol 8.394811e-01       FALSE
-35         total_families protocol:S1Unit       2.211659e-01       FALSE
-36            family_mean MungBeanUnit          3.721341e-01       FALSE
-37            family_mean protocol              2.541551e-01       FALSE
-38            family_mean S1Unit                2.914712e-01       FALSE
-39            family_mean MungBeanUnit:protocol 2.723545e-01       FALSE
-40            family_mean protocol:S1Unit       1.501251e-01       FALSE
-41          family_median MungBeanUnit          6.347858e-01       FALSE
-42          family_median protocol              4.810155e-01       FALSE
-43          family_median S1Unit                3.250056e-01       FALSE
-44          family_median MungBeanUnit:protocol 4.997581e-01       FALSE
-45          family_median protocol:S1Unit       3.250056e-01       FALSE
-46             family_max MungBeanUnit          3.849415e-01       FALSE
-47             family_max protocol              5.270992e-01       FALSE
-48             family_max S1Unit                1.424842e-01       FALSE
-49             family_max MungBeanUnit:protocol 9.819906e-01       FALSE
-50             family_max protocol:S1Unit       6.056582e-02       FALSE
-51           families_gt1 MungBeanUnit          1.793349e-01       FALSE
-52           families_gt1 protocol              9.876271e-01       FALSE
-53           families_gt1 S1Unit                6.881757e-01       FALSE
-54           families_gt1 MungBeanUnit:protocol 6.170001e-01       FALSE
-55           families_gt1 protocol:S1Unit       3.016320e-02        TRUE
-56        single_families MungBeanUnit          3.440723e-01       FALSE
-57        single_families protocol              9.487606e-01       FALSE
-58        single_families S1Unit                8.838445e-01       FALSE
-59        single_families MungBeanUnit:protocol 9.818450e-01       FALSE
-60        single_families protocol:S1Unit       7.210495e-01       FALSE
-61        paired_families MungBeanUnit          3.217762e-01       FALSE
-62        paired_families protocol              2.319573e-04        TRUE
-63        paired_families S1Unit                1.990511e-01       FALSE
-64        paired_families MungBeanUnit:protocol 9.226482e-01       FALSE
-65        paired_families protocol:S1Unit       8.092464e-01       FALSE
-66         paired_and_gt1 MungBeanUnit          6.527043e-01       FALSE
-67         paired_and_gt1 protocol              7.082361e-04        TRUE
-68         paired_and_gt1 S1Unit                8.872835e-01       FALSE
-69         paired_and_gt1 MungBeanUnit:protocol 5.304734e-01       FALSE
-70         paired_and_gt1 protocol:S1Unit       2.688706e-01       FALSE
-71         duplicate_rate MungBeanUnit          3.209744e-01       FALSE
-72         duplicate_rate protocol              6.617113e-01       FALSE
-73         duplicate_rate S1Unit                4.855983e-01       FALSE
-74         duplicate_rate MungBeanUnit:protocol 8.160371e-01       FALSE
-75         duplicate_rate protocol:S1Unit       5.516726e-01       FALSE
-76  duplex_coverage_ratio MungBeanUnit          5.159691e-02       FALSE
-77  duplex_coverage_ratio protocol              5.999337e-03        TRUE
-78  duplex_coverage_ratio S1Unit                4.875101e-01       FALSE
-79  duplex_coverage_ratio MungBeanUnit:protocol 6.215584e-02       FALSE
-80  duplex_coverage_ratio protocol:S1Unit       4.129184e-03        TRUE
-81 single_family_fraction MungBeanUnit          3.655666e-01       FALSE
-82 single_family_fraction protocol              9.875561e-01       FALSE
-83 single_family_fraction S1Unit                7.565118e-01       FALSE
-84 single_family_fraction MungBeanUnit:protocol 9.917902e-01       FALSE
-85 single_family_fraction protocol:S1Unit       8.631941e-01       FALSE</code></pre>
+<pre><code>                   metric              variable       pvalue            q
+1         frac_singletons MungBeanUnit          3.179448e-01 8.125140e-01
+2         frac_singletons protocol              9.702279e-01 9.917902e-01
+3         frac_singletons S1Unit                8.553539e-01 9.917902e-01
+4         frac_singletons MungBeanUnit:protocol 9.858376e-01 9.917902e-01
+5         frac_singletons protocol:S1Unit       8.540793e-01 9.917902e-01
+6              efficiency MungBeanUnit          6.743589e-01 9.917902e-01
+7              efficiency protocol              3.377609e-03 3.588710e-02
+8              efficiency S1Unit                4.674623e-01 9.417809e-01
+9              efficiency MungBeanUnit:protocol 8.509683e-01 9.917902e-01
+10             efficiency protocol:S1Unit       2.278366e-01 8.069213e-01
+11          drop_out_rate MungBeanUnit          4.118682e-01 8.976615e-01
+12          drop_out_rate protocol              2.566346e-04 5.453485e-03
+13          drop_out_rate S1Unit                9.042622e-02 4.270127e-01
+14          drop_out_rate MungBeanUnit:protocol 8.387882e-01 9.917902e-01
+15          drop_out_rate protocol:S1Unit       3.182162e-01 8.125140e-01
+16              gc_single MungBeanUnit          2.845364e-03 3.455085e-02
+17              gc_single protocol              4.201084e-07 1.785461e-05
+18              gc_single S1Unit                2.691266e-02 1.759674e-01
+19              gc_single MungBeanUnit:protocol 9.742888e-01 9.917902e-01
+20              gc_single protocol:S1Unit       7.452944e-01 9.917902e-01
+21                gc_both MungBeanUnit          3.374303e-04 5.736315e-03
+22                gc_both protocol              3.194918e-09 2.715681e-07
+23                gc_both S1Unit                9.138191e-03 6.898391e-02
+24                gc_both MungBeanUnit:protocol 8.678217e-01 9.917902e-01
+25                gc_both protocol:S1Unit       5.614184e-01 9.544114e-01
+26           gc_deviation MungBeanUnit          6.443318e-01 9.917902e-01
+27           gc_deviation protocol              9.738905e-03 6.898391e-02
+28           gc_deviation S1Unit                5.442060e-01 9.544114e-01
+29           gc_deviation MungBeanUnit:protocol 9.592822e-01 9.917902e-01
+30           gc_deviation protocol:S1Unit       8.839586e-01 9.917902e-01
+31         total_families MungBeanUnit          4.304880e-01 9.147871e-01
+32         total_families protocol              8.735318e-01 9.917902e-01
+33         total_families S1Unit                8.883185e-01 9.917902e-01
+34         total_families MungBeanUnit:protocol 8.394811e-01 9.917902e-01
+35         total_families protocol:S1Unit       2.211659e-01 8.069213e-01
+36            family_mean MungBeanUnit          3.721341e-01 8.549028e-01
+37            family_mean protocol              2.541551e-01 8.125140e-01
+38            family_mean S1Unit                2.914712e-01 8.125140e-01
+39            family_mean MungBeanUnit:protocol 2.723545e-01 8.125140e-01
+40            family_mean protocol:S1Unit       1.501251e-01 6.380316e-01
+41          family_median MungBeanUnit          6.347858e-01 9.917902e-01
+42          family_median protocol              4.810155e-01 9.417809e-01
+43          family_median S1Unit                3.250056e-01 8.125140e-01
+44          family_median MungBeanUnit:protocol 4.997581e-01 9.439876e-01
+45          family_median protocol:S1Unit       3.250056e-01 8.125140e-01
+46             family_max MungBeanUnit          3.849415e-01 8.610533e-01
+47             family_max protocol              5.270992e-01 9.544114e-01
+48             family_max S1Unit                1.424842e-01 6.374291e-01
+49             family_max MungBeanUnit:protocol 9.819906e-01 9.917902e-01
+50             family_max protocol:S1Unit       6.056582e-02 3.107792e-01
+51           families_gt1 MungBeanUnit          1.793349e-01 7.258795e-01
+52           families_gt1 protocol              9.876271e-01 9.917902e-01
+53           families_gt1 S1Unit                6.881757e-01 9.917902e-01
+54           families_gt1 MungBeanUnit:protocol 6.170001e-01 9.917902e-01
+55           families_gt1 protocol:S1Unit       3.016320e-02 1.831337e-01
+56        single_families MungBeanUnit          3.440723e-01 8.356042e-01
+57        single_families protocol              9.487606e-01 9.917902e-01
+58        single_families S1Unit                8.838445e-01 9.917902e-01
+59        single_families MungBeanUnit:protocol 9.818450e-01 9.917902e-01
+60        single_families protocol:S1Unit       7.210495e-01 9.917902e-01
+61        paired_families MungBeanUnit          3.217762e-01 8.125140e-01
+62        paired_families protocol              2.319573e-04 5.453485e-03
+63        paired_families S1Unit                1.990511e-01 7.690611e-01
+64        paired_families MungBeanUnit:protocol 9.226482e-01 9.917902e-01
+65        paired_families protocol:S1Unit       8.092464e-01 9.917902e-01
+66         paired_and_gt1 MungBeanUnit          6.527043e-01 9.917902e-01
+67         paired_and_gt1 protocol              7.082361e-04 1.003334e-02
+68         paired_and_gt1 S1Unit                8.872835e-01 9.917902e-01
+69         paired_and_gt1 MungBeanUnit:protocol 5.304734e-01 9.544114e-01
+70         paired_and_gt1 protocol:S1Unit       2.688706e-01 8.125140e-01
+71         duplicate_rate MungBeanUnit          3.209744e-01 8.125140e-01
+72         duplicate_rate protocol              6.617113e-01 9.917902e-01
+73         duplicate_rate S1Unit                4.855983e-01 9.417809e-01
+74         duplicate_rate MungBeanUnit:protocol 8.160371e-01 9.917902e-01
+75         duplicate_rate protocol:S1Unit       5.516726e-01 9.544114e-01
+76  duplex_coverage_ratio MungBeanUnit          5.159691e-02 2.923825e-01
+77  duplex_coverage_ratio protocol              5.999337e-03 5.099436e-02
+78  duplex_coverage_ratio S1Unit                4.875101e-01 9.417809e-01
+79  duplex_coverage_ratio MungBeanUnit:protocol 6.215584e-02 3.107792e-01
+80  duplex_coverage_ratio protocol:S1Unit       4.129184e-03 3.899785e-02
+81 single_family_fraction MungBeanUnit          3.655666e-01 8.549028e-01
+82 single_family_fraction protocol              9.875561e-01 9.917902e-01
+83 single_family_fraction S1Unit                7.565118e-01 9.917902e-01
+84 single_family_fraction MungBeanUnit:protocol 9.917902e-01 9.917902e-01
+85 single_family_fraction protocol:S1Unit       8.631941e-01 9.917902e-01
+   significant
+1        FALSE
+2        FALSE
+3        FALSE
+4        FALSE
+5        FALSE
+6        FALSE
+7         TRUE
+8        FALSE
+9        FALSE
+10       FALSE
+11       FALSE
+12        TRUE
+13       FALSE
+14       FALSE
+15       FALSE
+16        TRUE
+17        TRUE
+18       FALSE
+19       FALSE
+20       FALSE
+21        TRUE
+22        TRUE
+23       FALSE
+24       FALSE
+25       FALSE
+26       FALSE
+27       FALSE
+28       FALSE
+29       FALSE
+30       FALSE
+31       FALSE
+32       FALSE
+33       FALSE
+34       FALSE
+35       FALSE
+36       FALSE
+37       FALSE
+38       FALSE
+39       FALSE
+40       FALSE
+41       FALSE
+42       FALSE
+43       FALSE
+44       FALSE
+45       FALSE
+46       FALSE
+47       FALSE
+48       FALSE
+49       FALSE
+50       FALSE
+51       FALSE
+52       FALSE
+53       FALSE
+54       FALSE
+55       FALSE
+56       FALSE
+57       FALSE
+58       FALSE
+59       FALSE
+60       FALSE
+61       FALSE
+62        TRUE
+63       FALSE
+64       FALSE
+65       FALSE
+66       FALSE
+67        TRUE
+68       FALSE
+69       FALSE
+70       FALSE
+71       FALSE
+72       FALSE
+73       FALSE
+74       FALSE
+75       FALSE
+76       FALSE
+77       FALSE
+78       FALSE
+79       FALSE
+80        TRUE
+81       FALSE
+82       FALSE
+83       FALSE
+84       FALSE
+85       FALSE</code></pre>
 <p>We remove the outlier xGEN rep 1 and test again.</p>
 <pre class="r"><code>stats &lt;- NULL
 metric_names &lt;- unique(mmo$metric) %&gt;% as.character()
@@ -4289,100 +4420,188 @@ for(metric_name in metric_names) {
     x$MungBeanUnit &lt;- as.factor(x$`Mung bean unit`)
     x$S1Unit &lt;- as.factor(x$`S1 unit`)
     x &lt;- x[,c(&#39;MungBeanUnit&#39;, &#39;S1Unit&#39;, &#39;protocol&#39;, &#39;nuclease&#39;, &#39;value&#39;)]
-    x_aov &lt;- aov(value ~ MungBeanUnit * protocol + S1Unit * protocol, data = x) %&gt;% summary() %&gt;% dplyr::first()
+    # x_aov &lt;- aov(value ~ MungBeanUnit * protocol + S1Unit * protocol, data = x) %&gt;% summary() %&gt;% dplyr::first()
+    x_aov &lt;- aov(value ~ MungBeanUnit * S1Unit * protocol, data = x) %&gt;% summary() %&gt;% dplyr::first()
     stats &lt;- rbind(stats,
                    data.frame(metric = metric_name,
                               variable = rownames(x_aov)[1:5],
                               pvalue = x_aov[[&#39;Pr(&gt;F)&#39;]][1:5]))
 }
-stats$significant &lt;- stats$pvalue &lt; 0.05
+stats$q &lt;- p.adjust(stats$pvalue, method = &#39;BH&#39;)
+stats$significant &lt;- stats$q &lt; 0.05
 print(stats)</code></pre>
-<pre><code>                   metric              variable       pvalue significant
-1         frac_singletons MungBeanUnit          3.747242e-01       FALSE
-2         frac_singletons protocol              6.061218e-01       FALSE
-3         frac_singletons S1Unit                2.820185e-02        TRUE
-4         frac_singletons MungBeanUnit:protocol 1.145001e-01       FALSE
-5         frac_singletons protocol:S1Unit       2.714409e-02        TRUE
-6              efficiency MungBeanUnit          2.943575e-02        TRUE
-7              efficiency protocol              8.567087e-07        TRUE
-8              efficiency S1Unit                4.375525e-02        TRUE
-9              efficiency MungBeanUnit:protocol 2.583454e-01       FALSE
-10             efficiency protocol:S1Unit       3.175014e-03        TRUE
-11          drop_out_rate MungBeanUnit          4.996962e-04        TRUE
-12          drop_out_rate protocol              2.459532e-09        TRUE
-13          drop_out_rate S1Unit                2.501322e-05        TRUE
-14          drop_out_rate MungBeanUnit:protocol 9.115253e-02       FALSE
-15          drop_out_rate protocol:S1Unit       1.679681e-03        TRUE
-16              gc_single MungBeanUnit          1.711519e-03        TRUE
-17              gc_single protocol              9.159550e-09        TRUE
-18              gc_single S1Unit                1.523577e-03        TRUE
-19              gc_single MungBeanUnit:protocol 9.253752e-01       FALSE
-20              gc_single protocol:S1Unit       5.774184e-01       FALSE
-21                gc_both MungBeanUnit          1.770799e-03        TRUE
-22                gc_both protocol              3.727562e-09        TRUE
-23                gc_both S1Unit                4.828938e-03        TRUE
-24                gc_both MungBeanUnit:protocol 8.295304e-01       FALSE
-25                gc_both protocol:S1Unit       5.064090e-01       FALSE
-26           gc_deviation MungBeanUnit          1.765974e-01       FALSE
-27           gc_deviation protocol              7.986248e-04        TRUE
-28           gc_deviation S1Unit                3.553090e-01       FALSE
-29           gc_deviation MungBeanUnit:protocol 9.053297e-01       FALSE
-30           gc_deviation protocol:S1Unit       8.214325e-01       FALSE
-31         total_families MungBeanUnit          2.929023e-01       FALSE
-32         total_families protocol              5.053171e-01       FALSE
-33         total_families S1Unit                5.556673e-01       FALSE
-34         total_families MungBeanUnit:protocol 8.844339e-02       FALSE
-35         total_families protocol:S1Unit       3.593070e-04        TRUE
-36            family_mean MungBeanUnit          4.646379e-01       FALSE
-37            family_mean protocol              8.429941e-02       FALSE
-38            family_mean S1Unit                1.077790e-01       FALSE
-39            family_mean MungBeanUnit:protocol 6.294463e-02       FALSE
-40            family_mean protocol:S1Unit       3.389191e-02        TRUE
-41          family_median MungBeanUnit          4.629868e-01       FALSE
-42          family_median protocol              3.164774e-01       FALSE
-43          family_median S1Unit                1.678507e-01       FALSE
-44          family_median MungBeanUnit:protocol 2.615312e-01       FALSE
-45          family_median protocol:S1Unit       1.678507e-01       FALSE
-46             family_max MungBeanUnit          8.985047e-01       FALSE
-47             family_max protocol              4.901973e-01       FALSE
-48             family_max S1Unit                1.144701e-01       FALSE
-49             family_max MungBeanUnit:protocol 9.783491e-01       FALSE
-50             family_max protocol:S1Unit       4.537604e-02        TRUE
-51           families_gt1 MungBeanUnit          4.921202e-01       FALSE
-52           families_gt1 protocol              9.709211e-01       FALSE
-53           families_gt1 S1Unit                3.554965e-01       FALSE
-54           families_gt1 MungBeanUnit:protocol 1.121914e-01       FALSE
-55           families_gt1 protocol:S1Unit       2.152397e-04        TRUE
-56        single_families MungBeanUnit          3.561851e-01       FALSE
-57        single_families protocol              5.002377e-01       FALSE
-58        single_families S1Unit                1.446431e-01       FALSE
-59        single_families MungBeanUnit:protocol 1.802640e-01       FALSE
-60        single_families protocol:S1Unit       3.538918e-03        TRUE
-61        paired_families MungBeanUnit          1.158679e-02        TRUE
-62        paired_families protocol              2.650844e-08        TRUE
-63        paired_families S1Unit                1.825979e-03        TRUE
-64        paired_families MungBeanUnit:protocol 4.727076e-01       FALSE
-65        paired_families protocol:S1Unit       4.522724e-01       FALSE
-66         paired_and_gt1 MungBeanUnit          3.715875e-01       FALSE
-67         paired_and_gt1 protocol              4.877137e-07        TRUE
-68         paired_and_gt1 S1Unit                7.110938e-01       FALSE
-69         paired_and_gt1 MungBeanUnit:protocol 4.055773e-02        TRUE
-70         paired_and_gt1 protocol:S1Unit       1.317773e-02        TRUE
-71         duplicate_rate MungBeanUnit          2.028567e-01       FALSE
-72         duplicate_rate protocol              9.553308e-02       FALSE
-73         duplicate_rate S1Unit                1.519542e-02        TRUE
-74         duplicate_rate MungBeanUnit:protocol 7.348826e-02       FALSE
-75         duplicate_rate protocol:S1Unit       3.151836e-02        TRUE
-76  duplex_coverage_ratio MungBeanUnit          2.480884e-01       FALSE
-77  duplex_coverage_ratio protocol              6.668694e-04        TRUE
-78  duplex_coverage_ratio S1Unit                3.194763e-01       FALSE
-79  duplex_coverage_ratio MungBeanUnit:protocol 1.030421e-02        TRUE
-80  duplex_coverage_ratio protocol:S1Unit       4.306854e-04        TRUE
-81 single_family_fraction MungBeanUnit          5.636520e-01       FALSE
-82 single_family_fraction protocol              9.106823e-01       FALSE
-83 single_family_fraction S1Unit                4.704794e-02        TRUE
-84 single_family_fraction MungBeanUnit:protocol 6.635184e-01       FALSE
-85 single_family_fraction protocol:S1Unit       2.340365e-01       FALSE</code></pre>
+<pre><code>                   metric              variable       pvalue            q
+1         frac_singletons MungBeanUnit          3.747242e-01 5.137348e-01
+2         frac_singletons S1Unit                2.820185e-02 8.878361e-02
+3         frac_singletons protocol              6.061218e-01 6.869380e-01
+4         frac_singletons MungBeanUnit:protocol 1.145001e-01 2.211933e-01
+5         frac_singletons S1Unit:protocol       2.714409e-02 8.874030e-02
+6              efficiency MungBeanUnit          2.943575e-02 8.935853e-02
+7              efficiency S1Unit                4.375525e-02 1.162249e-01
+8              efficiency protocol              8.567087e-07 1.213671e-05
+9              efficiency MungBeanUnit:protocol 2.583454e-01 4.116694e-01
+10             efficiency S1Unit:protocol       3.175014e-03 1.420401e-02
+11          drop_out_rate MungBeanUnit          4.996962e-04 3.861289e-03
+12          drop_out_rate S1Unit                2.501322e-05 3.037320e-04
+13          drop_out_rate protocol              2.459532e-09 1.584214e-07
+14          drop_out_rate MungBeanUnit:protocol 9.115253e-02 1.986658e-01
+15          drop_out_rate S1Unit:protocol       1.679681e-03 8.622677e-03
+16              gc_single MungBeanUnit          1.711519e-03 8.622677e-03
+17              gc_single S1Unit                1.523577e-03 8.622677e-03
+18              gc_single protocol              9.159550e-09 2.595206e-07
+19              gc_single MungBeanUnit:protocol 9.253752e-01 9.476734e-01
+20              gc_single S1Unit:protocol       5.774184e-01 6.632508e-01
+21                gc_both MungBeanUnit          1.770799e-03 8.622677e-03
+22                gc_both S1Unit                4.828938e-03 1.954570e-02
+23                gc_both protocol              3.727562e-09 1.584214e-07
+24                gc_both MungBeanUnit:protocol 8.295304e-01 8.925327e-01
+25                gc_both S1Unit:protocol       5.064090e-01 6.062643e-01
+26           gc_deviation MungBeanUnit          1.765974e-01 3.127028e-01
+27           gc_deviation S1Unit                3.553090e-01 5.045955e-01
+28           gc_deviation protocol              7.986248e-04 5.221777e-03
+29           gc_deviation MungBeanUnit:protocol 9.053297e-01 9.440000e-01
+30           gc_deviation S1Unit:protocol       8.214325e-01 8.925327e-01
+31         total_families MungBeanUnit          2.929023e-01 4.526672e-01
+32         total_families S1Unit                5.556673e-01 6.559961e-01
+33         total_families protocol              5.053171e-01 6.062643e-01
+34         total_families MungBeanUnit:protocol 8.844339e-02 1.978339e-01
+35         total_families S1Unit:protocol       3.593070e-04 3.393455e-03
+36            family_mean MungBeanUnit          4.646379e-01 6.062643e-01
+37            family_mean S1Unit                1.077790e-01 2.211933e-01
+38            family_mean protocol              8.429941e-02 1.936608e-01
+39            family_mean MungBeanUnit:protocol 6.294463e-02 1.528655e-01
+40            family_mean S1Unit:protocol       3.389191e-02 9.602708e-02
+41          family_median MungBeanUnit          4.629868e-01 6.062643e-01
+42          family_median S1Unit                1.678507e-01 3.035597e-01
+43          family_median protocol              3.164774e-01 4.764120e-01
+44          family_median MungBeanUnit:protocol 2.615312e-01 4.116694e-01
+45          family_median S1Unit:protocol       1.678507e-01 3.035597e-01
+46             family_max MungBeanUnit          8.985047e-01 9.440000e-01
+47             family_max S1Unit                1.144701e-01 2.211933e-01
+48             family_max protocol              4.901973e-01 6.062643e-01
+49             family_max MungBeanUnit:protocol 9.783491e-01 9.783491e-01
+50             family_max S1Unit:protocol       4.537604e-02 1.168777e-01
+51           families_gt1 MungBeanUnit          4.921202e-01 6.062643e-01
+52           families_gt1 S1Unit                3.554965e-01 5.045955e-01
+53           families_gt1 protocol              9.709211e-01 9.783491e-01
+54           families_gt1 MungBeanUnit:protocol 1.121914e-01 2.211933e-01
+55           families_gt1 S1Unit:protocol       2.152397e-04 2.286922e-03
+56        single_families MungBeanUnit          3.561851e-01 5.045955e-01
+57        single_families S1Unit                1.446431e-01 2.732148e-01
+58        single_families protocol              5.002377e-01 6.062643e-01
+59        single_families MungBeanUnit:protocol 1.802640e-01 3.127028e-01
+60        single_families S1Unit:protocol       3.538918e-03 1.504040e-02
+61        paired_families MungBeanUnit          1.158679e-02 4.282076e-02
+62        paired_families S1Unit                1.825979e-03 8.622677e-03
+63        paired_families protocol              2.650844e-08 5.633044e-07
+64        paired_families MungBeanUnit:protocol 4.727076e-01 6.062643e-01
+65        paired_families S1Unit:protocol       4.522724e-01 6.062643e-01
+66         paired_and_gt1 MungBeanUnit          3.715875e-01 5.137348e-01
+67         paired_and_gt1 S1Unit                7.110938e-01 7.849737e-01
+68         paired_and_gt1 protocol              4.877137e-07 8.291133e-06
+69         paired_and_gt1 MungBeanUnit:protocol 4.055773e-02 1.112067e-01
+70         paired_and_gt1 S1Unit:protocol       1.317773e-02 4.667114e-02
+71         duplicate_rate MungBeanUnit          2.028567e-01 3.448563e-01
+72         duplicate_rate S1Unit                1.519542e-02 5.166443e-02
+73         duplicate_rate protocol              9.553308e-02 2.030078e-01
+74         duplicate_rate MungBeanUnit:protocol 7.348826e-02 1.735139e-01
+75         duplicate_rate S1Unit:protocol       3.151836e-02 9.238141e-02
+76  duplex_coverage_ratio MungBeanUnit          2.480884e-01 4.055291e-01
+77  duplex_coverage_ratio S1Unit                3.194763e-01 4.764120e-01
+78  duplex_coverage_ratio protocol              6.668694e-04 4.723659e-03
+79  duplex_coverage_ratio MungBeanUnit:protocol 1.030421e-02 3.981170e-02
+80  duplex_coverage_ratio S1Unit:protocol       4.306854e-04 3.660826e-03
+81 single_family_fraction MungBeanUnit          5.636520e-01 6.563071e-01
+82 single_family_fraction S1Unit                4.704794e-02 1.176199e-01
+83 single_family_fraction protocol              9.106823e-01 9.440000e-01
+84 single_family_fraction MungBeanUnit:protocol 6.635184e-01 7.420929e-01
+85 single_family_fraction S1Unit:protocol       2.340365e-01 3.900609e-01
+   significant
+1        FALSE
+2        FALSE
+3        FALSE
+4        FALSE
+5        FALSE
+6        FALSE
+7        FALSE
+8         TRUE
+9        FALSE
+10        TRUE
+11        TRUE
+12        TRUE
+13        TRUE
+14       FALSE
+15        TRUE
+16        TRUE
+17        TRUE
+18        TRUE
+19       FALSE
+20       FALSE
+21        TRUE
+22        TRUE
+23        TRUE
+24       FALSE
+25       FALSE
+26       FALSE
+27       FALSE
+28        TRUE
+29       FALSE
+30       FALSE
+31       FALSE
+32       FALSE
+33       FALSE
+34       FALSE
+35        TRUE
+36       FALSE
+37       FALSE
+38       FALSE
+39       FALSE
+40       FALSE
+41       FALSE
+42       FALSE
+43       FALSE
+44       FALSE
+45       FALSE
+46       FALSE
+47       FALSE
+48       FALSE
+49       FALSE
+50       FALSE
+51       FALSE
+52       FALSE
+53       FALSE
+54       FALSE
+55        TRUE
+56       FALSE
+57       FALSE
+58       FALSE
+59       FALSE
+60        TRUE
+61        TRUE
+62        TRUE
+63        TRUE
+64       FALSE
+65       FALSE
+66       FALSE
+67       FALSE
+68        TRUE
+69       FALSE
+70        TRUE
+71       FALSE
+72       FALSE
+73       FALSE
+74       FALSE
+75       FALSE
+76       FALSE
+77       FALSE
+78        TRUE
+79        TRUE
+80        TRUE
+81       FALSE
+82       FALSE
+83       FALSE
+84       FALSE
+85       FALSE</code></pre>
 </div>
 <div id="relationships-between-variables" class="section level2">
 <h2>Relationships between variables</h2>
@@ -5094,6 +5313,161 @@ Marek Cmero
 </table>
 </div>
 </div>
+</div>
+<div id="efficiency-estimation" class="section level2">
+<h2>Efficiency estimation</h2>
+<p>The NanoSeq paper (<a
+href="https://doi.org/10.1038/s41586-021-03477-4">Abascal et al.</a>)
+provides a formula for the estimation of efficiency given the sequencing
+ratio:</p>
+<p><code>(ppois(q=2-0.1, lambda=seqratio/2, lower.tail=F)/(1-dpois(0, seqratio/2)))^2 / (seqratio/(1-exp(-seqratio)))</code></p>
+<p>This is the zero-truncated poisson probability of selecting $$2 reads
+squared (as we need two read families to form a duplex), divided by the
+zero-truncated mean (sequences per family). We can expect this to be an
+over-estimate of the true efficiency, as the reasons of drop-out beyond
+sampling are not accounted for.</p>
+<p>To start, let’s see how close the efficiency estimation is to the
+estimate. We will assume 600 cell equivalents were sequenced per E coli
+sample. Additionally, we estimate the sequencing ratio as follows:</p>
+<p><code>(ESTIMATED_LIBRARY_SIZE / (READ_PAIRS_EXAMINED - READ_PAIR_OPTICAL_DUPLICATES)) * 2</code></p>
+<p>The above numbers can be obtained from the MarkDuplicates output. We
+multiply this by 2 due to paired-end sequencing. We should be able to
+estimate this before sequencing, but I’m using the empirical values for
+this experiment.</p>
+<p>We can then estimate the raw coverage as the seqratio mutliplied by
+the number of cells. Here is what this looks like on this data set:</p>
+<pre class="r"><code># prepare efficiency stats and filter out unrestricted xGEN sample
+eff &lt;- filter(mm, metric == &#39;efficiency&#39;) %&gt;% 
+        select(c(&#39;sample&#39;, &#39;nuclease&#39;, &#39;protocol&#39;, &#39;value&#39;)) %&gt;%
+        mutate(cells = 600,
+               raw_coverage = qmap_cov$coverage,
+               dup_coverage = qmap_cons_cov$coverage) %&gt;%
+        rename(value = &#39;efficiency&#39;) %&gt;%
+        filter(sample != &#39;xGEN-xGENRep1&#39;)
+
+# re-extract markdup data with library stats
+md &lt;- list.files(
+        markdup_dir,
+        full.names = TRUE,
+        recursive = TRUE,
+        pattern = &#39;txt&#39;) %&gt;%
+        paste(&#39;grep -E &quot;Library|LIBRARY&quot;&#39;, .) %&gt;%
+        lapply(., fread) %&gt;%
+        suppressMessages()
+md &lt;- md[-9] # remove xGEN-xGENRep1
+
+# calculate sequencing ratio
+eff$libsize &lt;- lapply(md, select, ESTIMATED_LIBRARY_SIZE) %&gt;% unlist() %&gt;% as.numeric() 
+eff$total_reads &lt;- lapply(md, function(x){x$READ_PAIRS_EXAMINED - x$READ_PAIR_OPTICAL_DUPLICATES}) %&gt;% as.numeric()
+eff$seqratio &lt;- eff$total_reads / eff$libsize * 2
+
+# estimate duplex coverage from seqratio
+eff$est_raw_coverage &lt;- eff$seqratio * eff$cells
+eff$est_efficiency &lt;- (ppois(q=2-0.1, lambda=eff$seqratio/2, lower.tail=F)/(1-dpois(0, eff$seqratio/2)))^2 / (eff$seqratio/(1-exp(-eff$seqratio)))
+eff$est_dup_coverage &lt;- eff$est_raw_coverage * eff$est_efficiency
+
+# here we add drop-out rate to the mix
+eff &lt;- filter(mm, metric == &#39;drop_out_rate&#39; &amp; sample != &#39;xGEN-xGENRep1&#39;) %&gt;%
+        select(c(&#39;sample&#39;, &#39;value&#39;)) %&gt;%
+        rename(value = &#39;drop_out_rate&#39;) %&gt;%
+        left_join(eff, ., by = &#39;sample&#39;)
+
+ggplot(eff, aes(raw_coverage, est_raw_coverage, colour=protocol, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab(&#39;Estimated raw coverage&#39;) +
+    xlab(&#39;Raw coverage&#39;) +
+    ggtitle(&#39;Estimated vs. actual raw coverage&#39;) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;) +
+    xlim(0, 10000) + ylim(0, 10000)</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/estimate_raw_coverage-1.png" width="528" style="display: block; margin: auto;" /></p>
+<p>We can see that the coverage is under-estimated, which may be due to
+an under-estimation of the number of input cells.</p>
+<p>Now that we have the estimated raw coverage, we can estimate the
+duplex coverage by multiplying this by the estimated efficiency.
+Alternatively, we can also obtain this figure from the ppois
+calculation:</p>
+<p><code>(ppois(q=2-0.1, lambda=seqratio/2, lower.tail=F)/(1-dpois(0, seqratio/2)))^2 * cells</code></p>
+<p>The numerator of the efficiency estimation equation is the estimated
+duplex yield, so we can multiply this by the cell number to obtain a
+coverage estimate.</p>
+<p>Here’s how the duplex coverage estimates compare for these data:</p>
+<pre class="r"><code>ggplot(eff, aes(dup_coverage, est_dup_coverage, colour=protocol, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab(&#39;Estimated duplex coverage&#39;) +
+    xlab(&#39;Duplex coverage&#39;) +
+    ggtitle(&#39;Estimated vs. actual duplex coverage&#39;) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;) +
+    xlim(0, 600) + ylim(0, 600)</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/estimate_duplex_coverage-1.png" width="528" style="display: block; margin: auto;" /></p>
+<p>We can see above that we over-estimate the duplex coverage, even
+though we <em>under</em>estimated the raw coverage. This indicates that
+the efficiency calculation is too optimistic in real data (which makes
+sense, it’s a very simple model).</p>
+<p>Case in point:</p>
+<pre class="r"><code>ggplot(eff, aes(efficiency, est_efficiency, colour=protocol, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab(&#39;Estimated efficiency&#39;) +
+    xlab(&#39;Efficiency&#39;) +
+    ggtitle(&#39;Estimated vs. actual efficiency&#39;) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;) +
+    xlim(0, 0.15) + ylim(0, 0.15)</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/estimate_efficiency-1.png" width="528" style="display: block; margin: auto;" /></p>
+<p>We can theoretically multiply the estimated efficiency value by an
+estimated (or empirically derived) drop-out rate to account for this. To
+do this, we multiply the estimated duplex coverage by one minus the
+drop-out rate.</p>
+<pre class="r"><code>eff$est_dup_coverage_wdo &lt;- eff$est_dup_coverage * (1 - eff$drop_out_rate)
+ggplot(eff, aes(dup_coverage, est_dup_coverage_wdo, colour=protocol, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab(&#39;Estimated duplex coverage&#39;) +
+    xlab(&#39;Duplex coverage&#39;) +
+    ggtitle(&#39;Estimated vs. actual duplex coverage with drop-out&#39;) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;) +
+    xlim(0, 600) + ylim(0, 600)</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/estimate_coverage_with_dropout-1.png" width="528" style="display: block; margin: auto;" /></p>
+<p>Which gives something much closer to the mark. I’m using the drop-out
+rates calculated from the data, however. Here’s what happens if we take
+a mean drop-out rate (<code>0.448</code> in these data).</p>
+<pre class="r"><code>eff$est_dup_coverage_wdo &lt;- eff$est_dup_coverage * (1 - mean(eff$drop_out_rate))
+
+ggplot(eff, aes(dup_coverage, est_dup_coverage_wdo, colour=protocol, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab(&#39;Estimated duplex coverage&#39;) +
+    xlab(&#39;Duplex coverage&#39;) +
+    ggtitle(&#39;Estimated vs. actual duplex coverage with mean drop-out&#39;) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;) +
+    xlim(0, 600) + ylim(0, 600)</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/estimate_coverage_with_mean_dropout-1.png" width="528" style="display: block; margin: auto;" />
+Now we’re starting to see the efficiency differences between the
+protocols making a difference.</p>
+<p>Here’s the same data for NanoSeq only, using the average NanoSeq
+drop-out rate of 0.285.</p>
+<pre class="r"><code>eff_nano &lt;- filter(eff, protocol == &#39;NanoSeq&#39;)
+eff_nano$est_dup_coverage_wdo &lt;- eff_nano$est_dup_coverage * (1 - mean(eff_nano$drop_out_rate))
+
+ggplot(eff_nano, aes(dup_coverage, est_dup_coverage_wdo, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab(&#39;Estimated duplex coverage&#39;) +
+    xlab(&#39;Duplex coverage&#39;) +
+    ggtitle(&#39;NanoSeq estimated vs. actual duplex\ncoverage with mean drop-out&#39;) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;) +
+    xlim(0, 600) + ylim(0, 600)</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/estimate_coverage_with_mean_dropout_nano-1.png" width="528" style="display: block; margin: auto;" />
+There’s still an over-estimate here, likely due to the over-estimation
+of raw coverage, however, the relationship is pretty linear, which means
+we can adjust for this.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
