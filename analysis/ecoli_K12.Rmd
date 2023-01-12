@@ -841,4 +841,4 @@ ggplot(eff_nano, aes(dup_coverage, est_dup_coverage_wdo, shape=nuclease)) +
     scale_colour_brewer(palette = 'Dark2') +
     xlim(0, 600) + ylim(0, 600)
 ```
-There's still an over-estimate here, likely due to the over-estimation of raw coverage, however, the relationship is pretty linear, which means we can adjust for this.
+There's still an over-estimate here, however, the relationship is pretty linear, which means we can adjust for this.
