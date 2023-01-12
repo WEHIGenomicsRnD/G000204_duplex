@@ -10,23 +10,23 @@ output:
 ## Experimental setup
 
 | End-prep | Mung Bean nuclease units | S1 Nuclease units | Protocol | PCR       | Samples | Key |
-|----------|:------------------------:|:-----------------:|----------|-----------|---------|-----|
-| MB1      |             1            |         0         | NanoSeq  | limited   | 2       | 1+0 |
-| MB2      |             2            |         0         | NanoSeq  | limited   | 2       | 2+0 |
-| MB3      |             3            |         0         | Nanoseq  | limited   | 2       | 3+0 |
-| MB-S1    |             2            |         1         | Nanoseq  | limited   | 2       | 2+1 |
-| MB1      |             1            |         0         | xGEN     | limited   | 2       | 1+0 |
-| MB2      |             2            |         0         | xGEN     | limited   | 2       | 2+0 |
-| MB3      |             3            |         0         | xGEN     | limited   | 2       | 3+0 |
-| MB-S1    |             2            |         1         | xGEN     | limited   | 2       | 2+1 |
-| xGEN     |             0            |         0         | xGEN     | limited   | 2       | 0+0 |
-| xGEN     |             0            |         0         | xGEN     | unlimited | 1       | 0+0 |
-
+|-----------|:---------:|:---------:|-----------|-----------|-----------|-----------|
+| MB1      |            1             |         0         | NanoSeq  | limited   | 2       | 1+0 |
+| MB2      |            2             |         0         | NanoSeq  | limited   | 2       | 2+0 |
+| MB3      |            3             |         0         | Nanoseq  | limited   | 2       | 3+0 |
+| MB-S1    |            2             |         1         | Nanoseq  | limited   | 2       | 2+1 |
+| MB1      |            1             |         0         | xGEN     | limited   | 2       | 1+0 |
+| MB2      |            2             |         0         | xGEN     | limited   | 2       | 2+0 |
+| MB3      |            3             |         0         | xGEN     | limited   | 2       | 3+0 |
+| MB-S1    |            2             |         1         | xGEN     | limited   | 2       | 2+1 |
+| xGEN     |            0             |         0         | xGEN     | limited   | 2       | 0+0 |
+| xGEN     |            0             |         0         | xGEN     | unlimited | 1       | 0+0 |
 
 ## MultiQC reports:
-* [AGRF_CAGRF22029764_HJK2GDSX3 MultiQC pre-duplex](AGRF_CAGRF22029764_HJK2GDSX3_multiqc/multiqc_report.html)
-* [AGRF_CAGRF22029764_HJK2GDSX3 MultiQC duplex](AGRF_CAGRF22029764_HJK2GDSX3_multiqc/multiqc_report_consensus.html)
-* [AGRF_CAGRF22029764_HJK2GDSX3 MultiQC duplex without SSCs](AGRF_CAGRF22029764_HJK2GDSX3_multiqc/multiqc_report_consensus_nossc.html)
+
+-   [AGRF_CAGRF22029764_HJK2GDSX3 MultiQC pre-duplex](AGRF_CAGRF22029764_HJK2GDSX3_multiqc/multiqc_report.html)
+-   [AGRF_CAGRF22029764_HJK2GDSX3 MultiQC duplex](AGRF_CAGRF22029764_HJK2GDSX3_multiqc/multiqc_report_consensus.html)
+-   [AGRF_CAGRF22029764_HJK2GDSX3 MultiQC duplex without SSCs](AGRF_CAGRF22029764_HJK2GDSX3_multiqc/multiqc_report_consensus_nossc.html)
 
 ```{r setup, include=FALSE}
 DOCNAME = "Analyse E. coli K12 results"
@@ -44,7 +44,6 @@ knitr::opts_chunk$set(autodep        = TRUE,
                       message        = FALSE,
                       warning        = FALSE)
 ```
-
 
 ```{r libraries, cache=FALSE, message=FALSE}
 library(ggplot2)
@@ -64,13 +63,11 @@ library(UpSetR)
 library(vcfR)
 ```
 
-
 ```{r source}
 source(here('code/load_data.R'))
 source(here('code/plot.R'))
 source(here('code/efficiency_nanoseq_functions.R'))
 ```
-
 
 ```{r variables}
 # Ecoli genome max size
@@ -79,7 +76,6 @@ genome_max <- c('2e914854fabb46b9_1' = 4661751,
                 '2e914854fabb46b9_2' = 67365)
 cores = 8
 ```
-
 
 ```{r paths}
 genomeFile <- here('data/ref/Escherichia_coli_ATCC_10798.fasta')
@@ -93,7 +89,6 @@ variant_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/variants')
 variant_nossc_dir <- here('data/ecoli/AGRF_CAGRF22029764_HJK2GDSX3/variants_nossc')
 variant_raw_dir <- here('data/ecoli/variant_calling')
 ```
-
 
 ```{r calculate_metrics, cache=FALSE}
 sample_names <- list.files(rinfo_dir) %>%
@@ -156,7 +151,7 @@ mm$nuclease <- paste(mm$`Mung bean unit`, mm$`S1 unit`, sep='+')
 
 ### Duplicate rate
 
-Fraction of duplicate reads calculated by [Picard's MarkDuplicates](https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-MarkDuplicates-Picard-). This is based on barcode-aware aligned duplicates mapping to the same 5' positions for both read pairs. The [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq) states the optimal empirical duplicate rate is 75-76\% (marked in the plot).
+Fraction of duplicate reads calculated by [Picard's MarkDuplicates](https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-MarkDuplicates-Picard-). This is based on barcode-aware aligned duplicates mapping to the same 5' positions for both read pairs. The [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq) states the optimal empirical duplicate rate is 75-76% (marked in the plot).
 
 ```{r duplicate_rate}
 metric <- 'duplicate_rate'
@@ -194,7 +189,6 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         ggtitle(metric)
 ```
 
-
 ### Drop-out rate
 
 This is the same calculation as F-EFF in the [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq):
@@ -213,10 +207,9 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         ggtitle(metric)
 ```
 
-
 ### Efficiency
 
-Efficiency is the number of duplex bases divided by the number of sequenced bases. According the [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq), this value is maximised at ~0.07 when duplicate rates and strand drop-outs are optimal.
+Efficiency is the number of duplex bases divided by the number of sequenced bases. According the [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq), this value is maximised at \~0.07 when duplicate rates and strand drop-outs are optimal.
 
 ```{r efficiency}
 metric <- 'efficiency'
@@ -230,10 +223,9 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
 
 ### GC deviation
 
-GC deviation is the absolute difference between `GC_BOTH` and `GC_SINGLE` calculated by the  [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq). The lower this deviation, the better.
+GC deviation is the absolute difference between `GC_BOTH` and `GC_SINGLE` calculated by the [NanoSeq Analysis pipeline](https://github.com/cancerit/NanoSeq). The lower this deviation, the better.
 
 "GC_BOTH and GC_SINGLE: the GC content of RBs with both strands and with just one strand. The two values should be similar between them and similar to the genome average. If there are large deviations that is possibly due to biases during PCR amplification. If GC_BOTH is substantially larger than GC_SINGLE, DNA denaturation before dilution may have taken place."
-
 
 ```{r gc_deviation}
 metric <- 'gc_deviation'
@@ -244,11 +236,9 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         ggtitle(metric)
 ```
 
-
 ### Duplex Coverage ratio
 
 The mean sequence (pre-duplex) coverage divided by mean duplex coverage. Indicates the yield of how much duplex coverage we get at each sample's sequence coverage. [Abascal et al.](https://doi.org/10.1038/s41586-021-03477-4) report that their yield was approximately 30x (marked on the plot).
-
 
 ```{r duplex_coverage_ratio}
 metric <- 'duplex_coverage_ratio'
@@ -259,7 +249,6 @@ ggplot(mm[mm$metric == metric,], aes(sample, value)) +
         geom_hline(yintercept = 30, alpha = 0.4)  +
         ggtitle(metric)
 ```
-
 
 ## Family statistics
 
@@ -275,13 +264,12 @@ ggplot(mm[mm$metric %like% 'family', ], aes(value, sample, colour = metric)) +
         ggtitle('Family pair sizes')
 ```
 
-
 The following plot shows:
 
-- families_gt1: number of family pairs where at least one family (AB or BA) has > 1 reads.
-- single_families: number of single-read families.
-- paired_families: number of family pairs where both families (AB and BA) have > 0 reads.
-- paired_and_gt1: number of family pairs where both families (AB and BA) have > 1 reads.
+-   families_gt1: number of family pairs where at least one family (AB or BA) has \> 1 reads.
+-   single_families: number of single-read families.
+-   paired_families: number of family pairs where both families (AB and BA) have \> 0 reads.
+-   paired_and_gt1: number of family pairs where both families (AB and BA) have \> 1 reads.
 
 ```{r family_stats, fig.width = 9, fig.height = 6}
 tmp <- data.table(mm)[,list(meanval = mean(value), minval = min(value), maxval= max(value)), by=c('sample', 'metric')] %>% data.frame()
@@ -380,9 +368,6 @@ for(metric in c('efficiency', 'drop_out_rate')) {
 }
 ```
 
-
-
-
 ## Facet summary plots
 
 Facet boxplots by nuclease and protocol to show overall results.
@@ -433,7 +418,6 @@ ggplot(mmo, aes(sample, value, colour = protocol, shape = nuclease)) +
     ggtitle('by protocol')
 ```
 
-
 ## Statistical test results by protocol
 
 For each metric, take the average of each replicate and perform a two-sided, unpaired T-test between protocols.
@@ -453,6 +437,7 @@ for(metric_name in metric_names) {
 stats$significant <- stats$pvalue < 0.05
 print(stats)
 ```
+
 Paired T-test (pairing nucleases, removing standard xGEN).
 
 ```{r}
@@ -471,7 +456,6 @@ stats$significant <- stats$pvalue < 0.05
 print(stats)
 ```
 
-
 Rerun tests removing outlier (xGEN rep1). The results are similar.
 
 ```{r test_by_protocol_remove_outlier}
@@ -489,10 +473,9 @@ stats$significant <- stats$pvalue < 0.05
 print(stats)
 ```
 
-
 ## Two-way ANOVA analysis
 
-We consider a two-way ANOVA, modelling the protocol, Mung Bean Unit and S1 Unit variables, as well as the interaction effect between the units and the protocol. 
+We consider a two-way ANOVA, modelling the protocol, Mung Bean Unit and S1 Unit variables, as well as the interaction effect between the units and the protocol.
 
 ```{r tests_by_nuclease}
 stats <- NULL
@@ -508,7 +491,8 @@ for(metric_name in metric_names) {
                               variable = rownames(x_aov)[1:5],
                               pvalue = x_aov[['Pr(>F)']][1:5]))
 }
-stats$significant <- stats$pvalue < 0.05
+stats$q <- p.adjust(stats$pvalue, method = 'BH')
+stats$significant <- stats$q < 0.05
 print(stats)
 ```
 
@@ -522,16 +506,17 @@ for(metric_name in metric_names) {
     x$MungBeanUnit <- as.factor(x$`Mung bean unit`)
     x$S1Unit <- as.factor(x$`S1 unit`)
     x <- x[,c('MungBeanUnit', 'S1Unit', 'protocol', 'nuclease', 'value')]
-    x_aov <- aov(value ~ MungBeanUnit * protocol + S1Unit * protocol, data = x) %>% summary() %>% dplyr::first()
+    # x_aov <- aov(value ~ MungBeanUnit * protocol + S1Unit * protocol, data = x) %>% summary() %>% dplyr::first()
+    x_aov <- aov(value ~ MungBeanUnit * S1Unit * protocol, data = x) %>% summary() %>% dplyr::first()
     stats <- rbind(stats,
                    data.frame(metric = metric_name,
                               variable = rownames(x_aov)[1:5],
                               pvalue = x_aov[['Pr(>F)']][1:5]))
 }
-stats$significant <- stats$pvalue < 0.05
+stats$q <- p.adjust(stats$pvalue, method = 'BH')
+stats$significant <- stats$q < 0.05
 print(stats)
 ```
-
 
 ## Relationships between variables
 
@@ -573,6 +558,7 @@ ggplot(dm, aes(duplicate_rate, duplex_coverage_ratio, colour=sample)) +
     scale_colour_manual(values = cols) +
     ggtitle('Duplicate rate vs. duplex coverage ratio')
 ```
+
 Focus on relationship between efficiency, duplicate rate and drop-out rate.
 
 ```{r efficiency_comparison, fig.width=14, fig.height=5}
@@ -630,7 +616,6 @@ for(sample in c('xGEN-xGENRep2-HJK2GDSX3', 'xGEN-xGENRep3-HJK2GDSX3', 'xGEN-xGEN
 
 upset(fromList(ulist), order.by='freq', nsets=length(sample_names))
 ```
-
 
 ## Duplex coverage without requiring SSC
 
@@ -706,3 +691,154 @@ ggplot(metrics[!metrics$sample %in% 'xGEN-xGENRep1',], aes(sample, estimated_cel
     coord_flip()
 ```
 
+## Efficiency estimation
+
+The NanoSeq paper ([Abascal et al.](https://doi.org/10.1038/s41586-021-03477-4)) provides a formula for the estimation of efficiency given the sequencing ratio:
+
+`(ppois(q=2-0.1, lambda=seqratio/2, lower.tail=F)/(1-dpois(0, seqratio/2)))^2 / (seqratio/(1-exp(-seqratio)))`
+
+This is the zero-truncated poisson probability of selecting $\geq$2 reads squared (as we need two read families to form a duplex), divided by the zero-truncated mean (sequences per family). We can expect this to be an over-estimate of the true efficiency, as the reasons of drop-out beyond sampling are not accounted for.
+
+To start, let's see how close the efficiency estimation is to the estimate. We will assume 600 cell equivalents were sequenced per E coli sample. Additionally, we estimate the sequencing ratio as follows:
+
+`(ESTIMATED_LIBRARY_SIZE / (READ_PAIRS_EXAMINED - READ_PAIR_OPTICAL_DUPLICATES)) * 2`
+
+The above numbers can be obtained from the MarkDuplicates output. We multiply this by 2 due to paired-end sequencing. We should be able to estimate this before sequencing, but I'm using the empirical values for this experiment.
+
+We can then estimate the raw coverage as the seqratio mutliplied by the number of cells. Here is what this looks like on this data set:
+
+```{r estimate_raw_coverage, fig.width=5.5, fig.height=4.5}
+# prepare efficiency stats and filter out unrestricted xGEN sample
+eff <- filter(mm, metric == 'efficiency') %>% 
+        select(c('sample', 'nuclease', 'protocol', 'value')) %>%
+        mutate(cells = 600,
+               raw_coverage = qmap_cov$coverage,
+               dup_coverage = qmap_cons_cov$coverage) %>%
+        rename(value = 'efficiency') %>%
+        filter(sample != 'xGEN-xGENRep1')
+
+# re-extract markdup data with library stats
+md <- list.files(
+        markdup_dir,
+        full.names = TRUE,
+        recursive = TRUE,
+        pattern = 'txt') %>%
+        paste('grep -E "Library|LIBRARY"', .) %>%
+        lapply(., fread) %>%
+        suppressMessages()
+md <- md[-9] # remove xGEN-xGENRep1
+
+# calculate sequencing ratio
+eff$libsize <- lapply(md, select, ESTIMATED_LIBRARY_SIZE) %>% unlist() %>% as.numeric() 
+eff$total_reads <- lapply(md, function(x){x$READ_PAIRS_EXAMINED - x$READ_PAIR_OPTICAL_DUPLICATES}) %>% as.numeric()
+eff$seqratio <- eff$total_reads / eff$libsize * 2
+
+# estimate duplex coverage from seqratio
+eff$est_raw_coverage <- eff$seqratio * eff$cells
+eff$est_efficiency <- (ppois(q=2-0.1, lambda=eff$seqratio/2, lower.tail=F)/(1-dpois(0, eff$seqratio/2)))^2 / (eff$seqratio/(1-exp(-eff$seqratio)))
+eff$est_dup_coverage <- eff$est_raw_coverage * eff$est_efficiency
+
+# here we add drop-out rate to the mix
+eff <- filter(mm, metric == 'drop_out_rate' & sample != 'xGEN-xGENRep1') %>%
+        select(c('sample', 'value')) %>%
+        rename(value = 'drop_out_rate') %>%
+        left_join(eff, ., by = 'sample')
+
+ggplot(eff, aes(raw_coverage, est_raw_coverage, colour=protocol, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab('Estimated raw coverage') +
+    xlab('Raw coverage') +
+    ggtitle('Estimated vs. actual raw coverage') +
+    scale_colour_brewer(palette = 'Dark2') +
+    xlim(0, 10000) + ylim(0, 10000)
+```
+
+We can see that the coverage is under-estimated, which may be due to an under-estimation of the number of input cells.
+
+Now that we have the estimated raw coverage, we can estimate the duplex coverage by multiplying this by the estimated efficiency. Alternatively, we can also obtain this figure from the ppois calculation:
+
+`(ppois(q=2-0.1, lambda=seqratio/2, lower.tail=F)/(1-dpois(0, seqratio/2)))^2 * cells`
+
+The numerator of the efficiency estimation equation is the estimated duplex yield, so we can multiply this by the cell number to obtain a coverage estimate.
+
+Here's how the duplex coverage estimates compare for these data:
+
+```{r estimate_duplex_coverage, fig.width=5.5, fig.height=4.5}
+ggplot(eff, aes(dup_coverage, est_dup_coverage, colour=protocol, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab('Estimated duplex coverage') +
+    xlab('Duplex coverage') +
+    ggtitle('Estimated vs. actual duplex coverage') +
+    scale_colour_brewer(palette = 'Dark2') +
+    xlim(0, 600) + ylim(0, 600)
+```
+
+We can see above that we over-estimate the duplex coverage, even though we *under*estimated the raw coverage. This indicates that the efficiency calculation is too optimistic in real data (which makes sense, it's a very simple model).
+
+Case in point:
+
+```{r estimate_efficiency, fig.width=5.5, fig.height=4.5}
+ggplot(eff, aes(efficiency, est_efficiency, colour=protocol, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab('Estimated efficiency') +
+    xlab('Efficiency') +
+    ggtitle('Estimated vs. actual efficiency') +
+    scale_colour_brewer(palette = 'Dark2') +
+    xlim(0, 0.15) + ylim(0, 0.15)
+```
+
+We can theoretically multiply the estimated efficiency value by an estimated (or empirically derived) drop-out rate to account for this. To do this, we multiply the estimated duplex coverage by one minus the drop-out rate.
+
+```{r estimate_coverage_with_dropout, fig.width=5.5, fig.height=4.5}
+eff$est_dup_coverage_wdo <- eff$est_dup_coverage * (1 - eff$drop_out_rate)
+ggplot(eff, aes(dup_coverage, est_dup_coverage_wdo, colour=protocol, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab('Estimated duplex coverage') +
+    xlab('Duplex coverage') +
+    ggtitle('Estimated vs. actual duplex coverage with drop-out') +
+    scale_colour_brewer(palette = 'Dark2') +
+    xlim(0, 600) + ylim(0, 600)
+```
+
+Which gives something much closer to the mark. I'm using the drop-out rates calculated from the data, however. Here's what happens if we take a mean drop-out rate (`0.448` in these data).
+
+```{r estimate_coverage_with_mean_dropout, fig.width=5.5, fig.height=4.5}
+eff$est_dup_coverage_wdo <- eff$est_dup_coverage * (1 - mean(eff$drop_out_rate))
+
+ggplot(eff, aes(dup_coverage, est_dup_coverage_wdo, colour=protocol, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab('Estimated duplex coverage') +
+    xlab('Duplex coverage') +
+    ggtitle('Estimated vs. actual duplex coverage with mean drop-out') +
+    scale_colour_brewer(palette = 'Dark2') +
+    xlim(0, 600) + ylim(0, 600)
+```
+Now we're starting to see the efficiency differences between the protocols making a difference. 
+
+Here's the same data for NanoSeq only, using the average NanoSeq drop-out rate of 0.285.
+
+```{r estimate_coverage_with_mean_dropout_nano, fig.width=5.5, fig.height=4.5}
+eff_nano <- filter(eff, protocol == 'NanoSeq')
+eff_nano$est_dup_coverage_wdo <- eff_nano$est_dup_coverage * (1 - mean(eff_nano$drop_out_rate))
+
+ggplot(eff_nano, aes(dup_coverage, est_dup_coverage_wdo, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab('Estimated duplex coverage') +
+    xlab('Duplex coverage') +
+    ggtitle('NanoSeq estimated vs. actual duplex\ncoverage with mean drop-out') +
+    scale_colour_brewer(palette = 'Dark2') +
+    xlim(0, 600) + ylim(0, 600)
+```
+There's still an over-estimate here, likely due to the over-estimation of raw coverage, however, the relationship is pretty linear, which means we can adjust for this.
