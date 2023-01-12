@@ -697,7 +697,7 @@ The NanoSeq paper ([Abascal et al.](https://doi.org/10.1038/s41586-021-03477-4))
 
 `(ppois(q=2-0.1, lambda=seqratio/2, lower.tail=F)/(1-dpois(0, seqratio/2)))^2 / (seqratio/(1-exp(-seqratio)))`
 
-This is the zero-truncated poisson probability of selecting $\geq$2 reads squared (as we need two read families to form a duplex), divided by the zero-truncated mean (sequences per family). We can expect this to be an over-estimate of the true efficiency, as the reasons of drop-out beyond sampling are not accounted for.
+This is the zero-truncated poisson probability of selecting >=2 reads squared (as we need two read families to form a duplex), divided by the zero-truncated mean (sequences per family). We can expect this to be an over-estimate of the true efficiency, as the reasons of drop-out beyond sampling are not accounted for.
 
 To start, let's see how close the efficiency estimation is to the estimate. We will assume 600 cell equivalents were sequenced per E coli sample. Additionally, we estimate the sequencing ratio as follows:
 
