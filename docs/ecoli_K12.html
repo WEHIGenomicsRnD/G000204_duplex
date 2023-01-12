@@ -538,15 +538,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree89ad7d82ab8968cf60873b3648d64e7e890824d3targetblank89ad7d8a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree403354fe7b2cfbf3aa184d15bf072adf873f6799targetblank403354fa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/89ad7d82ab8968cf60873b3648d64e7e890824d3" target="_blank">89ad7d8</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/403354fe7b2cfbf3aa184d15bf072adf873f6799" target="_blank">403354f</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree89ad7d82ab8968cf60873b3648d64e7e890824d3targetblank89ad7d8a"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree403354fe7b2cfbf3aa184d15bf072adf873f6799targetblank403354fa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -556,7 +556,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/89ad7d82ab8968cf60873b3648d64e7e890824d3" target="_blank">89ad7d8</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/403354fe7b2cfbf3aa184d15bf072adf873f6799" target="_blank">403354f</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -649,6 +649,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/403354fe7b2cfbf3aa184d15bf072adf873f6799/analysis/ecoli_K12.Rmd" target="_blank">403354f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-01-12
+</td>
+<td>
+Fix formatting
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/217f4148db0001ce7af51a78d69172ac15bcf490/docs/ecoli_K12.html" target="_blank">217f414</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-01-12
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -5321,11 +5355,11 @@ href="https://doi.org/10.1038/s41586-021-03477-4">Abascal et al.</a>)
 provides a formula for the estimation of efficiency given the sequencing
 ratio:</p>
 <p><code>(ppois(q=2-0.1, lambda=seqratio/2, lower.tail=F)/(1-dpois(0, seqratio/2)))^2 / (seqratio/(1-exp(-seqratio)))</code></p>
-<p>This is the zero-truncated poisson probability of selecting $$2 reads
-squared (as we need two read families to form a duplex), divided by the
-zero-truncated mean (sequences per family). We can expect this to be an
-over-estimate of the true efficiency, as the reasons of drop-out beyond
-sampling are not accounted for.</p>
+<p>This is the zero-truncated poisson probability of selecting &gt;=2
+reads squared (as we need two read families to form a duplex), divided
+by the zero-truncated mean (sequences per family). We can expect this to
+be an over-estimate of the true efficiency, as the reasons of drop-out
+beyond sampling are not accounted for.</p>
 <p>To start, let’s see how close the efficiency estimation is to the
 estimate. We will assume 600 cell equivalents were sequenced per E coli
 sample. Additionally, we estimate the sequencing ratio as follows:</p>
@@ -5382,6 +5416,43 @@ ggplot(eff, aes(raw_coverage, est_raw_coverage, colour=protocol, shape=nuclease)
     scale_colour_brewer(palette = &#39;Dark2&#39;) +
     xlim(0, 10000) + ylim(0, 10000)</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/estimate_raw_coverage-1.png" width="528" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-estimate_raw_coverage-1">
+Past versions of estimate_raw_coverage-1.png
+</button>
+</p>
+<div id="fig-estimate_raw_coverage-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/217f4148db0001ce7af51a78d69172ac15bcf490/docs/figure/ecoli_K12.Rmd/estimate_raw_coverage-1.png" target="_blank">217f414</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-01-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>We can see that the coverage is under-estimated, which may be due to
 an under-estimation of the number of input cells.</p>
 <p>Now that we have the estimated raw coverage, we can estimate the
@@ -5403,6 +5474,43 @@ coverage estimate.</p>
     scale_colour_brewer(palette = &#39;Dark2&#39;) +
     xlim(0, 600) + ylim(0, 600)</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/estimate_duplex_coverage-1.png" width="528" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-estimate_duplex_coverage-1">
+Past versions of estimate_duplex_coverage-1.png
+</button>
+</p>
+<div id="fig-estimate_duplex_coverage-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/217f4148db0001ce7af51a78d69172ac15bcf490/docs/figure/ecoli_K12.Rmd/estimate_duplex_coverage-1.png" target="_blank">217f414</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-01-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>We can see above that we over-estimate the duplex coverage, even
 though we <em>under</em>estimated the raw coverage. This indicates that
 the efficiency calculation is too optimistic in real data (which makes
@@ -5418,6 +5526,43 @@ sense, it’s a very simple model).</p>
     scale_colour_brewer(palette = &#39;Dark2&#39;) +
     xlim(0, 0.15) + ylim(0, 0.15)</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/estimate_efficiency-1.png" width="528" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-estimate_efficiency-1">
+Past versions of estimate_efficiency-1.png
+</button>
+</p>
+<div id="fig-estimate_efficiency-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/217f4148db0001ce7af51a78d69172ac15bcf490/docs/figure/ecoli_K12.Rmd/estimate_efficiency-1.png" target="_blank">217f414</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-01-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>We can theoretically multiply the estimated efficiency value by an
 estimated (or empirically derived) drop-out rate to account for this. To
 do this, we multiply the estimated duplex coverage by one minus the
@@ -5433,6 +5578,43 @@ ggplot(eff, aes(dup_coverage, est_dup_coverage_wdo, colour=protocol, shape=nucle
     scale_colour_brewer(palette = &#39;Dark2&#39;) +
     xlim(0, 600) + ylim(0, 600)</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/estimate_coverage_with_dropout-1.png" width="528" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-estimate_coverage_with_dropout-1">
+Past versions of estimate_coverage_with_dropout-1.png
+</button>
+</p>
+<div id="fig-estimate_coverage_with_dropout-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/217f4148db0001ce7af51a78d69172ac15bcf490/docs/figure/ecoli_K12.Rmd/estimate_coverage_with_dropout-1.png" target="_blank">217f414</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-01-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Which gives something much closer to the mark. I’m using the drop-out
 rates calculated from the data, however. Here’s what happens if we take
 a mean drop-out rate (<code>0.448</code> in these data).</p>
@@ -5447,8 +5629,45 @@ ggplot(eff, aes(dup_coverage, est_dup_coverage_wdo, colour=protocol, shape=nucle
     ggtitle(&#39;Estimated vs. actual duplex coverage with mean drop-out&#39;) +
     scale_colour_brewer(palette = &#39;Dark2&#39;) +
     xlim(0, 600) + ylim(0, 600)</code></pre>
-<p><img src="figure/ecoli_K12.Rmd/estimate_coverage_with_mean_dropout-1.png" width="528" style="display: block; margin: auto;" />
-Now we’re starting to see the efficiency differences between the
+<p><img src="figure/ecoli_K12.Rmd/estimate_coverage_with_mean_dropout-1.png" width="528" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-estimate_coverage_with_mean_dropout-1">
+Past versions of estimate_coverage_with_mean_dropout-1.png
+</button>
+</p>
+<div id="fig-estimate_coverage_with_mean_dropout-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/217f4148db0001ce7af51a78d69172ac15bcf490/docs/figure/ecoli_K12.Rmd/estimate_coverage_with_mean_dropout-1.png" target="_blank">217f414</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-01-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Now we’re starting to see the efficiency differences between the
 protocols making a difference.</p>
 <p>Here’s the same data for NanoSeq only, using the average NanoSeq
 drop-out rate of 0.285.</p>
@@ -5464,10 +5683,48 @@ ggplot(eff_nano, aes(dup_coverage, est_dup_coverage_wdo, shape=nuclease)) +
     ggtitle(&#39;NanoSeq estimated vs. actual duplex\ncoverage with mean drop-out&#39;) +
     scale_colour_brewer(palette = &#39;Dark2&#39;) +
     xlim(0, 600) + ylim(0, 600)</code></pre>
-<p><img src="figure/ecoli_K12.Rmd/estimate_coverage_with_mean_dropout_nano-1.png" width="528" style="display: block; margin: auto;" />
-There’s still an over-estimate here, likely due to the over-estimation
-of raw coverage, however, the relationship is pretty linear, which means
-we can adjust for this.</p>
+<p><img src="figure/ecoli_K12.Rmd/estimate_coverage_with_mean_dropout_nano-1.png" width="528" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-estimate_coverage_with_mean_dropout_nano-1">
+Past versions of estimate_coverage_with_mean_dropout_nano-1.png
+</button>
+</p>
+<div id="fig-estimate_coverage_with_mean_dropout_nano-1"
+class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/217f4148db0001ce7af51a78d69172ac15bcf490/docs/figure/ecoli_K12.Rmd/estimate_coverage_with_mean_dropout_nano-1.png" target="_blank">217f414</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-01-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>There’s still an over-estimate here, likely due to the
+over-estimation of raw coverage, however, the relationship is pretty
+linear, which means we can adjust for this.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
