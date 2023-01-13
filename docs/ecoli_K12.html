@@ -407,7 +407,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-01-12
+<strong>Last updated:</strong> 2023-01-13
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -538,15 +538,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree336d137a213e008f3e17f6e22827da224ef37121targetblank336d137a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreecf4738a322c363cb4767ed35e07aa9ccbe57e6c2targetblankcf4738aa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/336d137a213e008f3e17f6e22827da224ef37121" target="_blank">336d137</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/cf4738a322c363cb4767ed35e07aa9ccbe57e6c2" target="_blank">cf4738a</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree336d137a213e008f3e17f6e22827da224ef37121targetblank336d137a"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreecf4738a322c363cb4767ed35e07aa9ccbe57e6c2targetblankcf4738aa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -556,7 +556,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/336d137a213e008f3e17f6e22827da224ef37121" target="_blank">336d137</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/cf4738a322c363cb4767ed35e07aa9ccbe57e6c2" target="_blank">cf4738a</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -649,6 +649,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/cf4738a322c363cb4767ed35e07aa9ccbe57e6c2/analysis/ecoli_K12.Rmd" target="_blank">cf4738a</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-01-13
+</td>
+<td>
+Added coverage efficiency comparison
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/c80b470b69d3c24c48b5dc0f5e8ade42b12e287f/docs/ecoli_K12.html" target="_blank">c80b470</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-01-12
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -5758,6 +5792,31 @@ mcmero
 </div>
 <p>There’s still an over-estimate here, however, the relationship is
 pretty linear, which means we can adjust for this.</p>
+<div id="coverage-efficiency" class="section level3">
+<h3>Coverage efficiency</h3>
+<p>We can also calculate duplex efficiency using the mean duplex
+coverage over the mean raw coverage. This provides more of a picture of
+the real duplex output efficiency, as it also accounts for duplex reads
+that have been filtered out downstream of the family counts (the regular
+efficiency metric is based on the family counts only). We can see that
+the coverage efficiency is lower than the efficiency calculated via the
+family counts. This provides another piece of evidence for why we
+over-estimate duplex coverage. On average, the real (coverage)
+efficiency is only ~62% of the pre-filtered family efficiency. We can
+likely rescue some of these reads by considering single family pairs, or
+reducing filtering stringency.</p>
+<pre class="r"><code>eff$real_efficiency &lt;- eff$dup_coverage / eff$raw_coverage
+
+ggplot(eff, aes(efficiency, real_efficiency, colour=protocol, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab(&#39;Coverage efficiency&#39;) +
+    xlab(&#39;Family efficiency&#39;) +
+    ggtitle(&#39;Coverage vs. family efficiency &#39;) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;) +
+    xlim(0, 0.15) + ylim(0, 0.15)</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/adjusted_efficiency-1.png" width="528" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -5822,6 +5881,7 @@ loaded via a namespace (and not attached):
 [67] gtable_0.3.0           purrr_0.3.4            assertthat_0.2.1      
 [70] xfun_0.22              later_1.3.0            viridisLite_0.4.0     
 [73] cluster_2.1.2          ellipsis_0.3.2        </code></pre>
+</div>
 </div>
 </div>
 </div>
