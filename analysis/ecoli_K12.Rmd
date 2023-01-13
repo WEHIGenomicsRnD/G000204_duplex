@@ -842,3 +842,22 @@ ggplot(eff_nano, aes(dup_coverage, est_dup_coverage_wdo, shape=nuclease)) +
     xlim(0, 600) + ylim(0, 600)
 ```
 There's still an over-estimate here, however, the relationship is pretty linear, which means we can adjust for this.
+
+### Coverage efficiency
+
+We can also calculate duplex efficiency using the mean duplex coverage over the mean raw coverage. This provides more of a picture of the real duplex output efficiency, as it also accounts for duplex reads that have been filtered out downstream of the family counts (the regular efficiency metric is based on the family counts only). We can see that the coverage efficiency is lower than the efficiency calculated via the family counts. This provides another piece of evidence for why we over-estimate duplex coverage. On average, the real (coverage) efficiency is only ~62\% of the pre-filtered family efficiency. We can likely rescue some of these reads by considering single family pairs, or reducing filtering stringency.
+
+```{r adjusted_efficiency, fig.width=5.5, fig.height=4.5}
+eff$real_efficiency <- eff$dup_coverage / eff$raw_coverage
+
+ggplot(eff, aes(efficiency, real_efficiency, colour=protocol, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab('Coverage efficiency') +
+    xlab('Family efficiency') +
+    ggtitle('Coverage vs. family efficiency ') +
+    scale_colour_brewer(palette = 'Dark2') +
+    xlim(0, 0.15) + ylim(0, 0.15)
+```
+
