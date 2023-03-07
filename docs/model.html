@@ -13,7 +13,7 @@
 
 <title>Rare mutation detection model</title>
 
-<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
@@ -37,7 +37,7 @@
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
-<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
 <!-- Add a small amount of space between sections. -->
 <style type="text/css">
 div.section {
@@ -74,6 +74,7 @@ if (window.hljs) {
 
 
 
+
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -94,6 +95,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -151,11 +155,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -322,7 +330,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -369,7 +377,7 @@ div.tocify {
 <div id="header">
 
 <div class="btn-group pull-right float-right">
-<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
 <ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
 <li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
 <li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
@@ -407,7 +415,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-11-11
+<strong>Last updated:</strong> 2023-03-07
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -416,16 +424,16 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
 aria-hidden="true"></span> 0
 </p>
 <p>
-<strong>Knit directory:</strong> <code>rare-mutation-detection/</code>
-<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+<strong>Knit directory:</strong> <code>G000204_duplex/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
 title="This is the local directory in which the code in this file was executed.">
 </span>
 </p>
 <p>
-This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
 analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version
-1.6.2). The <em>Checks</em> tab describes the reproducibility checks
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the reproducibility checks
 that were applied when the results were created. The <em>Past
 versions</em> tab lists the development history.
 </p>
@@ -538,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreeeba33a5714c37cc7916f17092eb8a37e4a4d7e55targetblankeba33a5a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreea38edaadf33d791534d4de76caf7392971f08eectargetblanka38edaaa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/eba33a5714c37cc7916f17092eb8a37e4a4d7e55" target="_blank">eba33a5</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/a38edaadf33d791534d4de76caf7392971f08eec" target="_blank">a38edaa</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreeeba33a5714c37cc7916f17092eb8a37e4a4d7e55targetblankeba33a5a"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreea38edaadf33d791534d4de76caf7392971f08eectargetblanka38edaaa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -556,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/eba33a5714c37cc7916f17092eb8a37e4a4d7e55" target="_blank">eba33a5</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/a38edaadf33d791534d4de76caf7392971f08eec" target="_blank">a38edaa</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -576,28 +584,30 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
+    Ignored:    analysis/cache/
+    Ignored:    data/.DS_Store
     Ignored:    scripts/
 
 Untracked files:
     Untracked:  ._.DS_Store
+    Untracked:  ._rare-mutation-detection.Rproj
     Untracked:  DOCNAME
     Untracked:  analysis/._.DS_Store
-    Untracked:  analysis/cache/
+    Untracked:  analysis/._ecoli_spikeins.Rmd
     Untracked:  analysis/calc_nanoseq_metrics.Rmd
+    Untracked:  data/._.DS_Store
     Untracked:  data/._metrics.rds
     Untracked:  data/ecoli/
     Untracked:  data/ecoli_k12_metrics.rds
     Untracked:  data/metadata/
     Untracked:  data/metrics_efficiency_nossc.rds
+    Untracked:  data/metrics_spikeins.rds
     Untracked:  data/mixtures
     Untracked:  data/ref/
     Untracked:  drop_out_rate.pdf
     Untracked:  efficiency.pdf
     Untracked:  prototype_code/
-
-Unstaged changes:
-    Modified:   analysis/ecoli_K12.Rmd
-    Modified:   analysis/ecoli_spikeins.Rmd
+    Untracked:  stats.csv
 
 </code></pre>
 <p>
@@ -642,6 +652,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/a38edaadf33d791534d4de76caf7392971f08eec/analysis/model.Rmd" target="_blank">a38edaa</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-07
+</td>
+<td>
+Added coverage estimations using estimated efficiency
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/8f81f7029c2a973a2794a03d86526b45b52ada4a/docs/model.html" target="_blank">8f81f70</a>
+</td>
+<td>
+Marek Cmero
+</td>
+<td>
+2022-11-11
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1604,11 +1648,11 @@ class="math inline">\(g\)</span> = genome size.</p>
 <pre class="r"><code>lane_cap &lt;- 6e11
 g &lt;- 5e6
 pmiss &lt;- 0.05
-c &lt;- 10
-e &lt;- 0.057
+c &lt;- 8
+e &lt;- 1/ 30
 
 vafs &lt;- c(0.001, 0.01, 0.05, 0.1)
-n &lt;- seq(100, 10000, 100)
+n &lt;- seq(100, 12000, 100)
 
 # calculate duplex coverage
 dcov &lt;- n * c * e
@@ -1621,7 +1665,7 @@ min_cells &lt;- NULL
 for(vaf in vafs) {
     prob &lt;- data.frame(ncells = n,
                         dcov = dcov,
-                        p = pbinom(0, dcov, vaf),
+                        p = pbinom(0, round(dcov), vaf),
                         vaf = vaf,
                         bases = bases,
                         within_capacity = bases &lt; lane_cap)
@@ -1634,11 +1678,11 @@ for(vaf in vafs) {
 }
 
 print(min_cells)</code></pre>
-<pre><code>   ncells dcov           p   vaf    bases within_capacity
-1     100   57 0.002465035 0.100 5.00e+09            TRUE
-2     200  114 0.002887294 0.050 1.00e+10            TRUE
-6     600  342 0.032154114 0.010 3.00e+10            TRUE
-53   5300 3021 0.048678808 0.001 2.65e+11            TRUE</code></pre>
+<pre><code>    ncells       dcov           p   vaf    bases within_capacity
+2      200   53.33333 0.003757102 0.100 8.00e+09            TRUE
+3      300   80.00000 0.016515374 0.050 1.20e+10            TRUE
+12    1200  320.00000 0.040110887 0.010 4.80e+10            TRUE
+113  11300 3013.33333 0.049069996 0.001 4.52e+11            TRUE</code></pre>
 <pre class="r"><code>ggplot(probs, aes(ncells, p, colour = factor(vaf))) +
     geom_point() +
     theme_minimal() +
@@ -1689,14 +1733,14 @@ Marek Cmero
 different capture sizes (2kb, 10kb, 5Mb and 36.8Mb (human exome
 size).</p>
 <pre class="r"><code>lane_cap &lt;- 6e11
-capture_sizes &lt;- c(2000, 10000, 5e6, 3.68e7)
+capture_sizes &lt;- c(2000, 10000, 5e6, 3.68e7, 4e7)
 chance_to_miss &lt;- 0.05
 target_cov &lt;- 8
 efficiency &lt;- 1 / 30 # conservative estimate
 ploidy &lt;- 2
 readlen &lt;- 300
 ncells &lt;- c(5, seq(200, 6000, 10))
-vafs &lt;- c(0.01, 0.001)
+vafs &lt;- c(0.01, 0.05, 0.1)
 
 df_full &lt;- NULL
 for (capture_size in capture_sizes) {
@@ -1716,7 +1760,8 @@ for (capture_size in capture_sizes) {
                               million_reads = seq_bases / readlen / 1e6,
                               capture_size_kb = capture_size / 1e3,
                               chance_to_miss = pbinom(0, round(dup_cov), vaf),
-                              lane_fraction = seq_bases / lane_cap)
+                              lane_fraction = seq_bases / lane_cap,
+                              max_samples_per_lane = as.integer(1 / (seq_bases / lane_cap)))
             df &lt;- rbind(df, tmp)
         }
         df &lt;- df[df$chance_to_miss &lt; chance_to_miss,]
@@ -1725,24 +1770,38 @@ for (capture_size in capture_sizes) {
     }
 }
 print(df_full[order(df_full$vaf, decreasing = TRUE),])</code></pre>
-<pre><code>     ncell   vaf tot_cov   dup_cov seq_megabases million_reads capture_size_kb
-38     560 0.010    8960  298.6667         17.92  5.973333e-02               2
-381    560 0.010    8960  298.6667         89.60  2.986667e-01              10
-382    560 0.010    8960  298.6667      44800.00  1.493333e+02            5000
-383    560 0.010    8960  298.6667     329728.00  1.099093e+03           36800
-544   5620 0.001   89920 2997.3333        179.84  5.994667e-01               2
-5441  5620 0.001   89920 2997.3333        899.20  2.997333e+00              10
-5442  5620 0.001   89920 2997.3333     449600.00  1.498667e+03            5000
-5443  5620 0.001   89920 2997.3333    3309056.00  1.103019e+04           36800
-     chance_to_miss lane_fraction
-38       0.04953626  2.986667e-05
-381      0.04953626  1.493333e-04
-382      0.04953626  7.466667e-02
-383      0.04953626  5.495467e-01
-544      0.04986183  2.997333e-04
-5441     0.04986183  1.498667e-03
-5442     0.04986183  7.493333e-01
-5443     0.04986183  5.515093e+00</code></pre>
+<pre><code>    ncell  vaf tot_cov  dup_cov seq_megabases million_reads capture_size_kb
+21    200 0.10    3200 106.6667          6.40  2.133333e-02               2
+23    200 0.10    3200 106.6667         32.00  1.066667e-01              10
+25    200 0.10    3200 106.6667      16000.00  5.333333e+01            5000
+27    200 0.10    3200 106.6667     117760.00  3.925333e+02           36800
+29    200 0.10    3200 106.6667     128000.00  4.266667e+02           40000
+2     200 0.05    3200 106.6667          6.40  2.133333e-02               2
+22    200 0.05    3200 106.6667         32.00  1.066667e-01              10
+24    200 0.05    3200 106.6667      16000.00  5.333333e+01            5000
+26    200 0.05    3200 106.6667     117760.00  3.925333e+02           36800
+28    200 0.05    3200 106.6667     128000.00  4.266667e+02           40000
+38    560 0.01    8960 298.6667         17.92  5.973333e-02               2
+381   560 0.01    8960 298.6667         89.60  2.986667e-01              10
+382   560 0.01    8960 298.6667      44800.00  1.493333e+02            5000
+383   560 0.01    8960 298.6667     329728.00  1.099093e+03           36800
+384   560 0.01    8960 298.6667     358400.00  1.194667e+03           40000
+    chance_to_miss lane_fraction max_samples_per_lane
+21    1.270423e-05  1.066667e-05                93750
+23    1.270423e-05  5.333333e-05                18750
+25    1.270423e-05  2.666667e-02                   37
+27    1.270423e-05  1.962667e-01                    5
+29    1.270423e-05  2.133333e-01                    4
+2     4.134526e-03  1.066667e-05                93750
+22    4.134526e-03  5.333333e-05                18750
+24    4.134526e-03  2.666667e-02                   37
+26    4.134526e-03  1.962667e-01                    5
+28    4.134526e-03  2.133333e-01                    4
+38    4.953626e-02  2.986667e-05                33482
+381   4.953626e-02  1.493333e-04                 6696
+382   4.953626e-02  7.466667e-02                   13
+383   4.953626e-02  5.495467e-01                    1
+384   4.953626e-02  5.973333e-01                    1</code></pre>
 </div>
 <div id="downsampling-experiment-model" class="section level2">
 <h2>Downsampling experiment model</h2>
@@ -1834,13 +1893,13 @@ Session information
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 4.0.5 (2021-03-31)
+<pre><code>R version 4.2.0 (2022-04-22)
 Platform: x86_64-pc-linux-gnu (64-bit)
 Running under: CentOS Linux 7 (Core)
 
 Matrix products: default
-BLAS:   /stornext/System/data/apps/R/R-4.0.5/lib64/R/lib/libRblas.so
-LAPACK: /stornext/System/data/apps/R/R-4.0.5/lib64/R/lib/libRlapack.so
+BLAS:   /stornext/System/data/apps/R/R-4.2.0/lib64/R/lib/libRblas.so
+LAPACK: /stornext/System/data/apps/R/R-4.2.0/lib64/R/lib/libRlapack.so
 
 locale:
  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -1854,23 +1913,23 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] dplyr_1.0.7     ggplot2_3.3.6   workflowr_1.6.2
+[1] dplyr_1.1.0     ggplot2_3.3.6   workflowr_1.7.0
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.7         RColorBrewer_1.1-3 highr_0.9          pillar_1.7.0      
- [5] compiler_4.0.5     bslib_0.3.0        later_1.3.0        jquerylib_0.1.4   
- [9] git2r_0.28.0       tools_4.0.5        digest_0.6.29      gtable_0.3.0      
-[13] jsonlite_1.7.2     evaluate_0.14      lifecycle_1.0.1    tibble_3.1.7      
-[17] pkgconfig_2.0.3    rlang_1.0.2        DBI_1.1.1          cli_3.3.0         
-[21] rstudioapi_0.13    yaml_2.2.1         xfun_0.22          fastmap_1.1.0     
-[25] withr_2.5.0        stringr_1.4.0      knitr_1.33         generics_0.1.1    
-[29] fs_1.5.0           vctrs_0.4.1        sass_0.4.0         tidyselect_1.1.1  
-[33] grid_4.0.5         rprojroot_2.0.2    glue_1.6.2         R6_2.5.1          
-[37] fansi_1.0.3        rmarkdown_2.11     farver_2.1.0       purrr_0.3.4       
-[41] magrittr_2.0.3     whisker_0.4        scales_1.2.0       promises_1.2.0.1  
-[45] ellipsis_0.3.2     htmltools_0.5.2    assertthat_0.2.1   colorspace_2.0-3  
-[49] httpuv_1.6.3       labeling_0.4.2     utf8_1.2.2         stringi_1.7.5     
-[53] munsell_0.5.0      crayon_1.5.1      </code></pre>
+ [1] Rcpp_1.0.9         RColorBrewer_1.1-3 highr_0.9          compiler_4.2.0    
+ [5] pillar_1.8.1       bslib_0.4.0        later_1.3.0        git2r_0.31.0      
+ [9] jquerylib_0.1.4    tools_4.2.0        getPass_0.2-2      digest_0.6.30     
+[13] gtable_0.3.1       jsonlite_1.8.3     evaluate_0.17      lifecycle_1.0.3   
+[17] tibble_3.1.8       pkgconfig_2.0.3    rlang_1.0.6        cli_3.4.1         
+[21] rstudioapi_0.14    yaml_2.3.5         xfun_0.33          fastmap_1.1.0     
+[25] withr_2.5.0        httr_1.4.4         stringr_1.5.0      knitr_1.40        
+[29] generics_0.1.3     fs_1.5.2           vctrs_0.5.2        sass_0.4.2        
+[33] tidyselect_1.2.0   grid_4.2.0         rprojroot_2.0.3    glue_1.6.2        
+[37] R6_2.5.1           processx_3.7.0     fansi_1.0.3        rmarkdown_2.16    
+[41] farver_2.1.1       callr_3.7.2        magrittr_2.0.3     whisker_0.4       
+[45] scales_1.2.1       ps_1.7.1           promises_1.2.0.1   htmltools_0.5.3   
+[49] colorspace_2.0-3   httpuv_1.6.6       labeling_0.4.2     utf8_1.2.2        
+[53] stringi_1.7.8      munsell_0.5.0      cachem_1.0.6      </code></pre>
 </div>
 </div>
 </div>
@@ -1878,7 +1937,7 @@ loaded via a namespace (and not attached):
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
 TeX fonts only; see
-http://docs.mathjax.org/en/latest/configuration.html.  This will make
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
 the presentation more consistent at the cost of the webpage sometimes
 taking slightly longer to load. Note that this only works because the
 footer is added to webpages before the MathJax javascript. -->
