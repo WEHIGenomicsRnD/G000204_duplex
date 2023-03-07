@@ -65,6 +65,7 @@ library(RColorBrewer)
 library(UpSetR)
 library(vcfR)
 library(tidyr)
+library('R.utils')
 ```
 
 ```{r source}
@@ -369,5 +370,122 @@ ggplot(vaf_sm, aes(expected_variants_cov, nvars, shape=VAF_mix, colour=VAF_mix))
     ylab('Actual variants') +
     scale_color_brewer(palette = 'Dark2')
 dev.off()
+```
+
+### Expected efficiency
+
+Ideally, we want to try to estimate the coverage prior to sequencing. In these experiments, our drop-out rate was much higher than expected, so we will have to integrate that into the estimate. Here we estimate the efficiency and ultimately the number of variants knowing only the drop-out rate and library size.
+
+```{r exp_efficiency, fig.width=12, fig.height=5}
+eff <- vaf_sm %>% rename(., c('coverage' = 'dup_coverage'))
+eff$sample <- paste0(eff$sample, 'Rep', eff$replicate)
+eff$raw_coverage <- qmap_cov$coverage
+md <- list.files(
+        markdup_dir,
+        full.names = TRUE,
+        recursive = TRUE,
+        pattern = 'txt') %>%
+        paste('grep -E "Library|LIBRARY"', .) %>%
+        lapply(., fread) %>%
+        suppressMessages()
+
+# calculate sequencing ratio
+eff$libsize <- lapply(md, select, ESTIMATED_LIBRARY_SIZE) %>% unlist() %>% as.numeric() 
+eff$total_reads <- lapply(md, function(x){x$READ_PAIRS_EXAMINED - x$READ_PAIR_OPTICAL_DUPLICATES}) %>% as.numeric()
+eff$seqratio <- eff$total_reads / eff$libsize * 2
+
+# estimate duplex coverage from seqratio
+eff$est_raw_coverage <- eff$seqratio * eff$cells
+eff$est_efficiency <- (ppois(q=2-0.1, lambda=eff$seqratio/2, lower.tail=F)/(1-dpois(0, eff$seqratio/2)))^2 / (eff$seqratio/(1-exp(-eff$seqratio)))
+
+# here we add drop-out rate to the mix
+eff <- filter(mm, metric == 'drop_out_rate') %>%
+        select(c('sample', 'value')) %>%
+        rename(value = 'drop_out_rate') %>%
+        left_join(eff, ., by = 'sample')
+eff$est_efficiency_wdo <- eff$est_efficiency * (1 - eff$drop_out_rate)
+eff$est_dup_coverage <- eff$est_raw_coverage * eff$est_efficiency_wdo
+eff$expected_variants <- (1 - (1 - eff$VAF_mix) ^ round(eff$est_dup_coverage)) * N_TOTAL_VARS
+
+p1 <- ggplot(eff, aes(efficiency, est_efficiency, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    xlab('Efficiency') +
+    ylab('Estimated duplex efficiency') +
+    ggtitle('Estimated vs. actual duplex efficiency') +
+    scale_colour_brewer(palette = 'Dark2') +
+    xlim(0, 0.02) + ylim(0, 0.02)
+
+p2 <- ggplot(eff, aes(efficiency, est_efficiency_wdo, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    xlab('Efficiency') +
+    ylab('Estimated duplex efficiency with drop-out') +
+    ggtitle('Estimated vs. actual duplex efficiency (with drop-out)') +
+    scale_colour_brewer(palette = 'Dark2') +
+    xlim(0, 0.02) + ylim(0, 0.02)
+
+p1 + p2
+```
+
+### Expected raw coverage (re-estimated)
+
+```{r exp_raw_coverage, fig.width=12, fig.height=4}
+p3 <- ggplot(eff, aes(raw_coverage, est_raw_coverage, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    xlab('Raw coverage') +
+    ylab('Estimated raw coverage') +
+    ggtitle('Estimated vs. actual raw coverage') +
+    scale_colour_brewer(palette = 'Dark2')
+
+p4 <- ggplot(eff, aes(raw_coverage, est_raw_coverage, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    xlab('Raw coverage') +
+    ylab('Estimated raw coverage') +
+    ggtitle('Estimated vs. actual raw coverage (zoom)') +
+    scale_colour_brewer(palette = 'Dark2') +
+    xlim(0, 50000) + ylim(0, 45000)
+
+p3 + p4
+```
+
+### Expected duplex coverage and variants (re-estimated)
+
+```{r exp_dup_coverage, fig.width=19, fig.height=4}
+p5 <- ggplot(eff, aes(dup_coverage, est_dup_coverage, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab('Estimated duplex coverage') +
+    xlab('Duplex coverage') +
+    ggtitle('Estimated vs. actual duplex coverage') +
+    scale_colour_brewer(palette = 'Dark2')
+
+p6 <- ggplot(eff, aes(dup_coverage, est_dup_coverage, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab('Estimated duplex coverage') +
+    xlab('Duplex coverage') +
+    ggtitle('Estimated vs. actual duplex coverage (zoom)') +
+    scale_colour_brewer(palette = 'Dark2') +
+    xlim(0, 150) + ylim(0, 150)
+
+p7 <- ggplot(eff, aes(nvars, expected_variants, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab('Estimated variants') +
+    xlab('Variants called') +
+    ggtitle('Estimated vs. actual called variants') +
+    scale_colour_brewer(palette = 'Dark2')
+
+p5 + p6 + p7
 ```
 

@@ -205,11 +205,11 @@ $b = g * c * n$ where $g$ = genome size.
 lane_cap <- 6e11
 g <- 5e6
 pmiss <- 0.05
-c <- 10
-e <- 0.057
+c <- 8
+e <- 1/ 30
 
 vafs <- c(0.001, 0.01, 0.05, 0.1)
-n <- seq(100, 10000, 100)
+n <- seq(100, 12000, 100)
 
 # calculate duplex coverage
 dcov <- n * c * e
@@ -222,7 +222,7 @@ min_cells <- NULL
 for(vaf in vafs) {
     prob <- data.frame(ncells = n,
                         dcov = dcov,
-                        p = pbinom(0, dcov, vaf),
+                        p = pbinom(0, round(dcov), vaf),
                         vaf = vaf,
                         bases = bases,
                         within_capacity = bases < lane_cap)
@@ -248,14 +248,14 @@ Example statistics table for 1% and 0.1% VAF experiments for different capture s
 
 ```{r depth_and_size}
 lane_cap <- 6e11
-capture_sizes <- c(2000, 10000, 5e6, 3.68e7)
+capture_sizes <- c(2000, 10000, 5e6, 3.68e7, 4e7)
 chance_to_miss <- 0.05
 target_cov <- 8
 efficiency <- 1 / 30 # conservative estimate
 ploidy <- 2
 readlen <- 300
 ncells <- c(5, seq(200, 6000, 10))
-vafs <- c(0.01, 0.001)
+vafs <- c(0.01, 0.05, 0.1)
 
 df_full <- NULL
 for (capture_size in capture_sizes) {
@@ -275,7 +275,8 @@ for (capture_size in capture_sizes) {
                               million_reads = seq_bases / readlen / 1e6,
                               capture_size_kb = capture_size / 1e3,
                               chance_to_miss = pbinom(0, round(dup_cov), vaf),
-                              lane_fraction = seq_bases / lane_cap)
+                              lane_fraction = seq_bases / lane_cap,
+                              max_samples_per_lane = as.integer(1 / (seq_bases / lane_cap)))
             df <- rbind(df, tmp)
         }
         df <- df[df$chance_to_miss < chance_to_miss,]
