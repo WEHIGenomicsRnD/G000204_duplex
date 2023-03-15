@@ -415,7 +415,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-03-07
+<strong>Last updated:</strong> 2023-03-15
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreea38edaadf33d791534d4de76caf7392971f08eectargetblanka38edaaa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree460c51913b5421083bd90d1872b884b77a8e536dtargetblank460c519a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/a38edaadf33d791534d4de76caf7392971f08eec" target="_blank">a38edaa</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/460c51913b5421083bd90d1872b884b77a8e536d" target="_blank">460c519</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreea38edaadf33d791534d4de76caf7392971f08eectargetblanka38edaaa"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree460c51913b5421083bd90d1872b884b77a8e536dtargetblank460c519a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/a38edaadf33d791534d4de76caf7392971f08eec" target="_blank">a38edaa</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/460c51913b5421083bd90d1872b884b77a8e536d" target="_blank">460c519</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -653,6 +653,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/460c51913b5421083bd90d1872b884b77a8e536d/analysis/ecoli_spikeins.Rmd" target="_blank">460c519</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+<td>
+Revised estimated efficiency analyses
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/44865a12cd06b960e02c54dc14aad888535cea8e/docs/ecoli_spikeins.html" target="_blank">44865a1</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-07
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1009,7 +1043,9 @@ qmap_cons_cov &lt;- get_qmap_coverage(qualimap_cons_dir, sample_names)
 # uncomment below to calculate metrics
 # calculate metrics for nanoseq
 rlen &lt;- 151; skips &lt;- 5
-metrics &lt;- calc_metrics_new_rbs(rinfo_dir, cores = cores) %&gt;% bind_rows()
+# metrics &lt;- calc_metrics_new_rbs(rinfo_dir, cores = cores) %&gt;% bind_rows()
+metrics &lt;- readRDS(here(&#39;data/metrics_spikeins.rds&#39;))
+metrics$single_family_fraction &lt;- metrics$single_families / metrics$total_families
 
 metrics$duplicate_rate &lt;- mdup
 metrics$duplex_coverage_ratio &lt;- qmap_cov$coverage / qmap_cons_cov$coverage
@@ -1051,6 +1087,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/44865a12cd06b960e02c54dc14aad888535cea8e/docs/figure/ecoli_spikeins.Rmd/plot_by_sample-1.png" target="_blank">44865a1</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-07
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/bec537527d606a30117b3b15cec901762d82f323/docs/figure/ecoli_spikeins.Rmd/plot_by_sample-1.png" target="_blank">bec5375</a>
@@ -1444,6 +1491,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/44865a12cd06b960e02c54dc14aad888535cea8e/docs/figure/ecoli_spikeins.Rmd/gc_deviation-1.png" target="_blank">44865a1</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-07
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/bec537527d606a30117b3b15cec901762d82f323/docs/figure/ecoli_spikeins.Rmd/gc_deviation-1.png" target="_blank">bec5375</a>
 </td>
 <td>
@@ -1789,6 +1847,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/44865a12cd06b960e02c54dc14aad888535cea8e/docs/figure/ecoli_spikeins.Rmd/expected_coverage-1.png" target="_blank">44865a1</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-07
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/a099d381d50521a5372a885e2b017f8853df26e2/docs/figure/ecoli_spikeins.Rmd/expected_coverage-1.png" target="_blank">a099d38</a>
 </td>
 <td>
@@ -1863,6 +1932,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/44865a12cd06b960e02c54dc14aad888535cea8e/docs/figure/ecoli_spikeins.Rmd/expected_variants-1.png" target="_blank">44865a1</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-07
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/a099d381d50521a5372a885e2b017f8853df26e2/docs/figure/ecoli_spikeins.Rmd/expected_variants-1.png" target="_blank">a099d38</a>
 </td>
 <td>
@@ -1914,13 +1994,11 @@ p3 &lt;- ggplot(vaf_sm, aes(expected_variants_cov, nvars, shape=sample)) +
 
 p1 + p2 + p3</code></pre>
 </div>
-<div id="expected-efficiency" class="section level3">
-<h3>Expected efficiency</h3>
-<p>Ideally, we want to try to estimate the coverage prior to sequencing.
-In these experiments, our drop-out rate was much higher than expected,
-so we will have to integrate that into the estimate. Here we estimate
-the efficiency and ultimately the number of variants knowing only the
-drop-out rate and library size.</p>
+<div id="expected-raw-coverage-re-estimated" class="section level3">
+<h3>Expected raw coverage (re-estimated)</h3>
+<p>Here it looks like we can’t estimate raw coverage very well, so I’m
+just going to use actual coverage in the meantime, for downstream
+analyses.</p>
 <pre class="r"><code>eff &lt;- vaf_sm %&gt;% rename(., c(&#39;coverage&#39; = &#39;dup_coverage&#39;))
 eff$sample &lt;- paste0(eff$sample, &#39;Rep&#39;, eff$replicate)
 eff$raw_coverage &lt;- qmap_cov$coverage
@@ -1936,7 +2014,7 @@ md &lt;- list.files(
 # calculate sequencing ratio
 eff$libsize &lt;- lapply(md, select, ESTIMATED_LIBRARY_SIZE) %&gt;% unlist() %&gt;% as.numeric() 
 eff$total_reads &lt;- lapply(md, function(x){x$READ_PAIRS_EXAMINED - x$READ_PAIR_OPTICAL_DUPLICATES}) %&gt;% as.numeric()
-eff$seqratio &lt;- eff$total_reads / eff$libsize * 2
+eff$seqratio &lt;- eff$total_reads / eff$libsize
 
 # estimate duplex coverage from seqratio
 eff$est_raw_coverage &lt;- eff$seqratio * eff$cells
@@ -1948,10 +2026,76 @@ eff &lt;- filter(mm, metric == &#39;drop_out_rate&#39;) %&gt;%
         rename(value = &#39;drop_out_rate&#39;) %&gt;%
         left_join(eff, ., by = &#39;sample&#39;)
 eff$est_efficiency_wdo &lt;- eff$est_efficiency * (1 - eff$drop_out_rate)
-eff$est_dup_coverage &lt;- eff$est_raw_coverage * eff$est_efficiency_wdo
+eff$est_dup_coverage &lt;- eff$raw_coverage * eff$est_efficiency
 eff$expected_variants &lt;- (1 - (1 - eff$VAF_mix) ^ round(eff$est_dup_coverage)) * N_TOTAL_VARS
 
-p1 &lt;- ggplot(eff, aes(efficiency, est_efficiency, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
+p1 &lt;- ggplot(eff, aes(raw_coverage, est_raw_coverage, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    xlab(&#39;Raw coverage&#39;) +
+    ylab(&#39;Estimated raw coverage&#39;) +
+    ggtitle(&#39;Estimated vs. actual raw coverage&#39;) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;)
+
+p2 &lt;- ggplot(eff, aes(raw_coverage, est_raw_coverage, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    xlab(&#39;Raw coverage&#39;) +
+    ylab(&#39;Estimated raw coverage&#39;) +
+    ggtitle(&#39;Estimated vs. actual raw coverage (zoom)&#39;) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;) +
+    xlim(0, 50000) + ylim(0, 45000)
+
+p1 + p2</code></pre>
+<p><img src="figure/ecoli_spikeins.Rmd/exp_raw_coverage-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-exp_raw_coverage-1">
+Past versions of exp_raw_coverage-1.png
+</button>
+</p>
+<div id="fig-exp_raw_coverage-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/44865a12cd06b960e02c54dc14aad888535cea8e/docs/figure/ecoli_spikeins.Rmd/exp_raw_coverage-1.png" target="_blank">44865a1</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="expected-efficiency" class="section level3">
+<h3>Expected efficiency</h3>
+<p>Ideally, we want to try to estimate the coverage prior to sequencing.
+In these experiments, our drop-out rate was much higher than expected,
+so we will have to integrate that into the estimate. Here we estimate
+the efficiency and ultimately the number of variants knowing only the
+drop-out rate and library size.</p>
+<pre class="r"><code>p1 &lt;- ggplot(eff, aes(efficiency, est_efficiency, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
@@ -1959,7 +2103,7 @@ p1 &lt;- ggplot(eff, aes(efficiency, est_efficiency, colour=factor(VAF_mix), sha
     ylab(&#39;Estimated duplex efficiency&#39;) +
     ggtitle(&#39;Estimated vs. actual duplex efficiency&#39;) +
     scale_colour_brewer(palette = &#39;Dark2&#39;) +
-    xlim(0, 0.02) + ylim(0, 0.02)
+    xlim(0, 0.05) + ylim(0, 0.05)
 
 p2 &lt;- ggplot(eff, aes(efficiency, est_efficiency_wdo, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
     geom_point() +
@@ -1972,65 +2116,142 @@ p2 &lt;- ggplot(eff, aes(efficiency, est_efficiency_wdo, colour=factor(VAF_mix),
     xlim(0, 0.02) + ylim(0, 0.02)
 
 p1 + p2</code></pre>
-<p><img src="figure/ecoli_spikeins.Rmd/exp_efficiency-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/ecoli_spikeins.Rmd/exp_efficiency-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-exp_efficiency-1">
+Past versions of exp_efficiency-1.png
+</button>
+</p>
+<div id="fig-exp_efficiency-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/44865a12cd06b960e02c54dc14aad888535cea8e/docs/figure/ecoli_spikeins.Rmd/exp_efficiency-1.png" target="_blank">44865a1</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-07
+</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="expected-raw-coverage-re-estimated" class="section level3">
-<h3>Expected raw coverage (re-estimated)</h3>
-<pre class="r"><code>p3 &lt;- ggplot(eff, aes(raw_coverage, est_raw_coverage, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
-    geom_point() +
-    theme_minimal() +
-    geom_abline(slope = 1) +
-    xlab(&#39;Raw coverage&#39;) +
-    ylab(&#39;Estimated raw coverage&#39;) +
-    ggtitle(&#39;Estimated vs. actual raw coverage&#39;) +
-    scale_colour_brewer(palette = &#39;Dark2&#39;)
-
-p4 &lt;- ggplot(eff, aes(raw_coverage, est_raw_coverage, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
-    geom_point() +
-    theme_minimal() +
-    geom_abline(slope = 1) +
-    xlab(&#39;Raw coverage&#39;) +
-    ylab(&#39;Estimated raw coverage&#39;) +
-    ggtitle(&#39;Estimated vs. actual raw coverage (zoom)&#39;) +
-    scale_colour_brewer(palette = &#39;Dark2&#39;) +
-    xlim(0, 50000) + ylim(0, 45000)
-
-p3 + p4</code></pre>
-<p><img src="figure/ecoli_spikeins.Rmd/exp_raw_coverage-1.png" width="1152" style="display: block; margin: auto;" /></p>
 </div>
-<div id="expected-duplex-coverage-and-variants-re-estimated"
+</div>
+<div id="expected-duplex-coverage-adjusted-by-drop-out"
 class="section level3">
-<h3>Expected duplex coverage and variants (re-estimated)</h3>
+<h3>Expected duplex coverage adjusted by drop-out</h3>
 <pre class="r"><code>p5 &lt;- ggplot(eff, aes(dup_coverage, est_dup_coverage, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
     ylab(&#39;Estimated duplex coverage&#39;) +
     xlab(&#39;Duplex coverage&#39;) +
-    ggtitle(&#39;Estimated vs. actual duplex coverage&#39;) +
-    scale_colour_brewer(palette = &#39;Dark2&#39;)
+    ggtitle(&#39;Estimated vs. actual duplex\ncoverage&#39;) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;) +
+    xlim(0, 500) + ylim(0, 500)
 
-p6 &lt;- ggplot(eff, aes(dup_coverage, est_dup_coverage, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
+p6 &lt;- ggplot(eff, aes(dup_coverage, est_dup_coverage * (1 - drop_out_rate), colour=factor(VAF_mix), shape=factor(VAF_mix))) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
     ylab(&#39;Estimated duplex coverage&#39;) +
     xlab(&#39;Duplex coverage&#39;) +
-    ggtitle(&#39;Estimated vs. actual duplex coverage (zoom)&#39;) +
+    ggtitle(&#39;Estimated vs. actual duplex\ncoverage (zoom) w/ drop out&#39;) +
     scale_colour_brewer(palette = &#39;Dark2&#39;) +
-    xlim(0, 150) + ylim(0, 150)
+    xlim(0, 50) + ylim(0, 50)
 
-p7 &lt;- ggplot(eff, aes(nvars, expected_variants, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
+p7 &lt;- ggplot(eff, aes(dup_coverage, est_dup_coverage * (1 - drop_out_rate) * 0.5, colour=factor(VAF_mix), shape=factor(VAF_mix))) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
-    ylab(&#39;Estimated variants&#39;) +
-    xlab(&#39;Variants called&#39;) +
-    ggtitle(&#39;Estimated vs. actual called variants&#39;) +
-    scale_colour_brewer(palette = &#39;Dark2&#39;)
+    ylab(&#39;Estimated duplex coverage&#39;) +
+    xlab(&#39;Duplex coverage&#39;) +
+    ggtitle(&#39;Estimated vs. actual duplex\ncoverage (zoom) w/ drop out + correction&#39;) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;) +
+    xlim(0, 50) + ylim(0, 50)
 
 p5 + p6 + p7</code></pre>
-<p><img src="figure/ecoli_spikeins.Rmd/exp_dup_coverage-1.png" width="1824" style="display: block; margin: auto;" /></p>
+<p><img src="figure/ecoli_spikeins.Rmd/exp_dup_coverage-1.png" width="1584" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-exp_dup_coverage-1">
+Past versions of exp_dup_coverage-1.png
+</button>
+</p>
+<div id="fig-exp_dup_coverage-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/44865a12cd06b960e02c54dc14aad888535cea8e/docs/figure/ecoli_spikeins.Rmd/exp_dup_coverage-1.png" target="_blank">44865a1</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="expected-variants-recalculated-with-expected-efficiency"
+class="section level3">
+<h3>Expected variants recalculated with expected efficiency</h3>
+<pre class="r"><code>eff$expected_variants &lt;- (1 - (1 - eff$VAF_mix) ^ round(eff$est_dup_coverage * (1 - eff$drop_out_rate) * 0.5)) * N_TOTAL_VARS
+eff$expected_variants_cov &lt;- (1 - (1 - eff$VAF_mix) ^ round(eff$dup_coverage)) * N_TOTAL_VARS
+
+p1 &lt;- ggplot(eff, aes(nvars, expected_variants, shape=factor(VAF_mix))) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    scale_x_continuous(limits = c(0,15000)) +
+    scale_y_continuous(limits = c(0,15000)) +
+    ggtitle(&#39;Expected vs. actual variants, based on expected coverage&#39;)
+
+p2 &lt;- ggplot(eff, aes(nvars, expected_variants_cov, shape=factor(VAF_mix))) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    scale_x_continuous(limits = c(0,15000)) +
+    scale_y_continuous(limits = c(0,15000)) +
+    ggtitle(&#39;Expected vs. actual variants, based on actual coverage&#39;)
+
+p1 + p2</code></pre>
+<p><img src="figure/ecoli_spikeins.Rmd/expected_variants_recalc-1.png" width="1152" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">

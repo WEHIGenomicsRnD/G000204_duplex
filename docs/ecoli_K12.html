@@ -13,7 +13,7 @@
 
 <title>E. coli K12 analysis</title>
 
-<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
@@ -37,7 +37,7 @@
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
-<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
 <!-- Add a small amount of space between sections. -->
 <style type="text/css">
 div.section {
@@ -74,6 +74,7 @@ if (window.hljs) {
 
 
 
+
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -94,6 +95,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -151,11 +155,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -322,7 +330,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -369,7 +377,7 @@ div.tocify {
 <div id="header">
 
 <div class="btn-group pull-right float-right">
-<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
 <ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
 <li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
 <li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
@@ -407,7 +415,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-01-13
+<strong>Last updated:</strong> 2023-03-15
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -422,10 +430,10 @@ title="This is the local directory in which the code in this file was executed."
 </span>
 </p>
 <p>
-This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
 analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version
-1.6.2). The <em>Checks</em> tab describes the reproducibility checks
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the reproducibility checks
 that were applied when the results were created. The <em>Past
 versions</em> tab lists the development history.
 </p>
@@ -538,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreecf4738a322c363cb4767ed35e07aa9ccbe57e6c2targetblankcf4738aa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree460c51913b5421083bd90d1872b884b77a8e536dtargetblank460c519a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/cf4738a322c363cb4767ed35e07aa9ccbe57e6c2" target="_blank">cf4738a</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/460c51913b5421083bd90d1872b884b77a8e536d" target="_blank">460c519</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreecf4738a322c363cb4767ed35e07aa9ccbe57e6c2targetblankcf4738aa"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree460c51913b5421083bd90d1872b884b77a8e536dtargetblank460c519a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -556,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/cf4738a322c363cb4767ed35e07aa9ccbe57e6c2" target="_blank">cf4738a</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/460c51913b5421083bd90d1872b884b77a8e536d" target="_blank">460c519</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -576,6 +584,7 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
+    Ignored:    analysis/cache/
     Ignored:    data/.DS_Store
     Ignored:    scripts/
 
@@ -585,7 +594,6 @@ Untracked files:
     Untracked:  DOCNAME
     Untracked:  analysis/._.DS_Store
     Untracked:  analysis/._ecoli_spikeins.Rmd
-    Untracked:  analysis/cache/
     Untracked:  analysis/calc_nanoseq_metrics.Rmd
     Untracked:  data/._.DS_Store
     Untracked:  data/._metrics.rds
@@ -600,10 +608,6 @@ Untracked files:
     Untracked:  efficiency.pdf
     Untracked:  prototype_code/
     Untracked:  stats.csv
-
-Unstaged changes:
-    Modified:   analysis/ecoli_spikeins.Rmd
-    Modified:   analysis/model.Rmd
 
 </code></pre>
 <p>
@@ -649,6 +653,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/460c51913b5421083bd90d1872b884b77a8e536d/analysis/ecoli_K12.Rmd" target="_blank">460c519</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+<td>
+Revised estimated efficiency analyses
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/e631e4850a19a2983076fb0a30be55fbb49b919c/docs/ecoli_K12.html" target="_blank">e631e48</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-01-13
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -4333,11 +4371,11 @@ for(metric_name in metric_names) {
     x$MungBeanUnit &lt;- as.factor(x$`Mung bean unit`)
     x$S1Unit &lt;- as.factor(x$`S1 unit`)
     x &lt;- x[,c(&#39;MungBeanUnit&#39;, &#39;S1Unit&#39;, &#39;protocol&#39;, &#39;nuclease&#39;, &#39;value&#39;)]
-    x_aov &lt;- aov(value ~ MungBeanUnit * protocol + S1Unit * protocol, data = x) %&gt;% summary() %&gt;% dplyr::first()
+    x_aov &lt;- aov(value ~ MungBeanUnit * protocol + S1Unit * protocol, data = x) %&gt;% summary()
     stats &lt;- rbind(stats,
                    data.frame(metric = metric_name,
-                              variable = rownames(x_aov)[1:5],
-                              pvalue = x_aov[[&#39;Pr(&gt;F)&#39;]][1:5]))
+                              variable = rownames(x_aov[[1]])[1:5],
+                              pvalue = x_aov[[1]][[&#39;Pr(&gt;F)&#39;]][1:5]))
 }
 stats$q &lt;- p.adjust(stats$pvalue, method = &#39;BH&#39;)
 stats$significant &lt;- stats$q &lt; 0.05
@@ -4523,11 +4561,11 @@ for(metric_name in metric_names) {
     x$S1Unit &lt;- as.factor(x$`S1 unit`)
     x &lt;- x[,c(&#39;MungBeanUnit&#39;, &#39;S1Unit&#39;, &#39;protocol&#39;, &#39;nuclease&#39;, &#39;value&#39;)]
     # x_aov &lt;- aov(value ~ MungBeanUnit * protocol + S1Unit * protocol, data = x) %&gt;% summary() %&gt;% dplyr::first()
-    x_aov &lt;- aov(value ~ MungBeanUnit * S1Unit * protocol, data = x) %&gt;% summary() %&gt;% dplyr::first()
+    x_aov &lt;- aov(value ~ MungBeanUnit * S1Unit * protocol, data = x) %&gt;% summary()
     stats &lt;- rbind(stats,
                    data.frame(metric = metric_name,
-                              variable = rownames(x_aov)[1:5],
-                              pvalue = x_aov[[&#39;Pr(&gt;F)&#39;]][1:5]))
+                              variable = rownames(x_aov[[1]])[1:5],
+                              pvalue = x_aov[[1]][[&#39;Pr(&gt;F)&#39;]][1:5]))
 }
 stats$q &lt;- p.adjust(stats$pvalue, method = &#39;BH&#39;)
 stats$significant &lt;- stats$q &lt; 0.05
@@ -5431,18 +5469,16 @@ beyond sampling are not accounted for.</p>
 <p>To start, let’s see how close the efficiency estimation is to the
 estimate. We will assume 600 cell equivalents were sequenced per E coli
 sample. Additionally, we estimate the sequencing ratio as follows:</p>
-<p><code>(ESTIMATED_LIBRARY_SIZE / (READ_PAIRS_EXAMINED - READ_PAIR_OPTICAL_DUPLICATES)) * 2</code></p>
+<p><code>ESTIMATED_LIBRARY_SIZE / (READ_PAIRS_EXAMINED - READ_PAIR_OPTICAL_DUPLICATES)</code></p>
 <p>The above numbers can be obtained from the MarkDuplicates output. We
-multiply this by 2 due to paired-end sequencing. We should be able to
-estimate this before sequencing, but I’m using the empirical values for
-this experiment.</p>
+should be able to estimate this before sequencing, but I’m using the
+empirical values for this experiment.</p>
 <p>We can then estimate the raw coverage as the seqratio mutliplied by
 the number of cells. Here is what this looks like on this data set:</p>
 <pre class="r"><code># prepare efficiency stats and filter out unrestricted xGEN sample
 eff &lt;- filter(mm, metric == &#39;efficiency&#39;) %&gt;% 
         select(c(&#39;sample&#39;, &#39;nuclease&#39;, &#39;protocol&#39;, &#39;value&#39;)) %&gt;%
-        mutate(cells = 600,
-               raw_coverage = qmap_cov$coverage,
+        mutate(raw_coverage = qmap_cov$coverage,
                dup_coverage = qmap_cons_cov$coverage) %&gt;%
         rename(value = &#39;efficiency&#39;) %&gt;%
         filter(sample != &#39;xGEN-xGENRep1&#39;)
@@ -5461,29 +5497,36 @@ md &lt;- md[-9] # remove xGEN-xGENRep1
 # calculate sequencing ratio
 eff$libsize &lt;- lapply(md, select, ESTIMATED_LIBRARY_SIZE) %&gt;% unlist() %&gt;% as.numeric() 
 eff$total_reads &lt;- lapply(md, function(x){x$READ_PAIRS_EXAMINED - x$READ_PAIR_OPTICAL_DUPLICATES}) %&gt;% as.numeric()
-eff$seqratio &lt;- eff$total_reads / eff$libsize * 2
+eff$seqratio &lt;- eff$total_reads / eff$libsize
 
 # estimate duplex coverage from seqratio
+eff$cells &lt;- 600
 eff$est_raw_coverage &lt;- eff$seqratio * eff$cells
-eff$est_efficiency &lt;- (ppois(q=2-0.1, lambda=eff$seqratio/2, lower.tail=F)/(1-dpois(0, eff$seqratio/2)))^2 / (eff$seqratio/(1-exp(-eff$seqratio)))
-eff$est_dup_coverage &lt;- eff$est_raw_coverage * eff$est_efficiency
 
-# here we add drop-out rate to the mix
-eff &lt;- filter(mm, metric == &#39;drop_out_rate&#39; &amp; sample != &#39;xGEN-xGENRep1&#39;) %&gt;%
-        select(c(&#39;sample&#39;, &#39;value&#39;)) %&gt;%
-        rename(value = &#39;drop_out_rate&#39;) %&gt;%
-        left_join(eff, ., by = &#39;sample&#39;)
-
-ggplot(eff, aes(raw_coverage, est_raw_coverage, colour=protocol, shape=nuclease)) +
+p1 &lt;- ggplot(eff, aes(raw_coverage, est_raw_coverage, colour=protocol, shape=nuclease)) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
     ylab(&#39;Estimated raw coverage&#39;) +
     xlab(&#39;Raw coverage&#39;) +
-    ggtitle(&#39;Estimated vs. actual raw coverage&#39;) +
+    ggtitle(&#39;Estimated vs. actual\nraw coverage (600 cells)&#39;) +
     scale_colour_brewer(palette = &#39;Dark2&#39;) +
-    xlim(0, 10000) + ylim(0, 10000)</code></pre>
-<p><img src="figure/ecoli_K12.Rmd/estimate_raw_coverage-1.png" width="528" style="display: block; margin: auto;" /></p>
+    xlim(0, 10000) + ylim(0, 10000)
+
+eff$cells &lt;- 2000
+eff$est_raw_coverage &lt;- eff$seqratio * eff$cells
+p2 &lt;- ggplot(eff, aes(raw_coverage, est_raw_coverage, colour=protocol, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab(&#39;Estimated raw coverage&#39;) +
+    xlab(&#39;Raw coverage&#39;) +
+    ggtitle(&#39;Estimated vs. actual\nraw coverage (2000 cells)&#39;) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;) +
+    xlim(0, 10000) + ylim(0, 10000)
+
+p1 + p2</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/estimate_raw_coverage-1.png" width="1056" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-estimate_raw_coverage-1">
 Past versions of estimate_raw_coverage-1.png
@@ -5522,69 +5565,27 @@ mcmero
 </div>
 </div>
 <p>We can see that the coverage is under-estimated, which may be due to
-an under-estimation of the number of input cells.</p>
-<p>Now that we have the estimated raw coverage, we can estimate the
-duplex coverage by multiplying this by the estimated efficiency.
-Alternatively, we can also obtain this figure from the ppois
-calculation:</p>
-<p><code>(ppois(q=2-0.1, lambda=seqratio/2, lower.tail=F)/(1-dpois(0, seqratio/2)))^2 * cells</code></p>
-<p>The numerator of the efficiency estimation equation is the estimated
-duplex yield, so we can multiply this by the cell number to obtain a
-coverage estimate.</p>
-<p>Here’s how the duplex coverage estimates compare for these data:</p>
-<pre class="r"><code>ggplot(eff, aes(dup_coverage, est_dup_coverage, colour=protocol, shape=nuclease)) +
-    geom_point() +
-    theme_minimal() +
-    geom_abline(slope = 1) +
-    ylab(&#39;Estimated duplex coverage&#39;) +
-    xlab(&#39;Duplex coverage&#39;) +
-    ggtitle(&#39;Estimated vs. actual duplex coverage&#39;) +
-    scale_colour_brewer(palette = &#39;Dark2&#39;) +
-    xlim(0, 600) + ylim(0, 600)</code></pre>
-<p><img src="figure/ecoli_K12.Rmd/estimate_duplex_coverage-1.png" width="528" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-estimate_duplex_coverage-1">
-Past versions of estimate_duplex_coverage-1.png
-</button>
-</p>
-<div id="fig-estimate_duplex_coverage-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/mcmero/rare-mutation-detection/blob/217f4148db0001ce7af51a78d69172ac15bcf490/docs/figure/ecoli_K12.Rmd/estimate_duplex_coverage-1.png" target="_blank">217f414</a>
-</td>
-<td>
-mcmero
-</td>
-<td>
-2023-01-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>We can see above that we over-estimate the duplex coverage, even
-though we <em>under</em>estimated the raw coverage. This indicates that
-the efficiency calculation is too optimistic in real data (which makes
-sense, it’s a very simple model).</p>
-<p>Case in point:</p>
-<pre class="r"><code>ggplot(eff, aes(efficiency, est_efficiency, colour=protocol, shape=nuclease)) +
+an under-estimation of the number of input cells, but I am not entirely
+sure.</p>
+<p>We should be able to use estimated raw coverage, together with
+estimated efficiency to calculate the estimated duplex coverage. But
+because our estimated raw coverage is so off, we’ll just use the
+calculated coverage for now.</p>
+<p>Given that the efficiency model is quite simplistic, adjusting it by
+the drop-out rate gives a more accurate estimation. To do this, we
+multiply the estimated duplex coverage by one minus the drop-out
+rate.</p>
+<pre class="r"><code># calculate efficiency and estimated dup coverage
+eff$est_efficiency &lt;- (ppois(q=2-0.1, lambda=eff$seqratio/2, lower.tail=F)/(1-dpois(0, eff$seqratio/2)))^2 / (eff$seqratio/(1-exp(-eff$seqratio)))
+eff$est_dup_coverage &lt;- eff$raw_coverage * eff$est_efficiency
+
+# here we add drop-out rate to the mix
+eff &lt;- filter(mm, metric == &#39;drop_out_rate&#39; &amp; sample != &#39;xGEN-xGENRep1&#39;) %&gt;%
+        select(c(&#39;sample&#39;, &#39;value&#39;)) %&gt;%
+        rename(value = &#39;drop_out_rate&#39;) %&gt;%
+        left_join(eff, ., by = &#39;sample&#39;)
+
+p1 &lt;- ggplot(eff, aes(efficiency, est_efficiency, colour=protocol, shape=nuclease)) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
@@ -5592,8 +5593,20 @@ sense, it’s a very simple model).</p>
     xlab(&#39;Efficiency&#39;) +
     ggtitle(&#39;Estimated vs. actual efficiency&#39;) +
     scale_colour_brewer(palette = &#39;Dark2&#39;) +
-    xlim(0, 0.15) + ylim(0, 0.15)</code></pre>
-<p><img src="figure/ecoli_K12.Rmd/estimate_efficiency-1.png" width="528" style="display: block; margin: auto;" /></p>
+    xlim(0, 0.15) + ylim(0, 0.15)
+
+p2 &lt;- ggplot(eff, aes(efficiency, est_efficiency * (1 - drop_out_rate), colour=protocol, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab(&#39;Estimated efficiency&#39;) +
+    xlab(&#39;Efficiency&#39;) +
+    ggtitle(&#39;Estimated vs. actual efficiency with drop out&#39;) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;) +
+    xlim(0, 0.15) + ylim(0, 0.15)
+
+p1 + p2</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/estimate_efficiency-1.png" width="1056" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-estimate_efficiency-1">
 Past versions of estimate_efficiency-1.png
@@ -5631,12 +5644,22 @@ mcmero
 </table>
 </div>
 </div>
-<p>We can theoretically multiply the estimated efficiency value by an
-estimated (or empirically derived) drop-out rate to account for this. To
-do this, we multiply the estimated duplex coverage by one minus the
-drop-out rate.</p>
+<p>Here we can see the effect on the duplex coverage. We also halve the
+estimated duplex coverage to account for read filtering, which further
+reduces efficiency but is not accounted for in the calculation.</p>
 <pre class="r"><code>eff$est_dup_coverage_wdo &lt;- eff$est_dup_coverage * (1 - eff$drop_out_rate)
-ggplot(eff, aes(dup_coverage, est_dup_coverage_wdo, colour=protocol, shape=nuclease)) +
+eff$est_dup_coverage_wdo_cor &lt;- eff$est_dup_coverage_wdo * 0.5
+p1 &lt;- ggplot(eff, aes(dup_coverage, est_dup_coverage, colour=protocol, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab(&#39;Estimated duplex coverage&#39;) +
+    xlab(&#39;Duplex coverage&#39;) +
+    ggtitle(&#39;Estimated vs. actual duplex coverage&#39;) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;) +
+    xlim(0, 1200) + ylim(0, 1200)
+
+p2 &lt;- ggplot(eff, aes(dup_coverage, est_dup_coverage_wdo, colour=protocol, shape=nuclease)) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
@@ -5644,8 +5667,19 @@ ggplot(eff, aes(dup_coverage, est_dup_coverage_wdo, colour=protocol, shape=nucle
     xlab(&#39;Duplex coverage&#39;) +
     ggtitle(&#39;Estimated vs. actual duplex coverage with drop-out&#39;) +
     scale_colour_brewer(palette = &#39;Dark2&#39;) +
-    xlim(0, 600) + ylim(0, 600)</code></pre>
-<p><img src="figure/ecoli_K12.Rmd/estimate_coverage_with_dropout-1.png" width="528" style="display: block; margin: auto;" /></p>
+    xlim(0, 1200) + ylim(0, 1200)
+
+p3 &lt;- ggplot(eff, aes(dup_coverage, est_dup_coverage_wdo_cor, colour=protocol, shape=nuclease)) +
+    geom_point() +
+    theme_minimal() +
+    geom_abline(slope = 1) +
+    ylab(&#39;Estimated duplex coverage&#39;) +
+    xlab(&#39;Duplex coverage&#39;) +
+    ggtitle(&#39;Estimated vs. actual duplex\ncoverage with drop-out and correction&#39;) +
+    scale_colour_brewer(palette = &#39;Dark2&#39;) +
+    xlim(0, 1200) + ylim(0, 1200)
+p1 + p2 + p3</code></pre>
+<p><img src="figure/ecoli_K12.Rmd/estimate_coverage_with_dropout-1.png" width="1584" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-estimate_coverage_with_dropout-1">
 Past versions of estimate_coverage_with_dropout-1.png
@@ -5750,7 +5784,7 @@ ggplot(eff_nano, aes(dup_coverage, est_dup_coverage_wdo, shape=nuclease)) +
     xlab(&#39;Duplex coverage&#39;) +
     ggtitle(&#39;NanoSeq estimated vs. actual duplex\ncoverage with mean drop-out&#39;) +
     scale_colour_brewer(palette = &#39;Dark2&#39;) +
-    xlim(0, 600) + ylim(0, 600)</code></pre>
+    xlim(0, 1000) + ylim(0, 1000)</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/estimate_coverage_with_mean_dropout_nano-1.png" width="528" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-estimate_coverage_with_mean_dropout_nano-1">
@@ -5817,6 +5851,43 @@ ggplot(eff, aes(efficiency, real_efficiency, colour=protocol, shape=nuclease)) +
     scale_colour_brewer(palette = &#39;Dark2&#39;) +
     xlim(0, 0.15) + ylim(0, 0.15)</code></pre>
 <p><img src="figure/ecoli_K12.Rmd/adjusted_efficiency-1.png" width="528" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-adjusted_efficiency-1">
+Past versions of adjusted_efficiency-1.png
+</button>
+</p>
+<div id="fig-adjusted_efficiency-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/e631e4850a19a2983076fb0a30be55fbb49b919c/docs/figure/ecoli_K12.Rmd/adjusted_efficiency-1.png" target="_blank">e631e48</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-01-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -5826,13 +5897,13 @@ Session information
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 4.0.5 (2021-03-31)
+<pre><code>R version 4.2.0 (2022-04-22)
 Platform: x86_64-pc-linux-gnu (64-bit)
 Running under: CentOS Linux 7 (Core)
 
 Matrix products: default
-BLAS:   /stornext/System/data/apps/R/R-4.0.5/lib64/R/lib/libRblas.so
-LAPACK: /stornext/System/data/apps/R/R-4.0.5/lib64/R/lib/libRlapack.so
+BLAS:   /stornext/System/data/apps/R/R-4.2.0/lib64/R/lib/libRblas.so
+LAPACK: /stornext/System/data/apps/R/R-4.2.0/lib64/R/lib/libRlapack.so
 
 locale:
  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -5843,44 +5914,45 @@ locale:
 [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 
 attached base packages:
-[1] stats4    parallel  stats     graphics  grDevices utils     datasets 
+[1] parallel  stats4    stats     graphics  grDevices utils     datasets 
 [8] methods   base     
 
 other attached packages:
- [1] vcfR_1.12.0          UpSetR_1.4.0         RColorBrewer_1.1-3  
- [4] patchwork_1.1.1      readxl_1.3.1         seqinr_4.2-8        
- [7] Rsamtools_2.6.0      Biostrings_2.58.0    XVector_0.30.0      
-[10] GenomicRanges_1.42.0 GenomeInfoDb_1.26.7  IRanges_2.24.1      
-[13] S4Vectors_0.28.1     BiocGenerics_0.36.1  stringr_1.4.0       
-[16] tibble_3.1.7         here_1.0.1           dplyr_1.0.7         
-[19] data.table_1.14.0    ggplot2_3.3.6        workflowr_1.6.2     
+ [1] vcfR_1.14.0          UpSetR_1.4.0         RColorBrewer_1.1-3  
+ [4] patchwork_1.1.2      readxl_1.4.2         seqinr_4.2-23       
+ [7] Rsamtools_2.12.0     Biostrings_2.64.1    XVector_0.36.0      
+[10] GenomicRanges_1.48.0 GenomeInfoDb_1.32.4  IRanges_2.30.1      
+[13] S4Vectors_0.34.0     BiocGenerics_0.42.0  stringr_1.5.0       
+[16] tibble_3.1.8         here_1.0.1           dplyr_1.1.0         
+[19] data.table_1.14.8    ggplot2_3.3.6        workflowr_1.7.0     
 
 loaded via a namespace (and not attached):
- [1] nlme_3.1-152           bitops_1.0-7           fs_1.5.0              
- [4] rprojroot_2.0.2        tools_4.0.5            bslib_0.3.0           
- [7] utf8_1.2.2             R6_2.5.1               vegan_2.5-7           
-[10] DBI_1.1.1              mgcv_1.8-35            colorspace_2.0-3      
-[13] permute_0.9-5          ade4_1.7-18            withr_2.5.0           
-[16] tidyselect_1.1.1       gridExtra_2.3          compiler_4.0.5        
-[19] git2r_0.28.0           cli_3.3.0              labeling_0.4.2        
-[22] sass_0.4.0             scales_1.2.0           digest_0.6.29         
-[25] rmarkdown_2.11         pkgconfig_2.0.3        htmltools_0.5.2       
-[28] highr_0.9              fastmap_1.1.0          rlang_1.0.2           
-[31] rstudioapi_0.13        jquerylib_0.1.4        generics_0.1.1        
-[34] farver_2.1.0           jsonlite_1.7.2         BiocParallel_1.24.1   
-[37] RCurl_1.98-1.3         magrittr_2.0.3         GenomeInfoDbData_1.2.4
-[40] Matrix_1.3-2           Rcpp_1.0.7             munsell_0.5.0         
-[43] fansi_1.0.3            ape_5.5                lifecycle_1.0.1       
-[46] stringi_1.7.5          whisker_0.4            yaml_2.2.1            
-[49] MASS_7.3-53.1          zlibbioc_1.36.0        plyr_1.8.6            
-[52] pinfsc50_1.2.0         grid_4.0.5             promises_1.2.0.1      
-[55] crayon_1.5.1           lattice_0.20-44        splines_4.0.5         
-[58] knitr_1.33             pillar_1.7.0           reshape2_1.4.4        
-[61] glue_1.6.2             evaluate_0.14          memuse_4.2-1          
-[64] vctrs_0.4.1            httpuv_1.6.3           cellranger_1.1.0      
-[67] gtable_0.3.0           purrr_0.3.4            assertthat_0.2.1      
-[70] xfun_0.22              later_1.3.0            viridisLite_0.4.0     
-[73] cluster_2.1.2          ellipsis_0.3.2        </code></pre>
+ [1] nlme_3.1-160           bitops_1.0-7           fs_1.5.2              
+ [4] httr_1.4.4             rprojroot_2.0.3        tools_4.2.0           
+ [7] bslib_0.4.0            utf8_1.2.2             R6_2.5.1              
+[10] vegan_2.6-4            mgcv_1.8-40            colorspace_2.0-3      
+[13] permute_0.9-7          ade4_1.7-22            withr_2.5.0           
+[16] tidyselect_1.2.0       gridExtra_2.3          processx_3.7.0        
+[19] compiler_4.2.0         git2r_0.31.0           cli_3.4.1             
+[22] labeling_0.4.2         sass_0.4.2             scales_1.2.1          
+[25] callr_3.7.2            digest_0.6.30          rmarkdown_2.16        
+[28] pkgconfig_2.0.3        htmltools_0.5.3        fastmap_1.1.0         
+[31] highr_0.9              rlang_1.0.6            rstudioapi_0.14       
+[34] jquerylib_0.1.4        generics_0.1.3         farver_2.1.1          
+[37] jsonlite_1.8.3         BiocParallel_1.30.4    RCurl_1.98-1.9        
+[40] magrittr_2.0.3         GenomeInfoDbData_1.2.8 Matrix_1.5-1          
+[43] Rcpp_1.0.9             munsell_0.5.0          fansi_1.0.3           
+[46] ape_5.7                lifecycle_1.0.3        stringi_1.7.8         
+[49] whisker_0.4            yaml_2.3.5             MASS_7.3-58.1         
+[52] zlibbioc_1.42.0        plyr_1.8.7             pinfsc50_1.2.0        
+[55] grid_4.2.0             promises_1.2.0.1       crayon_1.5.2          
+[58] lattice_0.20-45        splines_4.2.0          knitr_1.40            
+[61] ps_1.7.1               pillar_1.8.1           reshape2_1.4.4        
+[64] codetools_0.2-18       glue_1.6.2             evaluate_0.17         
+[67] getPass_0.2-2          memuse_4.2-3           vctrs_0.5.2           
+[70] httpuv_1.6.6           cellranger_1.1.0       gtable_0.3.1          
+[73] cachem_1.0.6           xfun_0.33              later_1.3.0           
+[76] viridisLite_0.4.1      cluster_2.1.4         </code></pre>
 </div>
 </div>
 </div>
@@ -5889,7 +5961,7 @@ loaded via a namespace (and not attached):
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
 TeX fonts only; see
-http://docs.mathjax.org/en/latest/configuration.html.  This will make
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
 the presentation more consistent at the cost of the webpage sometimes
 taking slightly longer to load. Note that this only works because the
 footer is added to webpages before the MathJax javascript. -->
