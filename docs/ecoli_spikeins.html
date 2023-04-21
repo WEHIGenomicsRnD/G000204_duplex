@@ -415,7 +415,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-03-15
+<strong>Last updated:</strong> 2023-04-21
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree460c51913b5421083bd90d1872b884b77a8e536dtargetblank460c519a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree1940332d95fdab1f3c05b5dfdaa1da4474d1d739targetblank1940332a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/460c51913b5421083bd90d1872b884b77a8e536d" target="_blank">460c519</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/1940332d95fdab1f3c05b5dfdaa1da4474d1d739" target="_blank">1940332</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree460c51913b5421083bd90d1872b884b77a8e536dtargetblank460c519a"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree1940332d95fdab1f3c05b5dfdaa1da4474d1d739targetblank1940332a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/460c51913b5421083bd90d1872b884b77a8e536d" target="_blank">460c519</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/1940332d95fdab1f3c05b5dfdaa1da4474d1d739" target="_blank">1940332</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -608,6 +608,10 @@ Untracked files:
     Untracked:  efficiency.pdf
     Untracked:  prototype_code/
     Untracked:  stats.csv
+
+Unstaged changes:
+    Modified:   analysis/ecoli_K12.Rmd
+    Modified:   analysis/model.Rmd
 
 </code></pre>
 <p>
@@ -653,6 +657,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/1940332d95fdab1f3c05b5dfdaa1da4474d1d739/analysis/ecoli_spikeins.Rmd" target="_blank">1940332</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-04-21
+</td>
+<td>
+Filter/check by expected reference variants
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/ecoli_spikeins.html" target="_blank">f0bc24f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1015,7 +1053,8 @@ rinfo_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/read_info&
 markdup_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/mark_duplicates&#39;)
 qualimap_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/qualimap&#39;)
 qualimap_cons_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/consensus/qualimap&#39;)
-variant_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/variants&#39;)</code></pre>
+variant_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/variants&#39;)
+nucdiff_snp_file &lt;- here(&#39;data/ref/nucdiff/ecoli_BL21_vs_ATCC_1.snps&#39;)</code></pre>
 <pre class="r"><code>sample_names &lt;- list.files(rinfo_dir) %&gt;%
                 str_split(&#39;\\.txt.gz&#39;) %&gt;%
                 lapply(., dplyr::first) %&gt;%
@@ -1031,7 +1070,13 @@ var_sample_names &lt;- list.files(variant_dir) %&gt;%
                 lapply(., dplyr::first) %&gt;%
                 unlist()
 
-var_df &lt;- load_variants(variant_dir, var_sample_names) %&gt;% calculate_vafs()
+# load reference SNPs
+ref_snps &lt;- read.delim(nucdiff_snp_file, sep = &#39;\t&#39;, header = FALSE)
+N_TOTAL_VARS &lt;- length(unique(ref_snps$V1))
+
+var_df &lt;- load_variants(variant_dir, var_sample_names) %&gt;%
+            calculate_vafs() %&gt;%
+            mutate(is_ref_snp = POS %in% ref_snps$V1)
 
 # load and fetch duplicate rate from MarkDuplicates output
 mdup &lt;- load_markdup_data(markdup_dir, sample_names)
@@ -1087,6 +1132,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/figure/ecoli_spikeins.Rmd/plot_by_sample-1.png" target="_blank">f0bc24f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/44865a12cd06b960e02c54dc14aad888535cea8e/docs/figure/ecoli_spikeins.Rmd/plot_by_sample-1.png" target="_blank">44865a1</a>
@@ -1491,6 +1547,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/figure/ecoli_spikeins.Rmd/gc_deviation-1.png" target="_blank">f0bc24f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/44865a12cd06b960e02c54dc14aad888535cea8e/docs/figure/ecoli_spikeins.Rmd/gc_deviation-1.png" target="_blank">44865a1</a>
 </td>
 <td>
@@ -1672,6 +1739,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/figure/ecoli_spikeins.Rmd/family_sizes-1.png" target="_blank">f0bc24f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/a099d381d50521a5372a885e2b017f8853df26e2/docs/figure/ecoli_spikeins.Rmd/family_sizes-1.png" target="_blank">a099d38</a>
 </td>
 <td>
@@ -1770,43 +1848,88 @@ Marek Cmero
 number of other metrics used in estimating number of variants
 called.</p>
 <pre class="r"><code># number of differing variant sites between the E coli genomes
-N_TOTAL_VARS &lt;- 33655
 COVERAGE_PER_GENOME &lt;- 10
 
-vaf_sm &lt;- data.table(var_df)[, list(VAF_mean = mean(VAF), nvars = length(POS)), by=sample] %&gt;%
+vaf_sm &lt;- data.table(var_df)[, list(VAF_mean = mean(VAF), nvars_ref = sum(is_ref_snp), nvars_nonref = sum(!is_ref_snp)), by=sample] %&gt;%
             mutate(VAF_mix = as.character(sample) %&gt;% strsplit(&#39;-K12Rep&#39;) %&gt;% lapply(dplyr::first) %&gt;% unlist()) %&gt;%
             left_join(., select(metrics, c(sample, efficiency)), by=&#39;sample&#39;) %&gt;%
-            separate(col = sample, sep = &#39;Rep&#39;, into = c(&#39;sample&#39;, &#39;replicate&#39;))
-            
+            separate(col = sample, sep = &#39;Rep&#39;, into = c(&#39;sample&#39;, &#39;replicate&#39;)) %&gt;%
+            mutate(coverage = qmap_cons_cov$coverage,
+                   cells = c(318, 202, 11139, 601, 585, 86, 74, 188, 228)) %&gt;%
+            reshape2::melt(., id.vars = c(&quot;sample&quot;, &quot;replicate&quot;, &quot;cells&quot;, &quot;VAF_mean&quot;, &quot;VAF_mix&quot;, &quot;efficiency&quot;, &quot;coverage&quot;),
+                 measure.vars = c(&quot;nvars_ref&quot;, &quot;nvars_nonref&quot;),
+                 variable.name = &quot;nvars_type&quot;, value.name = &quot;nvars_count&quot;)
+    
 vaf_sm$VAF_mix[vaf_sm$VAF_mix == &#39;1-10&#39;] &lt;- 0.1
 # vaf_sm$efficiency[vaf_sm$sample == ] &lt;- 0.002 # a guess
 # vaf_sm$cells &lt;- c(318, 202, 11139, 601, 585, 86, 74, 188, 228)
 vaf_sm$VAF_mix &lt;- as.numeric(vaf_sm$VAF_mix) / 100
-vaf_sm$cells &lt;- c(318, 202, 11139, 601, 585, 86, 74, 188, 228)
-vaf_sm$coverage &lt;- qmap_cons_cov$coverage
 vaf_sm$expected_coverage &lt;- vaf_sm$cells * COVERAGE_PER_GENOME * vaf_sm$efficiency
 
 print(vaf_sm)</code></pre>
-<pre><code>    sample replicate    VAF_mean nvars VAF_mix  efficiency cells coverage
-1    0-K12         1 0.144585508   192   0.000 0.003411398   318  16.4145
-2    0-K12         2 0.159597801   122   0.000 0.002459236   202   8.5023
-3 1-10-K12         1 0.005226775 14202   0.001 0.003678547 11139 424.9759
-4    1-K12         1 0.070934203  8096   0.010 0.002135843   601  20.4558
-5    1-K12         2 0.087725317  6204   0.010 0.001740567   585  16.3451
-6   10-K12         1 0.222747259  1796   0.100 0.001806526    86   2.3988
-7   10-K12         2 0.230245999   723   0.100 0.001463852    74   1.8268
-8    5-K12         1 0.186009906  5788   0.050 0.001680279   188   5.1634
-9    5-K12         2 0.185332683  6394   0.050 0.001364435   228   5.3801
-  expected_coverage
-1         10.848247
-2          4.967657
-3        409.753348
-4         12.836414
-5         10.182318
-6          1.553612
-7          1.083251
-8          3.158924
-9          3.110913</code></pre>
+<pre><code>     sample replicate cells    VAF_mean VAF_mix  efficiency coverage
+1     0-K12         1   318 0.144585508   0.000 0.003411398  16.4145
+2     0-K12         2   202 0.159597801   0.000 0.002459236   8.5023
+3  1-10-K12         1 11139 0.005226775   0.001 0.003678547 424.9759
+4     1-K12         1   601 0.070934203   0.010 0.002135843  20.4558
+5     1-K12         2   585 0.087725317   0.010 0.001740567  16.3451
+6    10-K12         1    86 0.222747259   0.100 0.001806526   2.3988
+7    10-K12         2    74 0.230245999   0.100 0.001463852   1.8268
+8     5-K12         1   188 0.186009906   0.050 0.001680279   5.1634
+9     5-K12         2   228 0.185332683   0.050 0.001364435   5.3801
+10    0-K12         1   318 0.144585508   0.000 0.003411398  16.4145
+11    0-K12         2   202 0.159597801   0.000 0.002459236   8.5023
+12 1-10-K12         1 11139 0.005226775   0.001 0.003678547 424.9759
+13    1-K12         1   601 0.070934203   0.010 0.002135843  20.4558
+14    1-K12         2   585 0.087725317   0.010 0.001740567  16.3451
+15   10-K12         1    86 0.222747259   0.100 0.001806526   2.3988
+16   10-K12         2    74 0.230245999   0.100 0.001463852   1.8268
+17    5-K12         1   188 0.186009906   0.050 0.001680279   5.1634
+18    5-K12         2   228 0.185332683   0.050 0.001364435   5.3801
+     nvars_type nvars_count expected_coverage
+1     nvars_ref          41         10.848247
+2     nvars_ref          37          4.967657
+3     nvars_ref       11632        409.753348
+4     nvars_ref        7465         12.836414
+5     nvars_ref        5735         10.182318
+6     nvars_ref        1700          1.553612
+7     nvars_ref         632          1.083251
+8     nvars_ref        5364          3.158924
+9     nvars_ref        5959          3.110913
+10 nvars_nonref         151         10.848247
+11 nvars_nonref          85          4.967657
+12 nvars_nonref        2570        409.753348
+13 nvars_nonref         631         12.836414
+14 nvars_nonref         469         10.182318
+15 nvars_nonref          96          1.553612
+16 nvars_nonref          91          1.083251
+17 nvars_nonref         424          3.158924
+18 nvars_nonref         435          3.110913</code></pre>
+<div id="compare-variants-to-expected-reference-vars"
+class="section level3">
+<h3>Compare variants to expected reference vars</h3>
+<p>Plot number of variants that match the expected reference SNPs versus
+the non-reference SNPs.</p>
+<pre class="r"><code>p1 &lt;- ggplot(vaf_sm, aes(sample, nvars_count, colour = nvars_type, shape = nvars_type)) +
+    geom_point(size = 3) +
+    theme_minimal() +
+    theme(legend.position = &#39;bottom&#39;) +
+    ggtitle(&#39;Reference and non-reference variants called&#39;)
+p2 &lt;- ggplot(vaf_sm[vaf_sm$nvars_type == &#39;nvars_ref&#39;,], aes(sample, nvars_count / N_TOTAL_VARS)) +
+    geom_point(size = 3) +
+    theme_minimal() +
+    theme(legend.position = &#39;bottom&#39;) +
+    ylim(0, 1) +
+    ggtitle(&#39;Fraction of reference variants called&#39;)
+p3 &lt;- ggplot(vaf_sm, aes(sample, coverage, colour = replicate, shape = replicate)) +
+    geom_point(size = 3) +
+    theme_minimal() +
+    theme(legend.position = &#39;bottom&#39;) +
+    ggtitle(&#39;Duplex coverage&#39;)
+
+p1 + p2 + p3</code></pre>
+<p><img src="figure/ecoli_spikeins.Rmd/variant_calls_matching_ref-1.png" width="1584" style="display: block; margin: auto;" /></p>
+</div>
 <div id="expected-coverage" class="section level3">
 <h3>Expected coverage</h3>
 <p>Here we plot the observed mean coverage versus the expected coverage,
@@ -1822,7 +1945,7 @@ per strand, whereas we ran duplex consensus calling without SSC.</p>
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1)</code></pre>
-<p><img src="figure/ecoli_spikeins.Rmd/expected_coverage-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/ecoli_spikeins.Rmd/expected_coverage-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-expected_coverage-1">
 Past versions of expected_coverage-1.png
@@ -1890,7 +2013,7 @@ expected to call with 95% confidence, using the formula above.</p>
 <pre class="r"><code>vaf_sm$expected_variants &lt;- (1 - (1 - vaf_sm$VAF_mix) ^ round(vaf_sm$expected_coverage)) * N_TOTAL_VARS
 vaf_sm$expected_variants_cov &lt;- (1 - (1 - vaf_sm$VAF_mix) ^ round(vaf_sm$coverage)) * N_TOTAL_VARS
 
-p1 &lt;- ggplot(vaf_sm, aes(expected_variants, nvars, shape=sample)) +
+p1 &lt;- ggplot(vaf_sm[vaf_sm$nvars_type == &#39;nvars_ref&#39;,], aes(expected_variants, nvars_count, shape=sample)) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
@@ -1898,7 +2021,7 @@ p1 &lt;- ggplot(vaf_sm, aes(expected_variants, nvars, shape=sample)) +
     scale_y_continuous(limits = c(0,15000)) +
     ggtitle(&#39;Expected vs. actual variants, based on expected coverage&#39;)
 
-p2 &lt;- ggplot(vaf_sm, aes(expected_variants_cov, nvars, shape=sample)) +
+p2 &lt;- ggplot(vaf_sm[vaf_sm$nvars_type == &#39;nvars_ref&#39;,], aes(expected_variants_cov, nvars_count, shape=sample)) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
@@ -1967,14 +2090,14 @@ Marek Cmero
 </table>
 </div>
 </div>
-<pre class="r"><code>p1 &lt;- ggplot(vaf_sm, aes(expected_coverage, coverage, shape=sample)) +
+<pre class="r"><code>p1 &lt;- ggplot(vaf_sm[vaf_sm$nvars_type == &#39;nvars_ref&#39;,], aes(expected_coverage, coverage, shape=sample)) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
     theme(legend.position = &#39;none&#39;) +
     ggtitle(&#39;Expected vs. actual coverage&#39;)
 
-p2 &lt;- ggplot(vaf_sm, aes(expected_variants, nvars, shape=sample)) +
+p2 &lt;- ggplot(vaf_sm[vaf_sm$nvars_type == &#39;nvars_ref&#39;,], aes(expected_variants, nvars_count, shape=sample)) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
@@ -1983,7 +2106,7 @@ p2 &lt;- ggplot(vaf_sm, aes(expected_variants, nvars, shape=sample)) +
     scale_y_continuous(limits = c(0,15000)) +
     ggtitle(&#39;Expected vs. actual variants\nbased on expected coverage&#39;)
 
-p3 &lt;- ggplot(vaf_sm, aes(expected_variants_cov, nvars, shape=sample)) +
+p3 &lt;- ggplot(vaf_sm[vaf_sm$nvars_type == &#39;nvars_ref&#39;,], aes(expected_variants_cov, nvars_count, shape=sample)) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
@@ -1999,7 +2122,7 @@ p1 + p2 + p3</code></pre>
 <p>Here it looks like we can’t estimate raw coverage very well, so I’m
 just going to use actual coverage in the meantime, for downstream
 analyses.</p>
-<pre class="r"><code>eff &lt;- vaf_sm %&gt;% rename(., c(&#39;coverage&#39; = &#39;dup_coverage&#39;))
+<pre class="r"><code>eff &lt;- vaf_sm[vaf_sm$nvars_type == &#39;nvars_ref&#39;,] %&gt;% rename(., c(&#39;coverage&#39; = &#39;dup_coverage&#39;))
 eff$sample &lt;- paste0(eff$sample, &#39;Rep&#39;, eff$replicate)
 eff$raw_coverage &lt;- qmap_cov$coverage
 md &lt;- list.files(
@@ -2074,6 +2197,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/figure/ecoli_spikeins.Rmd/exp_raw_coverage-1.png" target="_blank">f0bc24f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/44865a12cd06b960e02c54dc14aad888535cea8e/docs/figure/ecoli_spikeins.Rmd/exp_raw_coverage-1.png" target="_blank">44865a1</a>
 </td>
 <td>
@@ -2139,6 +2273,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/figure/ecoli_spikeins.Rmd/exp_efficiency-1.png" target="_blank">f0bc24f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/44865a12cd06b960e02c54dc14aad888535cea8e/docs/figure/ecoli_spikeins.Rmd/exp_efficiency-1.png" target="_blank">44865a1</a>
@@ -2214,6 +2359,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/figure/ecoli_spikeins.Rmd/exp_dup_coverage-1.png" target="_blank">f0bc24f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/44865a12cd06b960e02c54dc14aad888535cea8e/docs/figure/ecoli_spikeins.Rmd/exp_dup_coverage-1.png" target="_blank">44865a1</a>
 </td>
 <td>
@@ -2234,7 +2390,7 @@ class="section level3">
 <pre class="r"><code>eff$expected_variants &lt;- (1 - (1 - eff$VAF_mix) ^ round(eff$est_dup_coverage * (1 - eff$drop_out_rate) * 0.5)) * N_TOTAL_VARS
 eff$expected_variants_cov &lt;- (1 - (1 - eff$VAF_mix) ^ round(eff$dup_coverage)) * N_TOTAL_VARS
 
-p1 &lt;- ggplot(eff, aes(nvars, expected_variants, shape=factor(VAF_mix))) +
+p1 &lt;- ggplot(eff, aes(nvars_count, expected_variants, shape=factor(VAF_mix))) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
@@ -2242,7 +2398,7 @@ p1 &lt;- ggplot(eff, aes(nvars, expected_variants, shape=factor(VAF_mix))) +
     scale_y_continuous(limits = c(0,15000)) +
     ggtitle(&#39;Expected vs. actual variants, based on expected coverage&#39;)
 
-p2 &lt;- ggplot(eff, aes(nvars, expected_variants_cov, shape=factor(VAF_mix))) +
+p2 &lt;- ggplot(eff, aes(nvars_count, expected_variants_cov, shape=factor(VAF_mix))) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
@@ -2252,6 +2408,43 @@ p2 &lt;- ggplot(eff, aes(nvars, expected_variants_cov, shape=factor(VAF_mix))) +
 
 p1 + p2</code></pre>
 <p><img src="figure/ecoli_spikeins.Rmd/expected_variants_recalc-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-expected_variants_recalc-1">
+Past versions of expected_variants_recalc-1.png
+</button>
+</p>
+<div id="fig-expected_variants_recalc-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/figure/ecoli_spikeins.Rmd/expected_variants_recalc-1.png" target="_blank">f0bc24f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
