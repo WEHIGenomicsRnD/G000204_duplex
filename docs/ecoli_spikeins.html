@@ -415,7 +415,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-04-21
+<strong>Last updated:</strong> 2023-04-28
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree1940332d95fdab1f3c05b5dfdaa1da4474d1d739targetblank1940332a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreefca5191d98c201dc5c73a4becae3254a87645c3etargetblankfca5191a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/1940332d95fdab1f3c05b5dfdaa1da4474d1d739" target="_blank">1940332</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/fca5191d98c201dc5c73a4becae3254a87645c3e" target="_blank">fca5191</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree1940332d95fdab1f3c05b5dfdaa1da4474d1d739targetblank1940332a"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreefca5191d98c201dc5c73a4becae3254a87645c3etargetblankfca5191a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/1940332d95fdab1f3c05b5dfdaa1da4474d1d739" target="_blank">1940332</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/fca5191d98c201dc5c73a4becae3254a87645c3e" target="_blank">fca5191</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -610,8 +610,8 @@ Untracked files:
     Untracked:  stats.csv
 
 Unstaged changes:
-    Modified:   analysis/ecoli_K12.Rmd
     Modified:   analysis/model.Rmd
+    Modified:   code/load_data.R
 
 </code></pre>
 <p>
@@ -657,6 +657,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/fca5191d98c201dc5c73a4becae3254a87645c3e/analysis/ecoli_spikeins.Rmd" target="_blank">fca5191</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-04-28
+</td>
+<td>
+Added NVC variant calling results
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/8601b669b4dde5ce60e9853c156b525c93387125/docs/ecoli_spikeins.html" target="_blank">8601b66</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-04-21
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1054,6 +1088,7 @@ markdup_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/mark_dup
 qualimap_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/qualimap&#39;)
 qualimap_cons_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/consensus/qualimap&#39;)
 variant_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/variants&#39;)
+variant_nvc_dir &lt;- here(&#39;data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/variants_nvc&#39;)
 nucdiff_snp_file &lt;- here(&#39;data/ref/nucdiff/ecoli_BL21_vs_ATCC_1.snps&#39;)</code></pre>
 <pre class="r"><code>sample_names &lt;- list.files(rinfo_dir) %&gt;%
                 str_split(&#39;\\.txt.gz&#39;) %&gt;%
@@ -1074,9 +1109,21 @@ var_sample_names &lt;- list.files(variant_dir) %&gt;%
 ref_snps &lt;- read.delim(nucdiff_snp_file, sep = &#39;\t&#39;, header = FALSE)
 N_TOTAL_VARS &lt;- length(unique(ref_snps$V1))
 
-var_df &lt;- load_variants(variant_dir, var_sample_names) %&gt;%
+vaf_vs &lt;- load_variants(variant_dir, var_sample_names) %&gt;%
             calculate_vafs() %&gt;%
             mutate(is_ref_snp = POS %in% ref_snps$V1)
+
+var_nvc &lt;- load_variants(variant_nvc_dir, sample_names) %&gt;%
+            mutate(VAF = INFO %&gt;%
+                       strsplit(&quot;AF=&quot;) %&gt;%
+                       lapply(., last) %&gt;%
+                       unlist() %&gt;%
+                       strsplit(&quot;,&quot;) %&gt;%
+                       lapply(., last) %&gt;%
+                       unlist() %&gt;%
+                       as.numeric(),
+                   is_ref_snp = POS %in% ref_snps$V1) %&gt;%
+            filter(ALT %in% c(&#39;A&#39;, &#39;T&#39;, &#39;G&#39;, &#39;C&#39;))
 
 # load and fetch duplicate rate from MarkDuplicates output
 mdup &lt;- load_markdup_data(markdup_dir, sample_names)
@@ -1850,13 +1897,15 @@ called.</p>
 <pre class="r"><code># number of differing variant sites between the E coli genomes
 COVERAGE_PER_GENOME &lt;- 10
 
-vaf_sm &lt;- data.table(var_df)[, list(VAF_mean = mean(VAF), nvars_ref = sum(is_ref_snp), nvars_nonref = sum(!is_ref_snp)), by=sample] %&gt;%
-            mutate(VAF_mix = as.character(sample) %&gt;% strsplit(&#39;-K12Rep&#39;) %&gt;% lapply(dplyr::first) %&gt;% unlist()) %&gt;%
+vaf_sm &lt;- data.table(vaf_vs)[, list(VAF_mean = mean(VAF), nvars_ref = sum(is_ref_snp), nvars_nonref = sum(!is_ref_snp)), by=sample] %&gt;%
+            mutate(VAF_mix = as.character(sample) %&gt;% strsplit(&#39;-K12Rep&#39;) %&gt;%
+                       lapply(dplyr::first) %&gt;% unlist()) %&gt;%
             left_join(., select(metrics, c(sample, efficiency)), by=&#39;sample&#39;) %&gt;%
             separate(col = sample, sep = &#39;Rep&#39;, into = c(&#39;sample&#39;, &#39;replicate&#39;)) %&gt;%
             mutate(coverage = qmap_cons_cov$coverage,
                    cells = c(318, 202, 11139, 601, 585, 86, 74, 188, 228)) %&gt;%
-            reshape2::melt(., id.vars = c(&quot;sample&quot;, &quot;replicate&quot;, &quot;cells&quot;, &quot;VAF_mean&quot;, &quot;VAF_mix&quot;, &quot;efficiency&quot;, &quot;coverage&quot;),
+            reshape2::melt(., id.vars = c(&quot;sample&quot;, &quot;replicate&quot;, &quot;cells&quot;,&quot;VAF_mean&quot;,
+                                          &quot;VAF_mix&quot;, &quot;efficiency&quot;, &quot;coverage&quot;),
                  measure.vars = c(&quot;nvars_ref&quot;, &quot;nvars_nonref&quot;),
                  variable.name = &quot;nvars_type&quot;, value.name = &quot;nvars_count&quot;)
     
@@ -1865,6 +1914,7 @@ vaf_sm$VAF_mix[vaf_sm$VAF_mix == &#39;1-10&#39;] &lt;- 0.1
 # vaf_sm$cells &lt;- c(318, 202, 11139, 601, 585, 86, 74, 188, 228)
 vaf_sm$VAF_mix &lt;- as.numeric(vaf_sm$VAF_mix) / 100
 vaf_sm$expected_coverage &lt;- vaf_sm$cells * COVERAGE_PER_GENOME * vaf_sm$efficiency
+vaf_sm$variant_caller &lt;- &#39;varscan2&#39;
 
 print(vaf_sm)</code></pre>
 <pre><code>     sample replicate cells    VAF_mean VAF_mix  efficiency coverage
@@ -1886,25 +1936,80 @@ print(vaf_sm)</code></pre>
 16   10-K12         2    74 0.230245999   0.100 0.001463852   1.8268
 17    5-K12         1   188 0.186009906   0.050 0.001680279   5.1634
 18    5-K12         2   228 0.185332683   0.050 0.001364435   5.3801
-     nvars_type nvars_count expected_coverage
-1     nvars_ref          41         10.848247
-2     nvars_ref          37          4.967657
-3     nvars_ref       11632        409.753348
-4     nvars_ref        7465         12.836414
-5     nvars_ref        5735         10.182318
-6     nvars_ref        1700          1.553612
-7     nvars_ref         632          1.083251
-8     nvars_ref        5364          3.158924
-9     nvars_ref        5959          3.110913
-10 nvars_nonref         151         10.848247
-11 nvars_nonref          85          4.967657
-12 nvars_nonref        2570        409.753348
-13 nvars_nonref         631         12.836414
-14 nvars_nonref         469         10.182318
-15 nvars_nonref          96          1.553612
-16 nvars_nonref          91          1.083251
-17 nvars_nonref         424          3.158924
-18 nvars_nonref         435          3.110913</code></pre>
+     nvars_type nvars_count expected_coverage variant_caller
+1     nvars_ref          41         10.848247       varscan2
+2     nvars_ref          37          4.967657       varscan2
+3     nvars_ref       11632        409.753348       varscan2
+4     nvars_ref        7465         12.836414       varscan2
+5     nvars_ref        5735         10.182318       varscan2
+6     nvars_ref        1700          1.553612       varscan2
+7     nvars_ref         632          1.083251       varscan2
+8     nvars_ref        5364          3.158924       varscan2
+9     nvars_ref        5959          3.110913       varscan2
+10 nvars_nonref         151         10.848247       varscan2
+11 nvars_nonref          85          4.967657       varscan2
+12 nvars_nonref        2570        409.753348       varscan2
+13 nvars_nonref         631         12.836414       varscan2
+14 nvars_nonref         469         10.182318       varscan2
+15 nvars_nonref          96          1.553612       varscan2
+16 nvars_nonref          91          1.083251       varscan2
+17 nvars_nonref         424          3.158924       varscan2
+18 nvars_nonref         435          3.110913       varscan2</code></pre>
+<pre class="r"><code>vaf_nvc &lt;- data.table(var_nvc)[, list(VAF_mean = mean(VAF), nvars_ref = sum(is_ref_snp),
+                                 nvars_nonref = sum(!is_ref_snp)), by=sample] %&gt;%
+            mutate(VAF_mix = as.character(sample) %&gt;% strsplit(&#39;-K12Rep&#39;) %&gt;%
+                       lapply(dplyr::first) %&gt;%
+                       unlist(),
+                   sample = gsub(&#39;-HFVGHDSX3&#39;, &#39;&#39;, sample)) %&gt;%
+            left_join(., select(metrics, c(sample, efficiency)), by=&#39;sample&#39;) %&gt;%
+            separate(col = sample, sep = &#39;Rep&#39;, into = c(&#39;sample&#39;, &#39;replicate&#39;)) %&gt;%
+            mutate(coverage = qmap_cons_cov$coverage,
+                   cells = c(318, 202, 11139, 601, 585, 86, 74, 188, 228)) %&gt;%
+            reshape2::melt(.,
+                           id.vars = c(&quot;sample&quot;, &quot;replicate&quot;, &quot;cells&quot;, &quot;VAF_mean&quot;,
+                                       &quot;VAF_mix&quot;, &quot;efficiency&quot;, &quot;coverage&quot;),
+                 measure.vars = c(&quot;nvars_ref&quot;, &quot;nvars_nonref&quot;),
+                 variable.name = &quot;nvars_type&quot;, value.name = &quot;nvars_count&quot;) %&gt;%
+            mutate(variant_caller = &#39;nvc&#39;)
+print(vaf_nvc)</code></pre>
+<pre><code>     sample replicate cells  VAF_mean VAF_mix  efficiency coverage   nvars_type
+1     0-K12         1   318 0.4216521       0 0.003411398  16.4145    nvars_ref
+2     0-K12         2   202 0.4832105       0 0.002459236   8.5023    nvars_ref
+3  1-10-K12         1 11139 0.0529065    1-10 0.003678547 424.9759    nvars_ref
+4     1-K12         1   601 0.1901343       1 0.002135843  20.4558    nvars_ref
+5     1-K12         2   585 0.2379405       1 0.001740567  16.3451    nvars_ref
+6    10-K12         1    86 0.6925152      10 0.001806526   2.3988    nvars_ref
+7    10-K12         2    74 0.7464506      10 0.001463852   1.8268    nvars_ref
+8     5-K12         1   188 0.4499639       5 0.001680279   5.1634    nvars_ref
+9     5-K12         2   228 0.4133003       5 0.001364435   5.3801    nvars_ref
+10    0-K12         1   318 0.4216521       0 0.003411398  16.4145 nvars_nonref
+11    0-K12         2   202 0.4832105       0 0.002459236   8.5023 nvars_nonref
+12 1-10-K12         1 11139 0.0529065    1-10 0.003678547 424.9759 nvars_nonref
+13    1-K12         1   601 0.1901343       1 0.002135843  20.4558 nvars_nonref
+14    1-K12         2   585 0.2379405       1 0.001740567  16.3451 nvars_nonref
+15   10-K12         1    86 0.6925152      10 0.001806526   2.3988 nvars_nonref
+16   10-K12         2    74 0.7464506      10 0.001463852   1.8268 nvars_nonref
+17    5-K12         1   188 0.4499639       5 0.001680279   5.1634 nvars_nonref
+18    5-K12         2   228 0.4133003       5 0.001364435   5.3801 nvars_nonref
+   nvars_count variant_caller
+1           91            nvc
+2           71            nvc
+3         2985            nvc
+4         1197            nvc
+5          905            nvc
+6         1233            nvc
+7          699            nvc
+8         1457            nvc
+9         1720            nvc
+10         333            nvc
+11         294            nvc
+12         659            nvc
+13         402            nvc
+14         354            nvc
+15         142            nvc
+16         128            nvc
+17         273            nvc
+18         335            nvc</code></pre>
 <div id="compare-variants-to-expected-reference-vars"
 class="section level3">
 <h3>Compare variants to expected reference vars</h3>
@@ -1914,14 +2019,31 @@ the non-reference SNPs.</p>
     geom_point(size = 3) +
     theme_minimal() +
     theme(legend.position = &#39;bottom&#39;) +
-    ggtitle(&#39;Reference and non-reference variants called&#39;)
+    ggtitle(&#39;Varscan reference and non-reference variants called&#39;)
 p2 &lt;- ggplot(vaf_sm[vaf_sm$nvars_type == &#39;nvars_ref&#39;,], aes(sample, nvars_count / N_TOTAL_VARS)) +
     geom_point(size = 3) +
     theme_minimal() +
     theme(legend.position = &#39;bottom&#39;) +
     ylim(0, 1) +
-    ggtitle(&#39;Fraction of reference variants called&#39;)
+    ggtitle(&#39;Varscan fraction of reference variants called&#39;)
 p3 &lt;- ggplot(vaf_sm, aes(sample, coverage, colour = replicate, shape = replicate)) +
+    geom_point(size = 3) +
+    theme_minimal() +
+    theme(legend.position = &#39;bottom&#39;) +
+    ggtitle(&#39;Duplex coverage&#39;)
+
+p4 &lt;- ggplot(vaf_nvc, aes(sample, nvars_count, colour = nvars_type, shape = nvars_type)) +
+    geom_point(size = 3) +
+    theme_minimal() +
+    theme(legend.position = &#39;bottom&#39;) +
+    ggtitle(&#39;NVC reference and non-reference variants called&#39;)
+p5 &lt;- ggplot(vaf_nvc[vaf_nvc$nvars_type == &#39;nvars_ref&#39;,], aes(sample, nvars_count / N_TOTAL_VARS)) +
+    geom_point(size = 3) +
+    theme_minimal() +
+    theme(legend.position = &#39;bottom&#39;) +
+    ylim(0, 1) +
+    ggtitle(&#39;NVC fraction of reference variants called&#39;)
+p6 &lt;- ggplot(vaf_nvc, aes(sample, coverage, colour = replicate, shape = replicate)) +
     geom_point(size = 3) +
     theme_minimal() +
     theme(legend.position = &#39;bottom&#39;) +
@@ -1929,6 +2051,45 @@ p3 &lt;- ggplot(vaf_sm, aes(sample, coverage, colour = replicate, shape = replic
 
 p1 + p2 + p3</code></pre>
 <p><img src="figure/ecoli_spikeins.Rmd/variant_calls_matching_ref-1.png" width="1584" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-variant_calls_matching_ref-1">
+Past versions of variant_calls_matching_ref-1.png
+</button>
+</p>
+<div id="fig-variant_calls_matching_ref-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/8601b669b4dde5ce60e9853c156b525c93387125/docs/figure/ecoli_spikeins.Rmd/variant_calls_matching_ref-1.png" target="_blank">8601b66</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-04-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>p4 + p5 + p6</code></pre>
+<p><img src="figure/ecoli_spikeins.Rmd/variant_calls_matching_ref-2.png" width="1584" style="display: block; margin: auto;" /></p>
 </div>
 <div id="expected-coverage" class="section level3">
 <h3>Expected coverage</h3>
@@ -1968,6 +2129,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/8601b669b4dde5ce60e9853c156b525c93387125/docs/figure/ecoli_spikeins.Rmd/expected_coverage-1.png" target="_blank">8601b66</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-04-21
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/44865a12cd06b960e02c54dc14aad888535cea8e/docs/figure/ecoli_spikeins.Rmd/expected_coverage-1.png" target="_blank">44865a1</a>
@@ -2053,6 +2225,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/8601b669b4dde5ce60e9853c156b525c93387125/docs/figure/ecoli_spikeins.Rmd/expected_variants-1.png" target="_blank">8601b66</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-04-21
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/44865a12cd06b960e02c54dc14aad888535cea8e/docs/figure/ecoli_spikeins.Rmd/expected_variants-1.png" target="_blank">44865a1</a>
@@ -2430,6 +2613,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/8601b669b4dde5ce60e9853c156b525c93387125/docs/figure/ecoli_spikeins.Rmd/expected_variants_recalc-1.png" target="_blank">8601b66</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-04-21
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/figure/ecoli_spikeins.Rmd/expected_variants_recalc-1.png" target="_blank">f0bc24f</a>

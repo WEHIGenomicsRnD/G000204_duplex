@@ -415,7 +415,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-03-15
+<strong>Last updated:</strong> 2023-04-28
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree460c51913b5421083bd90d1872b884b77a8e536dtargetblank460c519a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreefca5191d98c201dc5c73a4becae3254a87645c3etargetblankfca5191a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/460c51913b5421083bd90d1872b884b77a8e536d" target="_blank">460c519</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/fca5191d98c201dc5c73a4becae3254a87645c3e" target="_blank">fca5191</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree460c51913b5421083bd90d1872b884b77a8e536dtargetblank460c519a"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreefca5191d98c201dc5c73a4becae3254a87645c3etargetblankfca5191a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/460c51913b5421083bd90d1872b884b77a8e536d" target="_blank">460c519</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/fca5191d98c201dc5c73a4becae3254a87645c3e" target="_blank">fca5191</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -608,6 +608,10 @@ Untracked files:
     Untracked:  efficiency.pdf
     Untracked:  prototype_code/
     Untracked:  stats.csv
+
+Unstaged changes:
+    Modified:   analysis/model.Rmd
+    Modified:   code/load_data.R
 
 </code></pre>
 <p>
@@ -653,6 +657,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/fca5191d98c201dc5c73a4becae3254a87645c3e/analysis/ecoli_K12.Rmd" target="_blank">fca5191</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-04-28
+</td>
+<td>
+Added NVC variant calling results
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/ecoli_K12.html" target="_blank">f0bc24f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -5302,6 +5340,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/figure/ecoli_K12.Rmd/coverage_without_ssc-1.png" target="_blank">f0bc24f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/e1c0c281147b5108a6eb4be43ec899f8cbc40793/docs/figure/ecoli_K12.Rmd/coverage_without_ssc-1.png" target="_blank">e1c0c28</a>
 </td>
 <td>
@@ -5469,7 +5518,7 @@ beyond sampling are not accounted for.</p>
 <p>To start, let’s see how close the efficiency estimation is to the
 estimate. We will assume 600 cell equivalents were sequenced per E coli
 sample. Additionally, we estimate the sequencing ratio as follows:</p>
-<p><code>ESTIMATED_LIBRARY_SIZE / (READ_PAIRS_EXAMINED - READ_PAIR_OPTICAL_DUPLICATES)</code></p>
+<p><code>(READ_PAIRS_EXAMINED - READ_PAIR_OPTICAL_DUPLICATES) / ESTIMATED_LIBRARY_SIZE</code></p>
 <p>The above numbers can be obtained from the MarkDuplicates output. We
 should be able to estimate this before sequencing, but I’m using the
 empirical values for this experiment.</p>
@@ -5549,6 +5598,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/figure/ecoli_K12.Rmd/estimate_raw_coverage-1.png" target="_blank">f0bc24f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/217f4148db0001ce7af51a78d69172ac15bcf490/docs/figure/ecoli_K12.Rmd/estimate_raw_coverage-1.png" target="_blank">217f414</a>
@@ -5631,6 +5691,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/figure/ecoli_K12.Rmd/estimate_efficiency-1.png" target="_blank">f0bc24f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/217f4148db0001ce7af51a78d69172ac15bcf490/docs/figure/ecoli_K12.Rmd/estimate_efficiency-1.png" target="_blank">217f414</a>
 </td>
 <td>
@@ -5704,6 +5775,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/figure/ecoli_K12.Rmd/estimate_coverage_with_dropout-1.png" target="_blank">f0bc24f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/217f4148db0001ce7af51a78d69172ac15bcf490/docs/figure/ecoli_K12.Rmd/estimate_coverage_with_dropout-1.png" target="_blank">217f414</a>
 </td>
 <td>
@@ -5754,6 +5836,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/figure/ecoli_K12.Rmd/estimate_coverage_with_mean_dropout-1.png" target="_blank">f0bc24f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/217f4148db0001ce7af51a78d69172ac15bcf490/docs/figure/ecoli_K12.Rmd/estimate_coverage_with_mean_dropout-1.png" target="_blank">217f414</a>
@@ -5809,6 +5902,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/figure/ecoli_K12.Rmd/estimate_coverage_with_mean_dropout_nano-1.png" target="_blank">f0bc24f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/217f4148db0001ce7af51a78d69172ac15bcf490/docs/figure/ecoli_K12.Rmd/estimate_coverage_with_mean_dropout_nano-1.png" target="_blank">217f414</a>
@@ -5873,6 +5977,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/f0bc24fac3b149d1f655a5ab88ca032258d0ec27/docs/figure/ecoli_K12.Rmd/adjusted_efficiency-1.png" target="_blank">f0bc24f</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-03-15
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/e631e4850a19a2983076fb0a30be55fbb49b919c/docs/figure/ecoli_K12.Rmd/adjusted_efficiency-1.png" target="_blank">e631e48</a>
