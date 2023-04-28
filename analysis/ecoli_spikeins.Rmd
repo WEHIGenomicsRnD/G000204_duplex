@@ -86,6 +86,7 @@ markdup_dir <- here('data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/mark_duplicates
 qualimap_dir <- here('data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/qualimap')
 qualimap_cons_dir <- here('data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/QC/consensus/qualimap')
 variant_dir <- here('data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/variants')
+variant_nvc_dir <- here('data/ecoli/AGRF_CAGRF220410419_HFVGHDSX3/variants_nvc')
 nucdiff_snp_file <- here('data/ref/nucdiff/ecoli_BL21_vs_ATCC_1.snps')
 ```
 
@@ -109,9 +110,21 @@ var_sample_names <- list.files(variant_dir) %>%
 ref_snps <- read.delim(nucdiff_snp_file, sep = '\t', header = FALSE)
 N_TOTAL_VARS <- length(unique(ref_snps$V1))
 
-var_df <- load_variants(variant_dir, var_sample_names) %>%
+vaf_vs <- load_variants(variant_dir, var_sample_names) %>%
             calculate_vafs() %>%
             mutate(is_ref_snp = POS %in% ref_snps$V1)
+
+var_nvc <- load_variants(variant_nvc_dir, sample_names) %>%
+            mutate(VAF = INFO %>%
+                       strsplit("AF=") %>%
+                       lapply(., last) %>%
+                       unlist() %>%
+                       strsplit(",") %>%
+                       lapply(., last) %>%
+                       unlist() %>%
+                       as.numeric(),
+                   is_ref_snp = POS %in% ref_snps$V1) %>%
+            filter(ALT %in% c('A', 'T', 'G', 'C'))
 
 # load and fetch duplicate rate from MarkDuplicates output
 mdup <- load_markdup_data(markdup_dir, sample_names)
@@ -278,13 +291,15 @@ Here we show the VAF mean, number of variants called, as well as a number of oth
 # number of differing variant sites between the E coli genomes
 COVERAGE_PER_GENOME <- 10
 
-vaf_sm <- data.table(var_df)[, list(VAF_mean = mean(VAF), nvars_ref = sum(is_ref_snp), nvars_nonref = sum(!is_ref_snp)), by=sample] %>%
-            mutate(VAF_mix = as.character(sample) %>% strsplit('-K12Rep') %>% lapply(dplyr::first) %>% unlist()) %>%
+vaf_sm <- data.table(vaf_vs)[, list(VAF_mean = mean(VAF), nvars_ref = sum(is_ref_snp), nvars_nonref = sum(!is_ref_snp)), by=sample] %>%
+            mutate(VAF_mix = as.character(sample) %>% strsplit('-K12Rep') %>%
+                       lapply(dplyr::first) %>% unlist()) %>%
             left_join(., select(metrics, c(sample, efficiency)), by='sample') %>%
             separate(col = sample, sep = 'Rep', into = c('sample', 'replicate')) %>%
             mutate(coverage = qmap_cons_cov$coverage,
                    cells = c(318, 202, 11139, 601, 585, 86, 74, 188, 228)) %>%
-            reshape2::melt(., id.vars = c("sample", "replicate", "cells", "VAF_mean", "VAF_mix", "efficiency", "coverage"),
+            reshape2::melt(., id.vars = c("sample", "replicate", "cells","VAF_mean",
+                                          "VAF_mix", "efficiency", "coverage"),
                  measure.vars = c("nvars_ref", "nvars_nonref"),
                  variable.name = "nvars_type", value.name = "nvars_count")
     
@@ -293,8 +308,27 @@ vaf_sm$VAF_mix[vaf_sm$VAF_mix == '1-10'] <- 0.1
 # vaf_sm$cells <- c(318, 202, 11139, 601, 585, 86, 74, 188, 228)
 vaf_sm$VAF_mix <- as.numeric(vaf_sm$VAF_mix) / 100
 vaf_sm$expected_coverage <- vaf_sm$cells * COVERAGE_PER_GENOME * vaf_sm$efficiency
+vaf_sm$variant_caller <- 'varscan2'
 
 print(vaf_sm)
+
+vaf_nvc <- data.table(var_nvc)[, list(VAF_mean = mean(VAF), nvars_ref = sum(is_ref_snp),
+                                 nvars_nonref = sum(!is_ref_snp)), by=sample] %>%
+            mutate(VAF_mix = as.character(sample) %>% strsplit('-K12Rep') %>%
+                       lapply(dplyr::first) %>%
+                       unlist(),
+                   sample = gsub('-HFVGHDSX3', '', sample)) %>%
+            left_join(., select(metrics, c(sample, efficiency)), by='sample') %>%
+            separate(col = sample, sep = 'Rep', into = c('sample', 'replicate')) %>%
+            mutate(coverage = qmap_cons_cov$coverage,
+                   cells = c(318, 202, 11139, 601, 585, 86, 74, 188, 228)) %>%
+            reshape2::melt(.,
+                           id.vars = c("sample", "replicate", "cells", "VAF_mean",
+                                       "VAF_mix", "efficiency", "coverage"),
+                 measure.vars = c("nvars_ref", "nvars_nonref"),
+                 variable.name = "nvars_type", value.name = "nvars_count") %>%
+            mutate(variant_caller = 'nvc')
+print(vaf_nvc)
 ```
 
 ### Compare variants to expected reference vars
@@ -306,20 +340,38 @@ p1 <- ggplot(vaf_sm, aes(sample, nvars_count, colour = nvars_type, shape = nvars
     geom_point(size = 3) +
     theme_minimal() +
     theme(legend.position = 'bottom') +
-    ggtitle('Reference and non-reference variants called')
+    ggtitle('Varscan reference and non-reference variants called')
 p2 <- ggplot(vaf_sm[vaf_sm$nvars_type == 'nvars_ref',], aes(sample, nvars_count / N_TOTAL_VARS)) +
     geom_point(size = 3) +
     theme_minimal() +
     theme(legend.position = 'bottom') +
     ylim(0, 1) +
-    ggtitle('Fraction of reference variants called')
+    ggtitle('Varscan fraction of reference variants called')
 p3 <- ggplot(vaf_sm, aes(sample, coverage, colour = replicate, shape = replicate)) +
     geom_point(size = 3) +
     theme_minimal() +
     theme(legend.position = 'bottom') +
     ggtitle('Duplex coverage')
 
+p4 <- ggplot(vaf_nvc, aes(sample, nvars_count, colour = nvars_type, shape = nvars_type)) +
+    geom_point(size = 3) +
+    theme_minimal() +
+    theme(legend.position = 'bottom') +
+    ggtitle('NVC reference and non-reference variants called')
+p5 <- ggplot(vaf_nvc[vaf_nvc$nvars_type == 'nvars_ref',], aes(sample, nvars_count / N_TOTAL_VARS)) +
+    geom_point(size = 3) +
+    theme_minimal() +
+    theme(legend.position = 'bottom') +
+    ylim(0, 1) +
+    ggtitle('NVC fraction of reference variants called')
+p6 <- ggplot(vaf_nvc, aes(sample, coverage, colour = replicate, shape = replicate)) +
+    geom_point(size = 3) +
+    theme_minimal() +
+    theme(legend.position = 'bottom') +
+    ggtitle('Duplex coverage')
+
 p1 + p2 + p3
+p4 + p5 + p6
 ```
 
 ### Expected coverage
@@ -407,6 +459,9 @@ ggplot(vaf_sm[vaf_sm$nvars_type == 'nvars_ref',], aes(expected_variants_cov, nva
     scale_color_brewer(palette = 'Dark2')
 dev.off()
 ```
+
+
+
 
 ### Expected raw coverage (re-estimated)
 

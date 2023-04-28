@@ -701,7 +701,7 @@ This is the zero-truncated poisson probability of selecting >=2 reads squared (a
 
 To start, let's see how close the efficiency estimation is to the estimate. We will assume 600 cell equivalents were sequenced per E coli sample. Additionally, we estimate the sequencing ratio as follows:
 
-`ESTIMATED_LIBRARY_SIZE / (READ_PAIRS_EXAMINED - READ_PAIR_OPTICAL_DUPLICATES)`
+`(READ_PAIRS_EXAMINED - READ_PAIR_OPTICAL_DUPLICATES) / ESTIMATED_LIBRARY_SIZE`
 
 The above numbers can be obtained from the MarkDuplicates output. We should be able to estimate this before sequencing, but I'm using the empirical values for this experiment.
 
