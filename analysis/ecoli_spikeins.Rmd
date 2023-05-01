@@ -374,6 +374,25 @@ p1 + p2 + p3
 p4 + p5 + p6
 ```
 
+#### Varscan vs. Naive Variant Caller
+
+Compare number of variants called.
+
+```{r varscan_vs_nvc, fig.width = 6.5, fig.height = 5}
+select_cols <- c('sample', 'replicate', 'nvars_type', 'nvars_count')
+varc <- vaf_sm[,select_cols] %>%
+        inner_join(., vaf_nvc[,select_cols], by = c('sample', 'replicate', 'nvars_type')) %>%
+        rename(c('nvars_count.x' = 'varscan',
+                 'nvars_count.y' = 'nvc'))
+ggplot(varc, aes(varscan, nvc, shape = sample, colour = nvars_type)) +
+    geom_point(size = 3) +
+    theme_minimal() +
+    ylim(0, 12000) +
+    xlim(0, 12000) +
+    ggtitle('Varscan vs. NVC number of variants called')
+```
+
+
 ### Expected coverage
 
 Here we plot the observed mean coverage versus the expected coverage, the latter is calculated as $n * c * d$ where $n =$ number of input cells, $c =$ target coverage per genome equivalent (10) and $d =$ duplex efficiency.
