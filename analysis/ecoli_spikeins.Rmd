@@ -110,7 +110,7 @@ var_sample_names <- list.files(variant_dir) %>%
 ref_snps <- read.delim(nucdiff_snp_file, sep = '\t', header = FALSE)
 N_TOTAL_VARS <- length(unique(ref_snps$V1))
 
-vaf_vs <- load_variants(variant_dir, var_sample_names) %>%
+var_vs <- load_variants(variant_dir, var_sample_names) %>%
             calculate_vafs() %>%
             mutate(is_ref_snp = POS %in% ref_snps$V1)
 
@@ -291,7 +291,7 @@ Here we show the VAF mean, number of variants called, as well as a number of oth
 # number of differing variant sites between the E coli genomes
 COVERAGE_PER_GENOME <- 10
 
-vaf_sm <- data.table(vaf_vs)[, list(VAF_mean = mean(VAF), nvars_ref = sum(is_ref_snp), nvars_nonref = sum(!is_ref_snp)), by=sample] %>%
+vaf_sm <- data.table(var_vs)[, list(VAF_mean = mean(VAF), nvars_ref = sum(is_ref_snp), nvars_nonref = sum(!is_ref_snp)), by=sample] %>%
             mutate(VAF_mix = as.character(sample) %>% strsplit('-K12Rep') %>%
                        lapply(dplyr::first) %>% unlist()) %>%
             left_join(., select(metrics, c(sample, efficiency)), by='sample') %>%
@@ -301,15 +301,12 @@ vaf_sm <- data.table(vaf_vs)[, list(VAF_mean = mean(VAF), nvars_ref = sum(is_ref
             reshape2::melt(., id.vars = c("sample", "replicate", "cells","VAF_mean",
                                           "VAF_mix", "efficiency", "coverage"),
                  measure.vars = c("nvars_ref", "nvars_nonref"),
-                 variable.name = "nvars_type", value.name = "nvars_count")
+                 variable.name = "nvars_type", value.name = "nvars_count") %>%
+            mutate(variant_caller = 'varscan2',
+                   expected_coverage = cells * COVERAGE_PER_GENOME * efficiency)
     
 vaf_sm$VAF_mix[vaf_sm$VAF_mix == '1-10'] <- 0.1
-# vaf_sm$efficiency[vaf_sm$sample == ] <- 0.002 # a guess
-# vaf_sm$cells <- c(318, 202, 11139, 601, 585, 86, 74, 188, 228)
 vaf_sm$VAF_mix <- as.numeric(vaf_sm$VAF_mix) / 100
-vaf_sm$expected_coverage <- vaf_sm$cells * COVERAGE_PER_GENOME * vaf_sm$efficiency
-vaf_sm$variant_caller <- 'varscan2'
-
 print(vaf_sm)
 
 vaf_nvc <- data.table(var_nvc)[, list(VAF_mean = mean(VAF), nvars_ref = sum(is_ref_snp),
@@ -327,13 +324,33 @@ vaf_nvc <- data.table(var_nvc)[, list(VAF_mean = mean(VAF), nvars_ref = sum(is_r
                                        "VAF_mix", "efficiency", "coverage"),
                  measure.vars = c("nvars_ref", "nvars_nonref"),
                  variable.name = "nvars_type", value.name = "nvars_count") %>%
-            mutate(variant_caller = 'nvc')
+            mutate(variant_caller = 'nvc',
+                   expected_coverage = cells * COVERAGE_PER_GENOME * efficiency)
+
+vaf_nvc$VAF_mix[vaf_nvc$VAF_mix == '1-10'] <- 0.1
+vaf_nvc$VAF_mix <- as.numeric(vaf_nvc$VAF_mix) / 100
 print(vaf_nvc)
 ```
 
 ### Compare variants to expected reference vars
 
 Plot number of variants that match the expected reference SNPs versus the non-reference SNPs.
+
+The following parameters were used to call varscan2 variants:
+- min-avg-qual = 0
+- min-coverage = 4
+- p-value = 1
+- strand-filter = 0
+- min-reads2 (supporting reads) = 2
+- min-var-freq = 0.01
+
+However, it looks like setting p-value to 1 will ignore these filters.
+
+The following parameters were used to call naive variant caller variants:
+- ploidy = 1
+- min_support_depth = 1
+- min_mapping_quality = 20
+- min_base_quality = 0
 
 ```{r variant_calls_matching_ref, fig.width=16.5, fig.height=6}
 p1 <- ggplot(vaf_sm, aes(sample, nvars_count, colour = nvars_type, shape = nvars_type)) +
@@ -411,10 +428,10 @@ ggplot(vaf_sm, aes(expected_coverage, coverage, shape=sample)) +
 Here we use the revised model to estimate the number of variants we expected to call with 95\% confidence, using the formula above.
 
 ```{r expected_variants, fig.width=12, fig.height=5}
-vaf_sm$expected_variants <- (1 - (1 - vaf_sm$VAF_mix) ^ round(vaf_sm$expected_coverage)) * N_TOTAL_VARS
-vaf_sm$expected_variants_cov <- (1 - (1 - vaf_sm$VAF_mix) ^ round(vaf_sm$coverage)) * N_TOTAL_VARS
+vaf_nvc$expected_variants <- (1 - (1 - vaf_nvc$VAF_mix) ^ round(vaf_nvc$expected_coverage)) * N_TOTAL_VARS
+vaf_nvc$expected_variants_cov <- (1 - (1 - vaf_nvc$VAF_mix) ^ round(vaf_nvc$coverage)) * N_TOTAL_VARS
 
-p1 <- ggplot(vaf_sm[vaf_sm$nvars_type == 'nvars_ref',], aes(expected_variants, nvars_count, shape=sample)) +
+p1 <- ggplot(vaf_nvc[vaf_nvc$nvars_type == 'nvars_ref',], aes(expected_variants, nvars_count, shape=sample)) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
@@ -422,7 +439,7 @@ p1 <- ggplot(vaf_sm[vaf_sm$nvars_type == 'nvars_ref',], aes(expected_variants, n
     scale_y_continuous(limits = c(0,15000)) +
     ggtitle('Expected vs. actual variants, based on expected coverage')
 
-p2 <- ggplot(vaf_sm[vaf_sm$nvars_type == 'nvars_ref',], aes(expected_variants_cov, nvars_count, shape=sample)) +
+p2 <- ggplot(vaf_nvc[vaf_nvc$nvars_type == 'nvars_ref',], aes(expected_variants_cov, nvars_count, shape=sample)) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
@@ -434,14 +451,14 @@ p1 + p2
 ```
 
 ```{r presentation_expected_variants, fig.width=15, fig.height=5, eval=FALSE}
-p1 <- ggplot(vaf_sm[vaf_sm$nvars_type == 'nvars_ref',], aes(expected_coverage, coverage, shape=sample)) +
+p1 <- ggplot(vaf_nvc[vaf_nvc$nvars_type == 'nvars_ref',], aes(expected_coverage, coverage, shape=sample)) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
     theme(legend.position = 'none') +
     ggtitle('Expected vs. actual coverage')
 
-p2 <- ggplot(vaf_sm[vaf_sm$nvars_type == 'nvars_ref',], aes(expected_variants, nvars_count, shape=sample)) +
+p2 <- ggplot(vaf_nvc[vaf_nvc$nvars_type == 'nvars_ref',], aes(expected_variants, nvars_count, shape=sample)) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
@@ -450,7 +467,7 @@ p2 <- ggplot(vaf_sm[vaf_sm$nvars_type == 'nvars_ref',], aes(expected_variants, n
     scale_y_continuous(limits = c(0,15000)) +
     ggtitle('Expected vs. actual variants\nbased on expected coverage')
 
-p3 <- ggplot(vaf_sm[vaf_sm$nvars_type == 'nvars_ref',], aes(expected_variants_cov, nvars_count, shape=sample)) +
+p3 <- ggplot(vaf_nvc[vaf_nvc$nvars_type == 'nvars_ref',], aes(expected_variants_cov, nvars_count, shape=sample)) +
     geom_point() +
     theme_minimal() +
     geom_abline(slope = 1) +
@@ -464,8 +481,8 @@ p1 + p2 + p3
 
 ```{r poster_plots, fig.width=8, fig.height=3, include=FALSE, eval=FALSE}
 pdf('coverage.pdf', width = 4, height = 3)
-vaf_sm$VAF_mix <- factor(vaf_sm$VAF_mix)
-ggplot(vaf_sm[vaf_sm$nvars_type == 'nvars_ref',], aes(expected_variants_cov, nvars_count, shape=VAF_mix, colour=VAF_mix)) +
+vaf_nvc$VAF_mix <- factor(vaf_nvc$VAF_mix)
+ggplot(vaf_nvc[vaf_nvc$nvars_type == 'nvars_ref',], aes(expected_variants_cov, nvars_count, shape=VAF_mix, colour=VAF_mix)) +
     geom_point() +
     theme_bw() +
     geom_abline(slope = 1) +
@@ -487,7 +504,7 @@ dev.off()
 Here it looks like we can't estimate raw coverage very well, so I'm just going to use actual coverage in the meantime, for downstream analyses.
 
 ```{r exp_raw_coverage, fig.width=11, fig.height=4}
-eff <- vaf_sm[vaf_sm$nvars_type == 'nvars_ref',] %>% rename(., c('coverage' = 'dup_coverage'))
+eff <- vaf_nvc[vaf_nvc$nvars_type == 'nvars_ref',] %>% rename(., c('coverage' = 'dup_coverage'))
 eff$sample <- paste0(eff$sample, 'Rep', eff$replicate)
 eff$raw_coverage <- qmap_cov$coverage
 md <- list.files(
