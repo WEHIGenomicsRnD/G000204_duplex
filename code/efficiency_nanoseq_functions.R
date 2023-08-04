@@ -104,6 +104,9 @@ calculate_gc <- function(rbs, sample_n = 10000, max_gap = 100000) {
     rbs <- data.frame(rbs)
     colnames(rbs)[5:6] = c('plus', 'minus')
 
+    # remove any chroms not in the sizes vector
+    # rbs <- rbs[rbs$chrom %in% names(genome_max),]
+
     # remove records with mate positions exceeding genome max
     rbs$end <- rbs$mpos + rlen - skips
     if(length(genome_max) > 1) {

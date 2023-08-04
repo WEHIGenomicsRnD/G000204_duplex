@@ -34,6 +34,7 @@ load_variants <- function(fdir, sample_names) {
     var_df <- NULL
     for (i in 1:length(vars)) {
         svars <- data.frame(vars[[i]]@fix, vars[[i]]@gt)
+        colnames(svars)[ncol(svars)] <- 'Sample1'
         if (nrow(svars) > 0) {
             svars$sample <- sample_names[i]
             var_df <- rbind(var_df, svars)
@@ -163,5 +164,21 @@ get_qmap_coverage <- function(qualimap_dir, sample_names) {
         lapply(., as.numeric) %>%
         unlist()
     qmap <- qmap[,c('Sample', 'coverage')]
+    return(qmap)
+}
+
+get_qmap_mapped_reads <- function(qualimap_dir, sample_names) {
+    qmap <- load_data(qualimap_dir, 'genome_results.txt', sample_names)
+    qmap <- qmap[qmap$BamQC.report %like% 'number of mapped reads ',]
+    qmap$mapped_reads <-
+        str_split(qmap$BamQC.report, ' = ') %>%
+        lapply(., last) %>%
+        str_split(., ' ') %>%
+        lapply(., dplyr::first) %>%
+        unlist() %>%
+        gsub('X|,', '', .) %>%
+        lapply(., as.numeric) %>%
+        unlist()
+    qmap <- qmap[,c('Sample', 'mapped_reads')]
     return(qmap)
 }
