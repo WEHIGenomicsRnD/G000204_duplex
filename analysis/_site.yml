@@ -19,6 +19,8 @@ navbar:
     href: ecoli_spikeins.html
   - text: "Downsampling"
     href: downsampling.html
+  - text: "Human mixtures"
+    href: human_mixtures.html
   - text: License
     href: license.html
 output:

@@ -29,3 +29,4 @@ Analyses
 * [E coli spike-in results](ecoli_spikeins.html)
     * [AGRF_CAGRF220410419_HFVGHDSX3 MultiQC pre-duplex](AGRF_CAGRF220410419_HFVGHDSX3_multiqc/multiqc_report.html)
     * [AGRF_CAGRF220410419_HFVGHDSX3 MultiQC duplex](AGRF_CAGRF220410419_HFVGHDSX3_multiqc/multiqc_report_consensus.html)
+* [Human mixtures](human_mixtures.html)

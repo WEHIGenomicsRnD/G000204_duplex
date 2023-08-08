@@ -1,0 +1,166 @@
+---
+title: "Human spike-in experiments"
+output:
+  workflowr::wflow_html:
+      code_folding: hide
+---
+
+Human samples are duplicate of 1% spike-in of 8393 (son of Chinese ancestry HG-005) in 8391 (son of Eastern European Ashkenazi Jewish ancestry HG-0020). [Reference](https://www.coriell.org/1/NIGMS/Collections/NIST-Reference-Materials).
+
+```{r setup, include=FALSE}
+DOCNAME = "Human mixture duplex data"
+knitr::opts_chunk$set(autodep        = TRUE,
+                      cache          = FALSE,
+                      cache.path     = paste0("cache/", DOCNAME, "/"),
+                      cache.comments = FALSE,
+                      cache.lazy     = FALSE,
+                      echo           = TRUE,
+                      error          = FALSE,
+                      fig.align      = "center",
+                      fig.width      = 7,
+                      fig.height     = 5,
+                      dev            = c("png"),
+                      message        = FALSE,
+                      warning        = FALSE)
+```
+
+```{r libraries, cache=FALSE, message=FALSE}
+library(ggplot2)
+library(data.table)
+library(dplyr)
+library(here)
+library(tibble)
+library(stringr)
+library(Rsamtools)
+library(GenomicRanges)
+library(seqinr)
+library(parallel)
+library(readxl)
+library(patchwork)
+library(RColorBrewer)
+library(UpSetR)
+library(vcfR)
+library(R.utils)
+library(knitr)
+```
+
+```{r source}
+source(here('code/load_data.R'))
+source(here('code/plot.R'))
+source(here('code/efficiency_nanoseq_functions.R'))
+```
+
+
+```{r paths}
+variant_dir <- here('data/human_mixture_vars')
+region_bed <- here('data/human_mixture_capture_region.bed')
+hg002_var_file <- here('data/human_mixture_refs/HG002_GRCh38_1_22_v4.2.1_benchmark.vcf.gz')
+hg005_var_file <- here('data/human_mixture_refs/HG005_GRCh38_1_22_v4.2.1_benchmark.vcf.gz')
+```
+
+
+```{r load_variants, cache=FALSE}
+sample_names <- c('Human1pR1', 'Human1pR2')
+
+# load variant data
+var_df <- load_variants(variant_dir, sample_names)
+hg002_vars <- read.vcfR(hg002_var_file, verbose = FALSE)
+hg005_vars <- read.vcfR(hg005_var_file, verbose = FALSE)
+
+hg002v <- data.frame(hg002_vars@fix)
+hg005v <- data.frame(hg005_vars@fix)
+
+# get capture regions
+regions <- read.delim(region_bed, sep = '\t', header = FALSE)
+```
+
+## Variant Upset plot
+
+Here we remove any "N" variant calls and INDELs and compare the overlaps for on- and off-target variant calls.
+
+```{r variant_filtering, fig.width = 9, fig.height = 6}
+# remove any N calls and INDELs
+var_df <- filter(var_df, ALT != "N") %>%
+            filter(., (ALT %>% str_split("") %>% lapply(., length) %>% unlist) == 1) %>%
+            filter(., (REF %>% str_split("") %>% lapply(., length) %>% unlist) == 1) %>%
+            calculate_vafs_nvc(.)
+
+# get capture region range
+grx <- GRanges(seqnames = paste0("chr", regions$V1),
+               ranges = IRanges(start = regions$V2, end = regions$V3))
+vrx <- GRanges(seqnames = var_df$CHROM,
+               ranges = IRanges(start = as.numeric(var_df$POS),
+                                end = as.numeric(var_df$POS) + 1))
+var_df$on_target <- overlapsAny(vrx, grx)
+
+# make upsetplot
+ulist <- NULL
+for(sample in sample_names) {
+    ont_ids <- var_df[var_df$sample %in% sample & var_df$on_target,]$id
+    oft_ids <- var_df[var_df$sample %in% sample & !var_df$on_target,]$id
+    ulist[[paste(sample, "ontarget")]] <- ont_ids
+    ulist[[paste(sample, "offtarget")]] <- oft_ids
+    
+}
+
+upset(fromList(ulist), order.by='freq', nsets=4)
+```
+
+## Variant allele frequencies
+
+Here we plot the allelic frequencies per-replicate in three plots:
+
+ - all filtered variant calls: no frequency or target filtering
+ - on-target variant calls: only on-target variant calls (in capture region)
+ - VAF-filtered on-target variant calls: all on-target variants under <0.3\% VAF
+
+```{r vaf_plots, fig.width = 9, fig.height = 4}
+ggplot(var_df, aes(VAF)) +
+    geom_histogram(binwidth = 0.05) +
+    facet_grid(~sample) +
+    theme_minimal() +
+    ggtitle("All filtered variant calls")
+
+ggplot(var_df[var_df$on_target,], aes(VAF)) +
+    geom_histogram(binwidth = 0.05) +
+    facet_grid(~sample) +
+    theme_minimal() +
+    ggtitle("On-target variant calls")
+
+ggplot(var_df[var_df$on_target & var_df$VAF < 0.3,], aes(VAF)) +
+    geom_histogram(binwidth = 0.01) +
+    facet_grid(~sample) +
+    theme_minimal() +
+    ggtitle("On-target variant calls < 0.3 VAF")
+```
+
+## Variant comparison
+
+Given the referene information, we check how many SNPs are present in the capture area. We also filter out any variants that are common between the two samples (if the same variant appears in both samples, we can't differentiate the calls without some kind of phasing).
+
+```{r variant_comparison}
+# filter out any INDELs
+hg005v <- filter(hg005v, (ALT %>% str_split("") %>% lapply(., length) %>% unlist) == 1) %>%
+          filter(., (REF %>% str_split("") %>% lapply(., length) %>% unlist) == 1)
+
+# construct Granges for hg005 SNPs and keep only SNPs in capture area
+hg5x <- GRanges(seqnames = hg005v$CHROM,
+                ranges = IRanges(start = as.numeric(hg005v$POS),
+                                 end = as.numeric(hg005v$POS) + 1),
+                variant = hg005v$ALT)
+hg5x <- hg5x[overlapsAny(hg5x, grx) %>% suppressWarnings()]
+
+# construct Granges for hg002
+hg2x <- GRanges(seqnames = hg002v$CHROM,
+                ranges = IRanges(start = as.numeric(hg002v$POS),
+                                 end = as.numeric(hg002v$POS) + 1),
+                variant = hg002v$ALT)
+
+# check variants that overlap, we will keep these if they call a different base
+unique_vars <- hg5x[overlapsAny(hg5x, hg2x)]$variant != hg2x[overlapsAny(hg2x, hg5x)]$variant
+hg5x <- c(hg5x[!overlapsAny(hg5x, hg2x)], hg5x[overlapsAny(hg5x, hg2x)][unique_vars])
+
+kable(hg5x)
+kable(var_df[var_df$POS %in% start(hg5x) & var_df$CHROM %in% seqnames(hg5x),])
+```
+

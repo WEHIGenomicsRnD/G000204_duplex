@@ -56,6 +56,13 @@ calculate_vafs <- function(var_df, freq_filter = 0.3) {
     return(var_df)
 }
 
+calculate_vafs_nvc <- function(var_df) {
+    var_df$VAF <- str_split(var_df$Sample1, ':') %>%
+            lapply(., function(x){as.numeric(x[3])}) %>%
+            unlist()
+    return(var_df)
+}
+
 extract_std <- function(genome_results) {
     std <- genome_results[grep('std', genome_results$BamQC.report),] %>%
         strsplit(., split='=') %>%
