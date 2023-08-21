@@ -72,6 +72,8 @@ hg005v <- data.frame(hg005_vars@fix)
 
 # get capture regions
 regions <- read.delim(region_bed, sep = '\t', header = FALSE)
+grx <- GRanges(seqnames = regions$V1,
+               ranges = IRanges(start = regions$V2, end = regions$V3))
 ```
 
 ## Variant Upset plot
@@ -81,30 +83,43 @@ Here we remove any "N" variant calls and INDELs and compare the overlaps for on-
 ```{r variant_filtering, fig.width = 9, fig.height = 6}
 # remove any N calls and INDELs
 var_df <- filter(var_df, ALT != "N") %>%
-            filter(., (ALT %>% str_split("") %>% lapply(., length) %>% unlist) == 1) %>%
             filter(., (REF %>% str_split("") %>% lapply(., length) %>% unlist) == 1) %>%
-            calculate_vafs_nvc(.)
+            mutate(ALT = lapply(ALT, filter_out_indels) %>% as.character()) %>%
+            filter(., (ALT %>% str_split("") %>% lapply(., length) %>% unlist) == 1)
 
-# get capture region range
-grx <- GRanges(seqnames = paste0("chr", regions$V1),
-               ranges = IRanges(start = regions$V2, end = regions$V3))
+# filter out off-target reads
 vrx <- GRanges(seqnames = var_df$CHROM,
                ranges = IRanges(start = as.numeric(var_df$POS),
                                 end = as.numeric(var_df$POS) + 1))
 var_df$on_target <- overlapsAny(vrx, grx)
+
+# calculate vafs
+alt_dep <- apply(var_df, 1, get_alt_dep_nvc) %>% t() %>% data.frame()
+var_df$AC <- alt_dep$X1
+var_df$DP <- alt_dep$X2
+var_df$VAF <- var_df$AC / var_df$DP
 
 # make upsetplot
 ulist <- NULL
 for(sample in sample_names) {
     ont_ids <- var_df[var_df$sample %in% sample & var_df$on_target,]$id
     oft_ids <- var_df[var_df$sample %in% sample & !var_df$on_target,]$id
-    ulist[[paste(sample, "ontarget")]] <- ont_ids
-    ulist[[paste(sample, "offtarget")]] <- oft_ids
+    ulist[[paste(sample, "on_target")]] <- ont_ids
+    ulist[[paste(sample, "off_target")]] <- oft_ids
     
 }
 
 upset(fromList(ulist), order.by='freq', nsets=4)
 ```
+
+Checking on-target rate from the bam files (based on reads that fall within the region using `samtools view -c -L <region_bed> <consensus_bam>`) yields a higher on-target rate than the variant analysis would suggest:
+
+    
+    	            Human1pR1	Human1pR2
+    capture_region	188409	    122466
+    total_reads	    330368	    233768
+    on_target	    0.5703	    0.5239
+
 
 ## Variant allele frequencies
 

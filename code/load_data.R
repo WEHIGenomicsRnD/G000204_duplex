@@ -56,11 +56,42 @@ calculate_vafs <- function(var_df, freq_filter = 0.3) {
     return(var_df)
 }
 
-calculate_vafs_nvc <- function(var_df) {
-    var_df$VAF <- str_split(var_df$Sample1, ':') %>%
-            lapply(., function(x){as.numeric(x[3])}) %>%
-            unlist()
-    return(var_df)
+# calculate_vafs_nvc <- function(var_df) {
+#     var_df$VAF <- str_split(var_df$Sample1, ':') %>%
+#             lapply(., function(x){as.numeric(x[3])}) %>%
+#             unlist()
+#     return(var_df)
+# }
+
+filter_out_indels <- function(alt) {
+    alt <- str_split(alt, ",")[[1]] %>%
+        gsub("N", "", .)
+    alt <- alt[alt != ""]
+    alt <- alt[(str_split(alt, "") %>% lapply(., length) %>% unlist) == 1]
+    if (length(alt) == 0) { alt <- "" }
+    return(alt)
+}
+
+get_alt_dep_nvc <- function(var_row) {
+    alt <- strsplit(var_row["ALT"][[1]], ",")[[1]]
+    alt <- alt[!(alt %like% "N")]
+
+    base_counts <- str_split(var_row["Sample1"], ":")[[1]][4] %>%
+                    str_split(., ",") %>%
+                    unlist()
+    base_counts <- base_counts[base_counts != ""]
+
+    dep <- strsplit(base_counts, "=") %>%
+            lapply(., last) %>%
+            lapply(., as.numeric) %>%
+            unlist() %>% sum()
+    is_alt_base <- strsplit(base_counts, "=") %>%
+                    lapply(., function(x){head(x, 1) == alt}) %>%
+                    unlist()
+    alt_count <- strsplit(base_counts, "=")[is_alt_base][[1]] %>%
+                    last() %>% as.numeric()
+
+    return(c(alt_count, dep))
 }
 
 extract_std <- function(genome_results) {
