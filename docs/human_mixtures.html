@@ -411,7 +411,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-08-08
+<strong>Last updated:</strong> 2023-08-21
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -542,15 +542,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree0c24851a5270327aaf5ec9d8bde3625fa2eb3d29targetblank0c24851a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreecb969b12d9b9c200b9ba5cf817b24f07ffa3fd00targetblankcb969b1a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/0c24851a5270327aaf5ec9d8bde3625fa2eb3d29" target="_blank">0c24851</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/cb969b12d9b9c200b9ba5cf817b24f07ffa3fd00" target="_blank">cb969b1</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree0c24851a5270327aaf5ec9d8bde3625fa2eb3d29targetblank0c24851a"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreecb969b12d9b9c200b9ba5cf817b24f07ffa3fd00targetblankcb969b1a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -560,7 +560,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/0c24851a5270327aaf5ec9d8bde3625fa2eb3d29" target="_blank">0c24851</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/cb969b12d9b9c200b9ba5cf817b24f07ffa3fd00" target="_blank">cb969b1</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -661,6 +661,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/cb969b12d9b9c200b9ba5cf817b24f07ffa3fd00/analysis/human_mixtures.Rmd" target="_blank">cb969b1</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-08-21
+</td>
+<td>
+Fixed INDEL/N filtering from NVC output
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/603da1af4593433fb39e0122798ab0c498b3aa4a/docs/human_mixtures.html" target="_blank">603da1a</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-08-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/0c24851a5270327aaf5ec9d8bde3625fa2eb3d29/analysis/human_mixtures.Rmd" target="_blank">0c24851</a>
 </td>
 <td>
@@ -719,37 +753,89 @@ hg002v &lt;- data.frame(hg002_vars@fix)
 hg005v &lt;- data.frame(hg005_vars@fix)
 
 # get capture regions
-regions &lt;- read.delim(region_bed, sep = &#39;\t&#39;, header = FALSE)</code></pre>
+regions &lt;- read.delim(region_bed, sep = &#39;\t&#39;, header = FALSE)
+grx &lt;- GRanges(seqnames = regions$V1,
+               ranges = IRanges(start = regions$V2, end = regions$V3))</code></pre>
 <div id="variant-upset-plot" class="section level2">
 <h2>Variant Upset plot</h2>
 <p>Here we remove any “N” variant calls and INDELs and compare the
 overlaps for on- and off-target variant calls.</p>
 <pre class="r"><code># remove any N calls and INDELs
 var_df &lt;- filter(var_df, ALT != &quot;N&quot;) %&gt;%
-            filter(., (ALT %&gt;% str_split(&quot;&quot;) %&gt;% lapply(., length) %&gt;% unlist) == 1) %&gt;%
             filter(., (REF %&gt;% str_split(&quot;&quot;) %&gt;% lapply(., length) %&gt;% unlist) == 1) %&gt;%
-            calculate_vafs_nvc(.)
+            mutate(ALT = lapply(ALT, filter_out_indels) %&gt;% as.character()) %&gt;%
+            filter(., (ALT %&gt;% str_split(&quot;&quot;) %&gt;% lapply(., length) %&gt;% unlist) == 1)
 
-# get capture region range
-grx &lt;- GRanges(seqnames = paste0(&quot;chr&quot;, regions$V1),
-               ranges = IRanges(start = regions$V2, end = regions$V3))
+# filter out off-target reads
 vrx &lt;- GRanges(seqnames = var_df$CHROM,
                ranges = IRanges(start = as.numeric(var_df$POS),
                                 end = as.numeric(var_df$POS) + 1))
 var_df$on_target &lt;- overlapsAny(vrx, grx)
+
+# calculate vafs
+alt_dep &lt;- apply(var_df, 1, get_alt_dep_nvc) %&gt;% t() %&gt;% data.frame()
+var_df$AC &lt;- alt_dep$X1
+var_df$DP &lt;- alt_dep$X2
+var_df$VAF &lt;- var_df$AC / var_df$DP
 
 # make upsetplot
 ulist &lt;- NULL
 for(sample in sample_names) {
     ont_ids &lt;- var_df[var_df$sample %in% sample &amp; var_df$on_target,]$id
     oft_ids &lt;- var_df[var_df$sample %in% sample &amp; !var_df$on_target,]$id
-    ulist[[paste(sample, &quot;ontarget&quot;)]] &lt;- ont_ids
-    ulist[[paste(sample, &quot;offtarget&quot;)]] &lt;- oft_ids
+    ulist[[paste(sample, &quot;on_target&quot;)]] &lt;- ont_ids
+    ulist[[paste(sample, &quot;off_target&quot;)]] &lt;- oft_ids
     
 }
 
 upset(fromList(ulist), order.by=&#39;freq&#39;, nsets=4)</code></pre>
 <p><img src="figure/human_mixtures.Rmd/variant_filtering-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-variant_filtering-1">
+Past versions of variant_filtering-1.png
+</button>
+</p>
+<div id="fig-variant_filtering-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/603da1af4593433fb39e0122798ab0c498b3aa4a/docs/figure/human_mixtures.Rmd/variant_filtering-1.png" target="_blank">603da1a</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-08-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Checking on-target rate from the bam files (based on reads that fall
+within the region using
+<code>samtools view -c -L &lt;region_bed&gt; &lt;consensus_bam&gt;</code>)
+yields a higher on-target rate than the variant analysis would
+suggest:</p>
+<pre><code>                Human1pR1   Human1pR2
+capture_region  188409      122466
+total_reads     330368      233768
+on_target       0.5703      0.5239</code></pre>
 </div>
 <div id="variant-allele-frequencies" class="section level2">
 <h2>Variant allele frequencies</h2>
@@ -768,18 +854,129 @@ region)</li>
     theme_minimal() +
     ggtitle(&quot;All filtered variant calls&quot;)</code></pre>
 <p><img src="figure/human_mixtures.Rmd/vaf_plots-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-vaf_plots-1">
+Past versions of vaf_plots-1.png
+</button>
+</p>
+<div id="fig-vaf_plots-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/603da1af4593433fb39e0122798ab0c498b3aa4a/docs/figure/human_mixtures.Rmd/vaf_plots-1.png" target="_blank">603da1a</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-08-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ggplot(var_df[var_df$on_target,], aes(VAF)) +
     geom_histogram(binwidth = 0.05) +
     facet_grid(~sample) +
     theme_minimal() +
     ggtitle(&quot;On-target variant calls&quot;)</code></pre>
 <p><img src="figure/human_mixtures.Rmd/vaf_plots-2.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-vaf_plots-2">
+Past versions of vaf_plots-2.png
+</button>
+</p>
+<div id="fig-vaf_plots-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/603da1af4593433fb39e0122798ab0c498b3aa4a/docs/figure/human_mixtures.Rmd/vaf_plots-2.png" target="_blank">603da1a</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-08-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ggplot(var_df[var_df$on_target &amp; var_df$VAF &lt; 0.3,], aes(VAF)) +
     geom_histogram(binwidth = 0.01) +
     facet_grid(~sample) +
     theme_minimal() +
     ggtitle(&quot;On-target variant calls &lt; 0.3 VAF&quot;)</code></pre>
 <p><img src="figure/human_mixtures.Rmd/vaf_plots-3.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-vaf_plots-3">
+Past versions of vaf_plots-3.png
+</button>
+</p>
+<div id="fig-vaf_plots-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/603da1af4593433fb39e0122798ab0c498b3aa4a/docs/figure/human_mixtures.Rmd/vaf_plots-3.png" target="_blank">603da1a</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-08-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="variant-comparison" class="section level2">
 <h2>Variant comparison</h2>
@@ -896,23 +1093,25 @@ kable(hg5x)</code></pre>
 </tbody>
 </table>
 <pre class="r"><code>kable(var_df[var_df$POS %in% start(hg5x) &amp; var_df$CHROM %in% seqnames(hg5x),])</code></pre>
-<table>
+<table style="width:100%;">
 <colgroup>
 <col width="2%" />
 <col width="3%" />
-<col width="6%" />
+<col width="5%" />
 <col width="1%" />
 <col width="2%" />
 <col width="2%" />
+<col width="2%" />
 <col width="3%" />
-<col width="4%" />
-<col width="15%" />
-<col width="7%" />
 <col width="20%" />
 <col width="6%" />
-<col width="9%" />
-<col width="6%" />
-<col width="6%" />
+<col width="25%" />
+<col width="5%" />
+<col width="7%" />
+<col width="5%" />
+<col width="1%" />
+<col width="2%" />
+<col width="5%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -929,13 +1128,15 @@ kable(hg5x)</code></pre>
 <th align="left">Sample1</th>
 <th align="left">sample</th>
 <th align="left">id</th>
-<th align="right">VAF</th>
 <th align="left">on_target</th>
+<th align="right">AC</th>
+<th align="right">DP</th>
+<th align="right">VAF</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">127</td>
+<td align="left">146</td>
 <td align="left">chr5</td>
 <td align="left">177516672</td>
 <td align="left">NA</td>
@@ -948,11 +1149,13 @@ kable(hg5x)</code></pre>
 <td align="left">0:2:0.0104712041885:C=189,T=2,</td>
 <td align="left">Human1pR1</td>
 <td align="left">chr5_177516672</td>
-<td align="right">0.0104712</td>
 <td align="left">TRUE</td>
+<td align="right">2</td>
+<td align="right">191</td>
+<td align="right">0.0104712</td>
 </tr>
 <tr class="even">
-<td align="left">231</td>
+<td align="left">261</td>
 <td align="left">chr10</td>
 <td align="left">87970403</td>
 <td align="left">NA</td>
@@ -965,11 +1168,13 @@ kable(hg5x)</code></pre>
 <td align="left">0:2:0.00393700787402:C=506,T=2,</td>
 <td align="left">Human1pR1</td>
 <td align="left">chr10_87970403</td>
-<td align="right">0.0039370</td>
 <td align="left">TRUE</td>
+<td align="right">2</td>
+<td align="right">508</td>
+<td align="right">0.0039370</td>
 </tr>
 <tr class="odd">
-<td align="left">260</td>
+<td align="left">295</td>
 <td align="left">chr11</td>
 <td align="left">32396399</td>
 <td align="left">NA</td>
@@ -982,11 +1187,32 @@ kable(hg5x)</code></pre>
 <td align="left">0:4:0.0121951219512:C=4,T=324,</td>
 <td align="left">Human1pR1</td>
 <td align="left">chr11_32396399</td>
-<td align="right">0.0121951</td>
 <td align="left">TRUE</td>
+<td align="right">4</td>
+<td align="right">328</td>
+<td align="right">0.0121951</td>
 </tr>
 <tr class="even">
-<td align="left">517</td>
+<td align="left">527</td>
+<td align="left">chr1</td>
+<td align="left">114714012</td>
+<td align="left">NA</td>
+<td align="left">A</td>
+<td align="left">T</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">AC=5,2;AF=0.0505050505051,0.020202020202</td>
+<td align="left">GT:AC:AF:NC</td>
+<td align="left">0:5,2:0.0505050505051,0.020202020202:A=92,T=2,N=5,</td>
+<td align="left">Human1pR2</td>
+<td align="left">chr1_114714012</td>
+<td align="left">TRUE</td>
+<td align="right">2</td>
+<td align="right">99</td>
+<td align="right">0.0202020</td>
+</tr>
+<tr class="odd">
+<td align="left">590</td>
 <td align="left">chr3</td>
 <td align="left">128486108</td>
 <td align="left">NA</td>
@@ -999,11 +1225,13 @@ kable(hg5x)</code></pre>
 <td align="left">0:3:0.0260869565217:C=112,T=3,</td>
 <td align="left">Human1pR2</td>
 <td align="left">chr3_128486108</td>
-<td align="right">0.0260870</td>
 <td align="left">TRUE</td>
+<td align="right">3</td>
+<td align="right">115</td>
+<td align="right">0.0260870</td>
 </tr>
-<tr class="odd">
-<td align="left">732</td>
+<tr class="even">
+<td align="left">832</td>
 <td align="left">chr11</td>
 <td align="left">32396399</td>
 <td align="left">NA</td>
@@ -1016,8 +1244,10 @@ kable(hg5x)</code></pre>
 <td align="left">0:3:0.0125:C=3,T=237,</td>
 <td align="left">Human1pR2</td>
 <td align="left">chr11_32396399</td>
-<td align="right">0.0125000</td>
 <td align="left">TRUE</td>
+<td align="right">3</td>
+<td align="right">240</td>
+<td align="right">0.0125000</td>
 </tr>
 </tbody>
 </table>
