@@ -411,7 +411,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-08-21
+<strong>Last updated:</strong> 2023-08-23
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -542,15 +542,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreecb969b12d9b9c200b9ba5cf817b24f07ffa3fd00targetblankcb969b1a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree603ddbcd56e90837ca4947543bc5def94331dce4targetblank603ddbca">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/cb969b12d9b9c200b9ba5cf817b24f07ffa3fd00" target="_blank">cb969b1</a>
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/603ddbcd56e90837ca4947543bc5def94331dce4" target="_blank">603ddbc</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontreecb969b12d9b9c200b9ba5cf817b24f07ffa3fd00targetblankcb969b1a"
+id="strongRepositoryversionstrongahrefhttpsgithubcommcmeroraremutationdetectiontree603ddbcd56e90837ca4947543bc5def94331dce4targetblank603ddbca"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -560,7 +560,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/mcmero/rare-mutation-detection/tree/cb969b12d9b9c200b9ba5cf817b24f07ffa3fd00" target="_blank">cb969b1</a>.
+<a href="https://github.com/mcmero/rare-mutation-detection/tree/603ddbcd56e90837ca4947543bc5def94331dce4" target="_blank">603ddbc</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -582,7 +582,6 @@ Ignored files:
     Ignored:    analysis/.DS_Store
     Ignored:    analysis/cache/
     Ignored:    data/.DS_Store
-    Ignored:    scripts/
 
 Untracked files:
     Untracked:  ._.DS_Store
@@ -596,6 +595,7 @@ Untracked files:
     Untracked:  data/ecoli/
     Untracked:  data/ecoli_k12_metrics.rds
     Untracked:  data/human_mixture_capture_region.bed
+    Untracked:  data/human_mixture_pileup
     Untracked:  data/human_mixture_refs
     Untracked:  data/human_mixture_vars
     Untracked:  data/metadata/
@@ -607,6 +607,7 @@ Untracked files:
     Untracked:  drop_out_rate.pdf
     Untracked:  efficiency.pdf
     Untracked:  prototype_code/
+    Untracked:  scripts/
     Untracked:  stats.csv
 
 Unstaged changes:
@@ -656,6 +657,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/603ddbcd56e90837ca4947543bc5def94331dce4/analysis/human_mixtures.Rmd" target="_blank">603ddbc</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-08-23
+</td>
+<td>
+SNV pileup analysis
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/mcmero/rare-mutation-detection/3c535f782c59c418833176f6e1039c34108a51c9/docs/human_mixtures.html" target="_blank">3c535f7</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-08-21
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -735,14 +770,15 @@ library(UpSetR)
 library(vcfR)
 library(R.utils)
 library(knitr)</code></pre>
-<pre class="r"><code>source(here(&#39;code/load_data.R&#39;))
-source(here(&#39;code/plot.R&#39;))
-source(here(&#39;code/efficiency_nanoseq_functions.R&#39;))</code></pre>
-<pre class="r"><code>variant_dir &lt;- here(&#39;data/human_mixture_vars&#39;)
-region_bed &lt;- here(&#39;data/human_mixture_capture_region.bed&#39;)
-hg002_var_file &lt;- here(&#39;data/human_mixture_refs/HG002_GRCh38_1_22_v4.2.1_benchmark.vcf.gz&#39;)
-hg005_var_file &lt;- here(&#39;data/human_mixture_refs/HG005_GRCh38_1_22_v4.2.1_benchmark.vcf.gz&#39;)</code></pre>
-<pre class="r"><code>sample_names &lt;- c(&#39;Human1pR1&#39;, &#39;Human1pR2&#39;)
+<pre class="r"><code>source(here(&quot;code/load_data.R&quot;))
+source(here(&quot;code/plot.R&quot;))
+source(here(&quot;code/efficiency_nanoseq_functions.R&quot;))</code></pre>
+<pre class="r"><code>variant_dir &lt;- here(&quot;data/human_mixture_vars&quot;)
+pileup_dir &lt;- here(&quot;data/human_mixture_pileup&quot;)
+region_bed &lt;- here(&quot;data/human_mixture_capture_region.bed&quot;)
+hg002_var_file &lt;- here(&quot;data/human_mixture_refs/HG002_GRCh38_1_22_v4.2.1_benchmark.vcf.gz&quot;)
+hg005_var_file &lt;- here(&quot;data/human_mixture_refs/HG005_GRCh38_1_22_v4.2.1_benchmark.vcf.gz&quot;)</code></pre>
+<pre class="r"><code>sample_names &lt;- c(&quot;Human1pR1&quot;, &quot;Human1pR2&quot;)
 
 # load variant data
 var_df &lt;- load_variants(variant_dir, sample_names)
@@ -753,7 +789,7 @@ hg002v &lt;- data.frame(hg002_vars@fix)
 hg005v &lt;- data.frame(hg005_vars@fix)
 
 # get capture regions
-regions &lt;- read.delim(region_bed, sep = &#39;\t&#39;, header = FALSE)
+regions &lt;- read.delim(region_bed, sep = &quot;\t&quot;, header = FALSE)
 grx &lt;- GRanges(seqnames = regions$V1,
                ranges = IRanges(start = regions$V2, end = regions$V3))</code></pre>
 <div id="variant-upset-plot" class="section level2">
@@ -788,7 +824,7 @@ for(sample in sample_names) {
     
 }
 
-upset(fromList(ulist), order.by=&#39;freq&#39;, nsets=4)</code></pre>
+upset(fromList(ulist), order.by=&quot;freq&quot;, nsets=4)</code></pre>
 <p><img src="figure/human_mixtures.Rmd/variant_filtering-1.png" width="864" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-variant_filtering-1">
@@ -812,6 +848,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/3c535f782c59c418833176f6e1039c34108a51c9/docs/figure/human_mixtures.Rmd/variant_filtering-1.png" target="_blank">3c535f7</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-08-21
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/603da1af4593433fb39e0122798ab0c498b3aa4a/docs/figure/human_mixtures.Rmd/variant_filtering-1.png" target="_blank">603da1a</a>
@@ -878,6 +925,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/3c535f782c59c418833176f6e1039c34108a51c9/docs/figure/human_mixtures.Rmd/vaf_plots-1.png" target="_blank">3c535f7</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-08-21
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/603da1af4593433fb39e0122798ab0c498b3aa4a/docs/figure/human_mixtures.Rmd/vaf_plots-1.png" target="_blank">603da1a</a>
 </td>
 <td>
@@ -919,6 +977,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/3c535f782c59c418833176f6e1039c34108a51c9/docs/figure/human_mixtures.Rmd/vaf_plots-2.png" target="_blank">3c535f7</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-08-21
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/603da1af4593433fb39e0122798ab0c498b3aa4a/docs/figure/human_mixtures.Rmd/vaf_plots-2.png" target="_blank">603da1a</a>
@@ -964,6 +1033,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/mcmero/rare-mutation-detection/blob/3c535f782c59c418833176f6e1039c34108a51c9/docs/figure/human_mixtures.Rmd/vaf_plots-3.png" target="_blank">3c535f7</a>
+</td>
+<td>
+mcmero
+</td>
+<td>
+2023-08-21
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/mcmero/rare-mutation-detection/blob/603da1af4593433fb39e0122798ab0c498b3aa4a/docs/figure/human_mixtures.Rmd/vaf_plots-3.png" target="_blank">603da1a</a>
 </td>
 <td>
@@ -983,7 +1063,7 @@ mcmero
 <p>Given the referene information, we check how many SNPs are present in
 the capture area. We also filter out any variants that are common
 between the two samples (if the same variant appears in both samples, we
-can’t differentiate the calls without some kind of phasing).</p>
+can”t differentiate the calls without some kind of phasing).</p>
 <pre class="r"><code># filter out any INDELs
 hg005v &lt;- filter(hg005v, (ALT %&gt;% str_split(&quot;&quot;) %&gt;% lapply(., length) %&gt;% unlist) == 1) %&gt;%
           filter(., (REF %&gt;% str_split(&quot;&quot;) %&gt;% lapply(., length) %&gt;% unlist) == 1)
@@ -1251,6 +1331,689 @@ kable(hg5x)</code></pre>
 </tr>
 </tbody>
 </table>
+<p>As a sanity check, bcftools v1.17 mpileup was run on the bam files no
+BAQ and min base Q of 0. Below are the VAFs for the consensus bam
+variants:</p>
+<pre class="r"><code>h1mp_cons &lt;- read.vcfR(file.path(pileup_dir, &quot;Human1pR1_pileup.vcf&quot;),
+                      verbose = FALSE)
+h2mp_cons &lt;- read.vcfR(file.path(pileup_dir, &quot;Human1pR2_pileup.vcf&quot;),
+                      verbose = FALSE)
+
+h1mp_cons &lt;- data.frame(h1mp_cons@fix) %&gt;% cbind(., data.frame(h1mp_cons@gt))
+h2mp_cons &lt;- data.frame(h2mp_cons@fix) %&gt;% cbind(., data.frame(h2mp_cons@gt))
+h1mp_cons$ID &lt;- paste(h1mp_cons$CHROM, h1mp_cons$POS, sep = &quot;_&quot;)
+h2mp_cons$ID &lt;- paste(h2mp_cons$CHROM, h2mp_cons$POS, sep = &quot;_&quot;)
+
+hg5x$ID &lt;- paste(seqnames(hg5x), start(hg5x), sep = &quot;_&quot;)
+h1mp_cons &lt;- h1mp_cons[h1mp_cons$ID %in% hg5x$ID,] %&gt;% distinct()
+h2mp_cons &lt;- h2mp_cons[h2mp_cons$ID %in% hg5x$ID,] %&gt;% distinct()
+
+h1mp_cons$VAF &lt;- apply(h1mp_cons, 1, get_variant_fraction, hg5x)
+h2mp_cons$VAF &lt;- apply(h2mp_cons, 1, get_variant_fraction, hg5x)
+
+kable(h1mp_cons)</code></pre>
+<table style="width:100%;">
+<colgroup>
+<col width="1%" />
+<col width="3%" />
+<col width="4%" />
+<col width="1%" />
+<col width="1%" />
+<col width="1%" />
+<col width="2%" />
+<col width="63%" />
+<col width="2%" />
+<col width="13%" />
+<col width="3%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">CHROM</th>
+<th align="left">POS</th>
+<th align="left">ID</th>
+<th align="left">REF</th>
+<th align="left">ALT</th>
+<th align="left">QUAL</th>
+<th align="left">FILTER</th>
+<th align="left">INFO</th>
+<th align="left">FORMAT</th>
+<th align="left">Human1pR1_HJ7VFDSX7_GTGAAGTG.GAGCAATC_L002</th>
+<th align="right">VAF</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">chr1</td>
+<td align="left">114714012</td>
+<td align="left">chr1_114714012</td>
+<td align="left">A</td>
+<td align="left">T,&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=139;I16=128,3,0,8,7860,471600,74,3628,7860,471600,480,28800,2981,71929,62,690;QS=0.992424,0.00757576,0;VDB=0.000156924;SGB=-0.651104;RPBZ=-4.70428;MQBZ=0;MQSBZ=0;BQBZ=-10.9469;SCBZ=0;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255:131,1,0</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="even">
+<td align="left">chr10</td>
+<td align="left">87970403</td>
+<td align="left">chr10_87970403</td>
+<td align="left">C</td>
+<td align="left">T,&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=508;I16=241,265,1,1,30360,1.8216e+06,120,7200,30360,1.8216e+06,120,7200,9855,224105,26,626;QS=0.996063,0.00393701,0;VDB=0.7;SGB=-0.453602;RPBZ=1.29364;MQBZ=0;MQSBZ=0;BQBZ=0;SCBZ=0;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255:506,2,0</td>
+<td align="right">0.0039370</td>
+</tr>
+<tr class="odd">
+<td align="left">chr11</td>
+<td align="left">32396399</td>
+<td align="left">chr11_32396399</td>
+<td align="left">T</td>
+<td align="left">C,&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=327;I16=145,179,3,0,19440,1.1664e+06,180,10800,19440,1.1664e+06,180,10800,6715,156443,75,1875;QS=0.990826,0.00917431,0;VDB=0.292464;SGB=-0.511536;RPBZ=0.32827;MQBZ=0;MQSBZ=0;BQBZ=0;SCBZ=0;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255:324,3,0</td>
+<td align="right">0.0091743</td>
+</tr>
+<tr class="even">
+<td align="left">chr11</td>
+<td align="left">64805130</td>
+<td align="left">chr11_64805130</td>
+<td align="left">G</td>
+<td align="left">A,&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=255;I16=150,103,0,2,15180,910800,62,3604,15180,910800,120,7200,4794,107560,14,106;QS=0.996063,0.00393701,0;VDB=0.98;SGB=-0.453602;RPBZ=0.00481312;MQBZ=0;MQSBZ=0;BQBZ=-11.2472;SCBZ=0;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255:253,1,0</td>
+<td align="right">0.0039370</td>
+</tr>
+<tr class="odd">
+<td align="left">chr11</td>
+<td align="left">64810148</td>
+<td align="left">chr11_64810148</td>
+<td align="left">G</td>
+<td align="left">&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=74;I16=69,5,0,0,4412,263824,0,0,4440,266400,0,0,1479,33997,0,0;QS=1,0;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,223,255:74,0</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="even">
+<td align="left">chr17</td>
+<td align="left">7676301</td>
+<td align="left">chr17_7676301</td>
+<td align="left">G</td>
+<td align="left">T,&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=233;I16=104,128,0,1,13892,832624,60,3600,13920,835200,60,3600,4693,111063,25,625;QS=0.9957,0.00430046,0;SGB=-0.379885;RPBZ=-0.892202;MQBZ=0;MQSBZ=0;BQBZ=0.0656532;SCBZ=-0.375988;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255:232,1,0</td>
+<td align="right">0.0042918</td>
+</tr>
+<tr class="odd">
+<td align="left">chr3</td>
+<td align="left">128486108</td>
+<td align="left">chr3_128486108</td>
+<td align="left">C</td>
+<td align="left">&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=171;I16=125,44,1,1,10140,608400,4,8,10140,608400,120,7200,3290,74914,26,626;QS=1,0;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255:169,0</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="even">
+<td align="left">chr5</td>
+<td align="left">177516672</td>
+<td align="left">chr5_177516672</td>
+<td align="left">C</td>
+<td align="left">T,&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=191;I16=111,78,1,1,11312,677824,120,7200,11340,680400,120,7200,3941,92315,50,1250;QS=0.989503,0.0104969,0;VDB=0.66;SGB=-0.453602;RPBZ=0.0578716;MQBZ=0;MQSBZ=0;BQBZ=0.102869;SCBZ=0;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255:189,2,0</td>
+<td align="right">0.0104712</td>
+</tr>
+<tr class="odd">
+<td align="left">chr9</td>
+<td align="left">5069837</td>
+<td align="left">chr9_5069837</td>
+<td align="left">G</td>
+<td align="left">&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=411;I16=262,149,0,0,24660,1.4796e+06,0,0,24660,1.4796e+06,0,0,8384,193948,0,0;QS=1,0;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255:411,0</td>
+<td align="right">0.0000000</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>kable(h2mp_cons)</code></pre>
+<table>
+<colgroup>
+<col width="1%" />
+<col width="3%" />
+<col width="4%" />
+<col width="1%" />
+<col width="1%" />
+<col width="1%" />
+<col width="2%" />
+<col width="62%" />
+<col width="2%" />
+<col width="14%" />
+<col width="3%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">CHROM</th>
+<th align="left">POS</th>
+<th align="left">ID</th>
+<th align="left">REF</th>
+<th align="left">ALT</th>
+<th align="left">QUAL</th>
+<th align="left">FILTER</th>
+<th align="left">INFO</th>
+<th align="left">FORMAT</th>
+<th align="left">Human1pR2_HJ7VFDSX7_CATGGCTA.CACACATC_L002</th>
+<th align="right">VAF</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">chr1</td>
+<td align="left">114714012</td>
+<td align="left">chr1_114714012</td>
+<td align="left">A</td>
+<td align="left">T,&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=99;I16=88,4,0,7,5520,331200,130,7220,5520,331200,420,25200,1994,47390,29,169;QS=0.978723,0.0212766,0;VDB=0.000181347;SGB=-0.636426;RPBZ=-4.39045;MQBZ=0;MQSBZ=0;BQBZ=-8.27711;SCBZ=0;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,171,255,255,255,255:92,2,0</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="even">
+<td align="left">chr10</td>
+<td align="left">87970403</td>
+<td align="left">chr10_87970403</td>
+<td align="left">C</td>
+<td align="left">T,&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=359;I16=180,178,1,0,21480,1.2888e+06,60,3600,21480,1.2888e+06,60,3600,7182,165412,25,625;QS=0.997214,0.00278552,0;SGB=-0.379885;RPBZ=0.42945;MQBZ=0;MQSBZ=0;BQBZ=0;SCBZ=0;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255:358,1,0</td>
+<td align="right">0.0027855</td>
+</tr>
+<tr class="odd">
+<td align="left">chr11</td>
+<td align="left">32396399</td>
+<td align="left">chr11_32396399</td>
+<td align="left">T</td>
+<td align="left">C,&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=240;I16=101,136,1,2,14220,853200,180,10800,14220,853200,180,10800,5067,118617,75,1875;QS=0.9875,0.0125,0;VDB=0.529687;SGB=-0.511536;RPBZ=0.14647;MQBZ=0;MQSBZ=0;BQBZ=0;SCBZ=0;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255:237,3,0</td>
+<td align="right">0.0125000</td>
+</tr>
+<tr class="even">
+<td align="left">chr11</td>
+<td align="left">64805130</td>
+<td align="left">chr11_64805130</td>
+<td align="left">G</td>
+<td align="left">A,&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=134;I16=75,58,1,0,7980,478800,60,3600,7980,478800,60,3600,2571,58357,7,49;QS=0.992537,0.00746269,0;SGB=-0.379885;RPBZ=1.38334;MQBZ=0;MQSBZ=0;BQBZ=0;SCBZ=0;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255:133,1,0</td>
+<td align="right">0.0074627</td>
+</tr>
+<tr class="odd">
+<td align="left">chr11</td>
+<td align="left">64810148</td>
+<td align="left">chr11_64810148</td>
+<td align="left">G</td>
+<td align="left">&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=54;I16=46,8,0,0,3240,194400,0,0,3240,194400,0,0,1044,23184,0,0;QS=1,0;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,163,255:54,0</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="even">
+<td align="left">chr17</td>
+<td align="left">7676301</td>
+<td align="left">chr17_7676301</td>
+<td align="left">G</td>
+<td align="left">T,&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=180;I16=89,90,0,1,10740,644400,60,3600,10740,644400,60,3600,3798,89408,10,100;QS=0.994444,0.00555556,0;SGB=-0.379885;RPBZ=1.54957;MQBZ=0;MQSBZ=0;BQBZ=0;SCBZ=-0.352792;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255:179,1,0</td>
+<td align="right">0.0055556</td>
+</tr>
+<tr class="odd">
+<td align="left">chr3</td>
+<td align="left">128486108</td>
+<td align="left">chr3_128486108</td>
+<td align="left">C</td>
+<td align="left">T,&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=115;I16=84,28,3,0,6720,403200,180,10800,6720,403200,180,10800,2125,48073,57,1139;QS=0.973913,0.026087,0;VDB=0.839668;SGB=-0.511536;RPBZ=-0.658166;MQBZ=0;MQSBZ=0;BQBZ=0;SCBZ=0;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,187,255,255,255,255:112,3,0</td>
+<td align="right">0.0260870</td>
+</tr>
+<tr class="even">
+<td align="left">chr5</td>
+<td align="left">177516672</td>
+<td align="left">chr5_177516672</td>
+<td align="left">C</td>
+<td align="left">&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=127;I16=66,61,0,0,7620,457200,0,0,7620,457200,0,0,2635,60853,0,0;QS=1,0;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255:127,0</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="odd">
+<td align="left">chr9</td>
+<td align="left">5069837</td>
+<td align="left">chr9_5069837</td>
+<td align="left">G</td>
+<td align="left">&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=314;I16=184,130,0,0,18840,1.1304e+06,0,0,18840,1.1304e+06,0,0,6627,155741,0,0;QS=1,0;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255:314,0</td>
+<td align="right">0.0000000</td>
+</tr>
+</tbody>
+</table>
+<p>Below are the VAFs for the raw bam variants:</p>
+<pre class="r"><code>h1mp_raw &lt;- read.vcfR(file.path(pileup_dir, &quot;raw/Human1pR1_pileup.vcf&quot;),
+                      verbose = FALSE)
+h2mp_raw &lt;- read.vcfR(file.path(pileup_dir, &quot;raw/Human1pR2_pileup.vcf&quot;),
+                      verbose = FALSE)
+
+h1mp_raw &lt;- data.frame(h1mp_raw@fix) %&gt;% cbind(., data.frame(h1mp_raw@gt))
+h2mp_raw &lt;- data.frame(h2mp_raw@fix) %&gt;% cbind(., data.frame(h2mp_raw@gt))
+h1mp_raw$ID &lt;- paste(h1mp_raw$CHROM, h1mp_raw$POS, sep = &quot;_&quot;)
+h2mp_raw$ID &lt;- paste(h2mp_raw$CHROM, h2mp_raw$POS, sep = &quot;_&quot;)
+
+h1mp_raw &lt;- h1mp_raw[h1mp_raw$ID %in% hg5x$ID,] %&gt;% distinct()
+h2mp_raw &lt;- h2mp_raw[h2mp_raw$ID %in% hg5x$ID,] %&gt;% distinct()
+
+h1mp_raw$VAF &lt;- apply(h1mp_raw, 1, get_variant_fraction, hg5x)
+h2mp_raw$VAF &lt;- apply(h2mp_raw, 1, get_variant_fraction, hg5x)
+
+kable(h1mp_raw)</code></pre>
+<table>
+<colgroup>
+<col width="1%" />
+<col width="2%" />
+<col width="3%" />
+<col width="0%" />
+<col width="1%" />
+<col width="1%" />
+<col width="1%" />
+<col width="69%" />
+<col width="1%" />
+<col width="12%" />
+<col width="2%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">CHROM</th>
+<th align="left">POS</th>
+<th align="left">ID</th>
+<th align="left">REF</th>
+<th align="left">ALT</th>
+<th align="left">QUAL</th>
+<th align="left">FILTER</th>
+<th align="left">INFO</th>
+<th align="left">FORMAT</th>
+<th align="left">Human1pR1_HJ7VFDSX7_GTGAAGTG.GAGCAATC_L002</th>
+<th align="right">VAF</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">chr1</td>
+<td align="left">114714012</td>
+<td align="left">chr1_114714012</td>
+<td align="left">A</td>
+<td align="left">T,C,G</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=2378;I16=1279,814,17,268,58892,2.04342e+06,3241,53669,125062,7.4859e+06,16455,965889,44345,1.04588e+06,5570,126562;QS=0.945924,0.0325317,0.0122472,0.00929706;VDB=0.951167;SGB=-0.693147;RPBZ=-6.80848;MQBZ=-3.22071;MQSBZ=-1.95439;BQBZ=-18.5457;SCBZ=8.01938;MQ0F=0.000420521</td>
+<td align="left">PL:AD</td>
+<td
+align="left">0,255,255,255,255,255,255,255,255,255:2093,191,73,21</td>
+<td align="right">0.0088310</td>
+</tr>
+<tr class="even">
+<td align="left">chr10</td>
+<td align="left">87970403</td>
+<td align="left">chr10_87970403</td>
+<td align="left">C</td>
+<td align="left">A,T,G</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=7819;I16=3717,3854,109,139,238893,9.18864e+06,3308,73484,453674,2.72003e+07,14591,868753,154278,3.56539e+06,4928,114654;QS=0.985996,0.00797969,0.00504496,0.000979604;VDB=0.919782;SGB=-0.693147;RPBZ=2.66365;MQBZ=-1.49661;MQSBZ=0.0801869;BQBZ=-16.6284;SCBZ=4.80631;MQ0F=0.000127894</td>
+<td align="left">PL:AD</td>
+<td
+align="left">0,255,255,255,255,255,255,255,255,255:7571,188,38,21</td>
+<td align="right">0.0048606</td>
+</tr>
+<tr class="odd">
+<td align="left">chr11</td>
+<td align="left">32396399</td>
+<td align="left">chr11_32396399</td>
+<td align="left">T</td>
+<td align="left">C,A,G</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=5553;I16=2293,3120,103,37,179654,7.04057e+06,3156,102066,324202,1.9437e+07,8197,487841,114568,2.69134e+06,3132,75962;QS=0.982653,0.012653,0.0040769,0.00061722;VDB=0.0845183;SGB=-0.693147;RPBZ=-0.233849;MQBZ=-0.913227;MQSBZ=-0.0782107;BQBZ=-7.44466;SCBZ=1.47405;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td
+align="left">0,255,255,255,255,255,255,255,255,255:5413,67,60,11</td>
+<td align="right">0.0120699</td>
+</tr>
+<tr class="even">
+<td align="left">chr11</td>
+<td align="left">64805130</td>
+<td align="left">chr11_64805130</td>
+<td align="left">G</td>
+<td align="left">A,T,C</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=4358;I16=2409,1882,31,36,142568,5.51512e+06,1050,26306,256936,1.54053e+07,3916,233440,88208,2.05576e+06,1416,33540;QS=0.992565,0.00418323,0.00239535,0.000855975;VDB=0.320096;SGB=-0.693147;RPBZ=0.410199;MQBZ=-0.779995;MQSBZ=-0.281104;BQBZ=-8.23094;SCBZ=2.33746;MQ0F=0.000229463</td>
+<td align="left">PL:AD</td>
+<td
+align="left">0,255,255,255,255,255,255,255,255,255:4291,19,35,13</td>
+<td align="right">0.0043598</td>
+</tr>
+<tr class="odd">
+<td align="left">chr11</td>
+<td align="left">64810148</td>
+<td align="left">chr11_64810148</td>
+<td align="left">G</td>
+<td align="left">C,T,&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=843;I16=589,244,9,1,28948,1.06525e+06,214,6202,49888,2.98899e+06,600,36000,15283,339683,205,5025;QS=0.992678,0.00656949,0.000752754,0;VDB=0.517259;SGB=-0.670168;RPBZ=0.047697;MQBZ=0.348338;MQSBZ=-4.26096;BQBZ=-4.40035;SCBZ=0.50099;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255,255,255,255,255:833,8,2,0</td>
+<td align="right">0.0094899</td>
+</tr>
+<tr class="even">
+<td align="left">chr17</td>
+<td align="left">7676301</td>
+<td align="left">chr17_7676301</td>
+<td align="left">G</td>
+<td align="left">T,C,A</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=3530;I16=1298,2167,16,49,113069,4.55887e+06,713,13305,206814,1.23788e+07,3783,222911,74360,1.76666e+06,1456,34806;QS=0.993328,0.00587403,0.000702802,9.54422e-05;VDB=0.0563998;SGB=-0.693147;RPBZ=0.0431235;MQBZ=-1.06911;MQSBZ=-0.565955;BQBZ=-9.52428;SCBZ=2.28313;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255,255,255,255,255:3465,56,8,1</td>
+<td align="right">0.0158640</td>
+</tr>
+<tr class="odd">
+<td align="left">chr3</td>
+<td align="left">128486108</td>
+<td align="left">chr3_128486108</td>
+<td align="left">C</td>
+<td align="left">T,A,G</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=3461;I16=1927,1471,40,23,113127,4.42568e+06,1155,32769,203473,1.21928e+07,3765,225101,67788,1.55613e+06,1346,31404;QS=0.989772,0.005465,0.0037848,0.000978677;VDB=0.0583748;SGB=-0.693147;RPBZ=1.6185;MQBZ=-0.321333;MQSBZ=-0.401551;BQBZ=-6.98816;SCBZ=1.45631;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255,255,255,255,255:3398,19,34,9</td>
+<td align="right">0.0054913</td>
+</tr>
+<tr class="even">
+<td align="left">chr5</td>
+<td align="left">177516672</td>
+<td align="left">chr5_177516672</td>
+<td align="left">C</td>
+<td align="left">T,A,G</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=3518;I16=1997,1457,44,20,115800,4.43498e+06,1463,44079,206866,1.24004e+07,3737,221777,75292,1.7941e+06,1421,34423;QS=0.987627,0.00754921,0.00435857,0.000465478;VDB=0.0479845;SGB=-0.693147;RPBZ=2.98368;MQBZ=-0.781218;MQSBZ=0.275029;BQBZ=-5.31556;SCBZ=2.09774;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255,255,255,255,255:3454,25,34,5</td>
+<td align="right">0.0071063</td>
+</tr>
+<tr class="odd">
+<td align="left">chr9</td>
+<td align="left">5069837</td>
+<td align="left">chr9_5069837</td>
+<td align="left">G</td>
+<td align="left">T,A,C</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=5598;I16=3814,1579,138,67,168735,6.502e+06,2284,41542,322933,1.93601e+07,12194,727162,113627,2.66584e+06,4304,100780;QS=0.985848,0.0110098,0.00220659,0.000935778;VDB=0.0333858;SGB=-0.693147;RPBZ=3.25191;MQBZ=-0.69118;MQSBZ=0.161522;BQBZ=-16.4947;SCBZ=2.76591;MQ0F=0.000535906</td>
+<td align="left">PL:AD</td>
+<td
+align="left">0,255,255,255,255,255,255,255,255,255:5393,176,12,16</td>
+<td align="right">0.0021440</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>kable(h2mp_raw)</code></pre>
+<table style="width:100%;">
+<colgroup>
+<col width="1%" />
+<col width="2%" />
+<col width="3%" />
+<col width="0%" />
+<col width="1%" />
+<col width="1%" />
+<col width="1%" />
+<col width="69%" />
+<col width="1%" />
+<col width="13%" />
+<col width="2%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">CHROM</th>
+<th align="left">POS</th>
+<th align="left">ID</th>
+<th align="left">REF</th>
+<th align="left">ALT</th>
+<th align="left">QUAL</th>
+<th align="left">FILTER</th>
+<th align="left">INFO</th>
+<th align="left">FORMAT</th>
+<th align="left">Human1pR2_HJ7VFDSX7_CATGGCTA.CACACATC_L002</th>
+<th align="right">VAF</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">chr1</td>
+<td align="left">114714012</td>
+<td align="left">chr1_114714012</td>
+<td align="left">A</td>
+<td align="left">T,C,G</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=2169;I16=1259,707,12,191,56707,1.94058e+06,2356,34750,117234,7.00777e+06,11805,695233,41293,970483,4313,99021;QS=0.959398,0.0219532,0.0133034,0.00534498;VDB=0.227244;SGB=-0.693147;RPBZ=-5.67825;MQBZ=-2.17381;MQSBZ=-2.41906;BQBZ=-17.6354;SCBZ=8.93585;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td
+align="left">0,255,255,255,255,255,255,255,255,255:1966,113,73,17</td>
+<td align="right">0.0078377</td>
+</tr>
+<tr class="even">
+<td align="left">chr10</td>
+<td align="left">87970403</td>
+<td align="left">chr10_87970403</td>
+<td align="left">C</td>
+<td align="left">A,T,G</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=7908;I16=3827,3773,148,160,240875,8.63876e+06,4327,93611,454888,2.72553e+07,18114,1.07416e+06,155667,3.6211e+06,6449,150153;QS=0.982219,0.0120663,0.00471526,0.000999098;VDB=0.693789;SGB=-0.693147;RPBZ=2.24651;MQBZ=-1.78029;MQSBZ=-0.0471676;BQBZ=-20.5534;SCBZ=3.38189;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td
+align="left">0,255,255,255,255,255,255,255,255,255:7600,238,45,23</td>
+<td align="right">0.0056919</td>
+</tr>
+<tr class="odd">
+<td align="left">chr11</td>
+<td align="left">32396399</td>
+<td align="left">chr11_32396399</td>
+<td align="left">T</td>
+<td align="left">C,A,G</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=5660;I16=2228,3298,78,56,186452,6.92944e+06,2767,79371,330678,1.98204e+07,7983,476705,117563,2.75273e+06,2988,70368;QS=0.985352,0.0101496,0.00310757,0.00139051;VDB=0.783816;SGB=-0.693147;RPBZ=-0.144853;MQBZ=-0.614132;MQSBZ=0.221435;BQBZ=-9.83269;SCBZ=2.39853;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td
+align="left">0,255,255,255,255,255,255,255,255,255:5526,59,50,23</td>
+<td align="right">0.0104277</td>
+</tr>
+<tr class="even">
+<td align="left">chr11</td>
+<td align="left">64805130</td>
+<td align="left">chr11_64805130</td>
+<td align="left">G</td>
+<td align="left">A,T,C</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=3916;I16=2008,1843,42,23,129841,4.87608e+06,1280,35080,230629,1.38301e+07,3840,228168,77102,1.78753e+06,1282,29582;QS=0.990301,0.00522913,0.00354427,0.000925912;VDB=0.76911;SGB=-0.693147;RPBZ=2.31656;MQBZ=-0.573209;MQSBZ=0.0288966;BQBZ=-7.56984;SCBZ=2.99803;MQ0F=0.000510725</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255,255,255,255,255:3851,21,34,7</td>
+<td align="right">0.0053667</td>
+</tr>
+<tr class="odd">
+<td align="left">chr11</td>
+<td align="left">64810148</td>
+<td align="left">chr11_64810148</td>
+<td align="left">G</td>
+<td align="left">C,T,&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=676;I16=428,237,10,1,23176,854776,225,6323,39791,2.38279e+06,660,39600,11634,253154,230,5362;QS=0.990406,0.00818659,0.00140707,0;VDB=0.861107;SGB=-0.676189;RPBZ=-0.778572;MQBZ=0.365666;MQSBZ=-3.11839;BQBZ=-4.96894;SCBZ=0.0339176;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255,255,255,255,255:665,8,3,0</td>
+<td align="right">0.0118343</td>
+</tr>
+<tr class="even">
+<td align="left">chr17</td>
+<td align="left">7676301</td>
+<td align="left">chr17_7676301</td>
+<td align="left">G</td>
+<td align="left">T,C,&lt;*&gt;</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=3166;I16=1115,1980,11,60,102575,3.81673e+06,1413,40473,184584,1.10418e+07,4119,242163,66203,1.5576e+06,1436,32344;QS=0.986287,0.0133975,0.000315799,0;VDB=0.531092;SGB=-0.693147;RPBZ=1.0634;MQBZ=-1.16002;MQSBZ=-0.543083;BQBZ=-6.83871;SCBZ=2.58645;MQ0F=0.000631712</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255,255,255,255,255:3095,68,3,0</td>
+<td align="right">0.0214782</td>
+</tr>
+<tr class="odd">
+<td align="left">chr3</td>
+<td align="left">128486108</td>
+<td align="left">chr3_128486108</td>
+<td align="left">C</td>
+<td align="left">T,A,G</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=3162;I16=1737,1339,65,21,103870,3.84005e+06,2004,60350,183941,1.10177e+07,5098,303330,61503,1.41556e+06,1741,39241;QS=0.981135,0.0149016,0.00292761,0.00103549;VDB=0.900481;SGB=-0.693147;RPBZ=-1.60971;MQBZ=-0.580684;MQSBZ=-0.562229;BQBZ=-6.6964;SCBZ=1.5936;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td
+align="left">0,255,255,255,255,255,255,255,255,255:3076,49,27,10</td>
+<td align="right">0.0154965</td>
+</tr>
+<tr class="even">
+<td align="left">chr5</td>
+<td align="left">177516672</td>
+<td align="left">chr5_177516672</td>
+<td align="left">C</td>
+<td align="left">T,A,G</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=3382;I16=1921,1418,33,10,112476,4.12708e+06,908,26062,199867,1.19788e+07,2547,151745,70651,1.65268e+06,1008,24242;QS=0.992032,0.00549653,0.00198755,0.000483695;VDB=0.170142;SGB=-0.693146;RPBZ=-0.726899;MQBZ=-0.431209;MQSBZ=0.285921;BQBZ=-5.5266;SCBZ=0.926467;MQ0F=0</td>
+<td align="left">PL:AD</td>
+<td align="left">0,255,255,255,255,255,255,255,255,255:3339,19,18,5</td>
+<td align="right">0.0056196</td>
+</tr>
+<tr class="odd">
+<td align="left">chr9</td>
+<td align="left">5069837</td>
+<td align="left">chr9_5069837</td>
+<td align="left">G</td>
+<td align="left">T,A,C</td>
+<td align="left">0</td>
+<td align="left">NA</td>
+<td
+align="left">DP=5837;I16=3973,1612,183,69,173527,6.14438e+06,3110,47700,334288,2.00398e+07,15008,896888,118701,2.79869e+06,5467,127981;QS=0.982244,0.0155491,0.00162546,0.000581326;VDB=0.381863;SGB=-0.693147;RPBZ=6.07266;MQBZ=-0.579316;MQSBZ=0.155051;BQBZ=-20.229;SCBZ=2.41617;MQ0F=0.000171321</td>
+<td align="left">PL:AD</td>
+<td
+align="left">0,255,255,255,255,255,255,255,255,255:5585,230,12,10</td>
+<td align="right">0.0020559</td>
+</tr>
+</tbody>
+</table>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1309,7 +2072,7 @@ loaded via a namespace (and not attached):
 [34] crayon_1.5.2            generics_0.1.3          rstudioapi_0.15.0      
 [37] httr_1.4.6              ape_5.7-1               cachem_1.0.8           
 [40] zlibbioc_1.46.0         splines_4.3.0           cellranger_1.1.0       
-[43] vctrs_0.6.3             Matrix_1.5-4            jsonlite_1.8.7         
+[43] vctrs_0.6.3             Matrix_1.6-1            jsonlite_1.8.7         
 [46] callr_3.7.3             jquerylib_0.1.4         glue_1.6.2             
 [49] codetools_0.2-19        ps_1.7.5                stringi_1.7.12         
 [52] gtable_0.3.3            later_1.3.1             munsell_0.5.0          
