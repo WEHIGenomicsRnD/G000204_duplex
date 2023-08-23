@@ -45,22 +45,23 @@ library(knitr)
 ```
 
 ```{r source}
-source(here('code/load_data.R'))
-source(here('code/plot.R'))
-source(here('code/efficiency_nanoseq_functions.R'))
+source(here("code/load_data.R"))
+source(here("code/plot.R"))
+source(here("code/efficiency_nanoseq_functions.R"))
 ```
 
 
 ```{r paths}
-variant_dir <- here('data/human_mixture_vars')
-region_bed <- here('data/human_mixture_capture_region.bed')
-hg002_var_file <- here('data/human_mixture_refs/HG002_GRCh38_1_22_v4.2.1_benchmark.vcf.gz')
-hg005_var_file <- here('data/human_mixture_refs/HG005_GRCh38_1_22_v4.2.1_benchmark.vcf.gz')
+variant_dir <- here("data/human_mixture_vars")
+pileup_dir <- here("data/human_mixture_pileup")
+region_bed <- here("data/human_mixture_capture_region.bed")
+hg002_var_file <- here("data/human_mixture_refs/HG002_GRCh38_1_22_v4.2.1_benchmark.vcf.gz")
+hg005_var_file <- here("data/human_mixture_refs/HG005_GRCh38_1_22_v4.2.1_benchmark.vcf.gz")
 ```
 
 
 ```{r load_variants, cache=FALSE}
-sample_names <- c('Human1pR1', 'Human1pR2')
+sample_names <- c("Human1pR1", "Human1pR2")
 
 # load variant data
 var_df <- load_variants(variant_dir, sample_names)
@@ -71,7 +72,7 @@ hg002v <- data.frame(hg002_vars@fix)
 hg005v <- data.frame(hg005_vars@fix)
 
 # get capture regions
-regions <- read.delim(region_bed, sep = '\t', header = FALSE)
+regions <- read.delim(region_bed, sep = "\t", header = FALSE)
 grx <- GRanges(seqnames = regions$V1,
                ranges = IRanges(start = regions$V2, end = regions$V3))
 ```
@@ -109,7 +110,7 @@ for(sample in sample_names) {
     
 }
 
-upset(fromList(ulist), order.by='freq', nsets=4)
+upset(fromList(ulist), order.by="freq", nsets=4)
 ```
 
 Checking on-target rate from the bam files (based on reads that fall within the region using `samtools view -c -L <region_bed> <consensus_bam>`) yields a higher on-target rate than the variant analysis would suggest:
@@ -151,7 +152,7 @@ ggplot(var_df[var_df$on_target & var_df$VAF < 0.3,], aes(VAF)) +
 
 ## Variant comparison
 
-Given the referene information, we check how many SNPs are present in the capture area. We also filter out any variants that are common between the two samples (if the same variant appears in both samples, we can't differentiate the calls without some kind of phasing).
+Given the referene information, we check how many SNPs are present in the capture area. We also filter out any variants that are common between the two samples (if the same variant appears in both samples, we can"t differentiate the calls without some kind of phasing).
 
 ```{r variant_comparison}
 # filter out any INDELs
@@ -177,5 +178,52 @@ hg5x <- c(hg5x[!overlapsAny(hg5x, hg2x)], hg5x[overlapsAny(hg5x, hg2x)][unique_v
 
 kable(hg5x)
 kable(var_df[var_df$POS %in% start(hg5x) & var_df$CHROM %in% seqnames(hg5x),])
+```
+
+As a sanity check, bcftools v1.17 mpileup was run on the bam files no BAQ and min base Q of 0. Below are the VAFs for the consensus bam variants:
+
+```{r check_cons_pileup}
+h1mp_cons <- read.vcfR(file.path(pileup_dir, "Human1pR1_pileup.vcf"),
+                      verbose = FALSE)
+h2mp_cons <- read.vcfR(file.path(pileup_dir, "Human1pR2_pileup.vcf"),
+                      verbose = FALSE)
+
+h1mp_cons <- data.frame(h1mp_cons@fix) %>% cbind(., data.frame(h1mp_cons@gt))
+h2mp_cons <- data.frame(h2mp_cons@fix) %>% cbind(., data.frame(h2mp_cons@gt))
+h1mp_cons$ID <- paste(h1mp_cons$CHROM, h1mp_cons$POS, sep = "_")
+h2mp_cons$ID <- paste(h2mp_cons$CHROM, h2mp_cons$POS, sep = "_")
+
+hg5x$ID <- paste(seqnames(hg5x), start(hg5x), sep = "_")
+h1mp_cons <- h1mp_cons[h1mp_cons$ID %in% hg5x$ID,] %>% distinct()
+h2mp_cons <- h2mp_cons[h2mp_cons$ID %in% hg5x$ID,] %>% distinct()
+
+h1mp_cons$VAF <- apply(h1mp_cons, 1, get_variant_fraction, hg5x)
+h2mp_cons$VAF <- apply(h2mp_cons, 1, get_variant_fraction, hg5x)
+
+kable(h1mp_cons)
+kable(h2mp_cons)
+```
+
+Below are the VAFs for the raw bam variants:
+
+```{r check_raw_pileup}
+h1mp_raw <- read.vcfR(file.path(pileup_dir, "raw/Human1pR1_pileup.vcf"),
+                      verbose = FALSE)
+h2mp_raw <- read.vcfR(file.path(pileup_dir, "raw/Human1pR2_pileup.vcf"),
+                      verbose = FALSE)
+
+h1mp_raw <- data.frame(h1mp_raw@fix) %>% cbind(., data.frame(h1mp_raw@gt))
+h2mp_raw <- data.frame(h2mp_raw@fix) %>% cbind(., data.frame(h2mp_raw@gt))
+h1mp_raw$ID <- paste(h1mp_raw$CHROM, h1mp_raw$POS, sep = "_")
+h2mp_raw$ID <- paste(h2mp_raw$CHROM, h2mp_raw$POS, sep = "_")
+
+h1mp_raw <- h1mp_raw[h1mp_raw$ID %in% hg5x$ID,] %>% distinct()
+h2mp_raw <- h2mp_raw[h2mp_raw$ID %in% hg5x$ID,] %>% distinct()
+
+h1mp_raw$VAF <- apply(h1mp_raw, 1, get_variant_fraction, hg5x)
+h2mp_raw$VAF <- apply(h2mp_raw, 1, get_variant_fraction, hg5x)
+
+kable(h1mp_raw)
+kable(h2mp_raw)
 ```
 

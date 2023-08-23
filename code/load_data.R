@@ -94,6 +94,36 @@ get_alt_dep_nvc <- function(var_row) {
     return(c(alt_count, dep))
 }
 
+# calculate allele frequency of mpileup variant from reference
+# GRanges in current row (position must exist in GRanges object)
+get_variant_fraction <- function(row, refgx=refgx) {
+    # get base counts from row
+    counts <- row[length(row)] %>%
+        as.character() %>%
+        str_split(., ":") %>%
+        dplyr::first() %>%
+        dplyr::last() %>%
+        str_split(., ",") %>%
+        dplyr::first() %>%
+        as.numeric()
+    bases <- row["ALT"] %>%
+        as.character() %>%
+        str_split(., ",") %>%
+        dplyr::first()
+    bases <- c(as.character(row["REF"]), bases)
+    names(counts) <- bases
+
+    # get alt base from ref
+    ID <- row["ID"] %>% as.character()
+    variant <- refgx[refgx$ID == ID]$variant
+    var_count <- counts[variant] %>% as.numeric()
+    if (is.na(var_count)) {
+        return(0)
+    } else {
+        return(var_count / sum(counts))
+    }
+}
+
 extract_std <- function(genome_results) {
     std <- genome_results[grep('std', genome_results$BamQC.report),] %>%
         strsplit(., split='=') %>%
